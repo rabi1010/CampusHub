@@ -9,43 +9,51 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* All public pages share Navbar + Footer via PublicLayout */}
+        {/* Public pages — share Navbar + Footer */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Landing />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
         </Route>
 
-        {/* Login is full screen — no Navbar/Footer */}
+        {/* Login — full screen, no layout */}
         <Route path="/login" element={<Login />} />
 
-        {/* Dashboard stubs — you'll build these next */}
+        {/* Dashboard stubs — next step */}
         <Route
           path="/dashboard/admin"
           element={
-            <div className="min-h-screen flex items-center justify-center text-jade-400 font-mono">
-              Admin Dashboard — coming next
+            <div
+              className="min-h-screen flex items-center justify-center
+                            text-jade-400 font-mono"
+            >
+              Admin Dashboard — next
             </div>
           }
         />
         <Route
           path="/dashboard/teacher"
           element={
-            <div className="min-h-screen flex items-center justify-center text-jade-400 font-mono">
-              Teacher Dashboard — coming next
+            <div
+              className="min-h-screen flex items-center justify-center
+                            text-jade-400 font-mono"
+            >
+              Teacher Dashboard — next
             </div>
           }
         />
         <Route
           path="/dashboard/student"
           element={
-            <div className="min-h-screen flex items-center justify-center text-jade-400 font-mono">
-              Student Dashboard — coming next
+            <div
+              className="min-h-screen flex items-center justify-center
+                            text-jade-400 font-mono"
+            >
+              Student Dashboard — next
             </div>
           }
         />
 
-        {/* Catch all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

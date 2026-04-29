@@ -1,5 +1,19 @@
-import { useState, type FormEvent } from "react";
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
+import {
+  contactSchema,
+  type ContactFormValues,
+} from "../features/auth/authSchemas";
+import { contactService } from "../services/authService";
 
 const CONTACT_INFO = [
   { icon: Mail, label: "Email", value: "support@campushub.edu.np" },
@@ -7,49 +21,28 @@ const CONTACT_INFO = [
   { icon: MapPin, label: "Address", value: "Kathmandu, Nepal" },
 ];
 
-interface FormState {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
-
-const EMPTY: FormState = { name: "", email: "", subject: "", message: "" };
-
 export default function Contact() {
-  const [form, setForm] = useState<FormState>(EMPTY);
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [errors, setErrors] = useState<Partial<FormState>>({});
+  // ── TanStack Query mutation ───────────────────────────
+  const sendMessage = useMutation({
+    mutationFn: contactService.send,
+    // onSuccess/onError handled via mutation state below
+  });
 
-  /* Validate all fields, set error messages */
-  const validate = (): boolean => {
-    const e: Partial<FormState> = {};
-    if (!form.name.trim()) e.name = "Name is required";
-    if (!form.email.trim()) e.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(form.email))
-      e.email = "Invalid email address";
-    if (!form.subject.trim()) e.subject = "Subject is required";
-    if (!form.message.trim()) e.message = "Message is required";
-    setErrors(e);
-    return Object.keys(e).length === 0;
+  // ── React Hook Form + Zod ─────────────────────────────
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+  });
+
+  const onSubmit = (data: ContactFormValues) => {
+    sendMessage.mutate(data, {
+      onSuccess: () => reset(),
+    });
   };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 1500)); // replace with real API call
-    setLoading(false);
-    setSubmitted(true);
-    setForm(EMPTY);
-  };
-
-  /* Generic field change handler — avoids one handler per field */
-  const set =
-    (key: keyof FormState) =>
-    (e: import("react").ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setForm((f) => ({ ...f, [key]: e.target.value }));
 
   return (
     <div className="grid-texture">
@@ -74,7 +67,7 @@ export default function Contact() {
           </p>
 
           <div className="grid lg:grid-cols-5 gap-8">
-            {/* Contact info cards */}
+            {/* Info cards */}
             <div className="lg:col-span-2 flex flex-col gap-4">
               {CONTACT_INFO.map(({ icon: Icon, label, value }) => (
                 <div
@@ -99,30 +92,16 @@ export default function Contact() {
                   </div>
                 </div>
               ))}
-
-              <div className="glass rounded-2xl p-6 mt-2">
-                <p
-                  className="text-xs font-mono text-ink-500
-                              uppercase tracking-wider mb-3"
-                >
-                  Response time
-                </p>
-                <p className="text-sm text-ink-300 leading-relaxed">
-                  We typically respond within{" "}
-                  <span className="text-jade-400 font-medium">24 hours</span> on
-                  weekdays.
-                </p>
-              </div>
             </div>
 
             {/* Form */}
             <div className="lg:col-span-3">
               <div className="glass rounded-2xl p-8">
-                {submitted ? (
-                  /* Success state */
+                {/* Success state */}
+                {sendMessage.isSuccess ? (
                   <div
-                    className="flex flex-col items-center justify-center
-                                  py-12 text-center gap-4"
+                    className="flex flex-col items-center py-12
+                                  text-center gap-4"
                   >
                     <div
                       className="w-14 h-14 rounded-full bg-jade-500/15
@@ -134,23 +113,35 @@ export default function Contact() {
                     <h3 className="font-display text-2xl text-ink-50">
                       Message sent!
                     </h3>
-                    <p className="text-sm text-ink-400 max-w-xs">
+                    <p className="text-sm text-ink-400">
                       We'll get back to you within 24 hours.
                     </p>
                     <button
-                      onClick={() => setSubmitted(false)}
+                      onClick={() => sendMessage.reset()}
                       className="btn-ghost text-jade-400 mt-2"
                     >
                       Send another message
                     </button>
                   </div>
                 ) : (
-                  /* Form fields */
                   <form
-                    onSubmit={handleSubmit}
+                    onSubmit={handleSubmit(onSubmit)}
                     noValidate
                     className="flex flex-col gap-5"
                   >
+                    {/* API error */}
+                    {sendMessage.isError && (
+                      <div
+                        className="flex items-center gap-2 px-3 py-2.5
+                                      rounded-lg bg-red-500/10
+                                      border border-red-500/20
+                                      text-red-400 text-sm"
+                      >
+                        <AlertCircle size={14} />
+                        Failed to send. Please try again.
+                      </div>
+                    )}
+
                     <div className="grid sm:grid-cols-2 gap-4">
                       {/* Name */}
                       <div>
@@ -163,15 +154,14 @@ export default function Contact() {
                         <input
                           type="text"
                           placeholder="Aarav Sharma"
-                          value={form.name}
-                          onChange={set("name")}
                           className={`input-field ${
-                            errors.name ? "border-red-500/50" : ""
+                            errors.name ? "input-error" : ""
                           }`}
+                          {...register("name")}
                         />
                         {errors.name && (
                           <p className="text-xs text-red-400 mt-1">
-                            {errors.name}
+                            {errors.name.message}
                           </p>
                         )}
                       </div>
@@ -187,15 +177,14 @@ export default function Contact() {
                         <input
                           type="email"
                           placeholder="you@college.edu"
-                          value={form.email}
-                          onChange={set("email")}
                           className={`input-field ${
-                            errors.email ? "border-red-500/50" : ""
+                            errors.email ? "input-error" : ""
                           }`}
+                          {...register("email")}
                         />
                         {errors.email && (
                           <p className="text-xs text-red-400 mt-1">
-                            {errors.email}
+                            {errors.email.message}
                           </p>
                         )}
                       </div>
@@ -212,15 +201,14 @@ export default function Contact() {
                       <input
                         type="text"
                         placeholder="How can we help?"
-                        value={form.subject}
-                        onChange={set("subject")}
                         className={`input-field ${
-                          errors.subject ? "border-red-500/50" : ""
+                          errors.subject ? "input-error" : ""
                         }`}
+                        {...register("subject")}
                       />
                       {errors.subject && (
                         <p className="text-xs text-red-400 mt-1">
-                          {errors.subject}
+                          {errors.subject.message}
                         </p>
                       )}
                     </div>
@@ -235,28 +223,27 @@ export default function Contact() {
                       </label>
                       <textarea
                         rows={5}
-                        placeholder="Tell us more about your enquiry..."
-                        value={form.message}
-                        onChange={set("message")}
+                        placeholder="Tell us more..."
                         className={`input-field resize-none ${
-                          errors.message ? "border-red-500/50" : ""
+                          errors.message ? "input-error" : ""
                         }`}
+                        {...register("message")}
                       />
                       {errors.message && (
                         <p className="text-xs text-red-400 mt-1">
-                          {errors.message}
+                          {errors.message.message}
                         </p>
                       )}
                     </div>
 
                     <button
                       type="submit"
-                      disabled={loading}
+                      disabled={sendMessage.isPending}
                       className="btn-primary justify-center py-3.5 mt-1
                                  disabled:opacity-60 disabled:cursor-not-allowed
                                  disabled:transform-none"
                     >
-                      {loading ? (
+                      {sendMessage.isPending ? (
                         <>
                           <span
                             className="w-4 h-4 border-2 border-white/30

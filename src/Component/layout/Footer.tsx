@@ -32,7 +32,10 @@ export default function Footer() {
           {/* Brand column */}
           <div className="col-span-2">
             <Link to="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-jade-500/20 border border-jade-500/30 flex items-center justify-center">
+              <div
+                className="w-8 h-8 rounded-lg bg-jade-500/20 border border-jade-500/30
+                              flex items-center justify-center"
+              >
                 <GraduationCap size={16} className="text-jade-400" />
               </div>
               <span className="font-display text-lg text-ink-50">
@@ -52,7 +55,9 @@ export default function Footer() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-8 h-8 rounded-lg glass-light flex items-center justify-center text-ink-400 hover:text-jade-400 hover:border-jade-500/30 transition-colors"
+                  className="w-8 h-8 rounded-lg glass-light flex items-center justify-center
+                             text-ink-400 hover:text-jade-400 hover:border-jade-500/30
+                             transition-colors"
                 >
                   <Icon size={14} />
                 </a>
@@ -63,7 +68,10 @@ export default function Footer() {
           {/* Link columns */}
           {Object.entries(LINKS).map(([title, items]) => (
             <div key={title}>
-              <p className="text-xs font-mono font-medium text-ink-400 uppercase tracking-widest mb-4">
+              <p
+                className="text-xs font-mono font-medium text-ink-400
+                            uppercase tracking-widest mb-4"
+              >
                 {title}
               </p>
               <ul className="flex flex-col gap-2.5">
@@ -71,7 +79,8 @@ export default function Footer() {
                   <li key={l}>
                     <Link
                       to={to}
-                      className="text-sm text-ink-400 hover:text-jade-400 transition-colors"
+                      className="text-sm text-ink-400 hover:text-jade-400
+                                 transition-colors"
                     >
                       {l}
                     </Link>
@@ -84,7 +93,10 @@ export default function Footer() {
 
         <div className="divider mt-12 mb-6" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-ink-500">
+        <div
+          className="flex flex-col md:flex-row items-center
+                        justify-between gap-4 text-xs text-ink-500"
+        >
           <p>
             © {new Date().getFullYear()} CampusHub. Built with React + Node.js.
           </p>

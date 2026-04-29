@@ -28,10 +28,12 @@
   --color-gold-500: #f59e0b;
 
   /* Fonts */
-  --font-display: "DM Serif Display", Georgia, serif;
+  /* --font-display: "DM Serif Display", Georgia, serif;
   --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace; */
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-body: "Outfit", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
-
   /* Shadows */
   --shadow-glow-jade: 0 0 50px rgba(31, 157, 104, 0.2);
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.07);
@@ -104,7 +106,7 @@
   body {
     font-family: var(--font-body);
     background: var(--bg);
-    color: var(--text);
+    /* color: var(--text); */
     overflow-x: hidden;
   }
 

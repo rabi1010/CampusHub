@@ -1,0 +1,234 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap");
+
+@import "tailwindcss";
+
+/* ============================================
+   THEME TOKENS (replaces tailwind.config.js)
+   ============================================ */
+@theme {
+  /* Colors */
+  --color-ink-50: #f0f0f5;
+  --color-ink-100: #dcdce8;
+  --color-ink-200: #b8b8d1;
+  --color-ink-300: #8f8fb8;
+  --color-ink-400: #6b6b9e;
+  --color-ink-500: #4e4e84;
+  --color-ink-600: #3b3b6b;
+  --color-ink-700: #2a2a52;
+  --color-ink-800: #1a1a38;
+  --color-ink-900: #0d0d1f;
+  --color-ink-950: #07070f;
+
+  --color-jade-300: #6dd5a8;
+  --color-jade-400: #3aba84;
+  --color-jade-500: #1f9d68;
+  --color-jade-600: #167d52;
+
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+
+  /* Fonts */
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Shadows */
+  --shadow-glow-jade: 0 0 50px rgba(31, 157, 104, 0.2);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.07);
+  --shadow-card-lg:
+    0 4px 16px rgba(0, 0, 0, 0.12), 0 24px 48px rgba(0, 0, 0, 0.1);
+
+  /* Animations */
+  --animate-fade-up: fadeUp 0.7s ease both;
+  --animate-fade-in: fadeIn 0.5s ease both;
+  --animate-float: float 5s ease-in-out infinite;
+  --animate-pulse-slow: pulse 3s ease-in-out infinite;
+  --animate-spin-slow: spin 12s linear infinite;
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-14px);
+    }
+  }
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+@layer base {
+  :root {
+    --bg: #0d0d1f;
+    --bg-2: #12122a;
+    --bg-3: #1a1a38;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-md: rgba(255, 255, 255, 0.14);
+    --text: #f0f0f5;
+    --text-muted: #8f8fb8;
+    --accent: #1f9d68;
+    --accent-2: #3aba84;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(31, 157, 104, 0.3);
+    color: #fff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-2);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--bg-3);
+    border-radius: 3px;
+  }
+}
+
+/* ============================================
+   COMPONENT UTILITIES
+   ============================================ */
+@layer components {
+  .grid-texture {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .glass {
+    background: rgba(26, 26, 56, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-light {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #3aba84 0%, #6dd5a8 50%, #fbbf24 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .orb {
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-xl
+           font-medium text-sm bg-jade-500 hover:bg-jade-400 text-white
+           transition-all duration-200 hover:shadow-glow-jade hover:-translate-y-0.5
+           active:translate-y-0 active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-xl
+           font-medium text-sm text-ink-100
+           hover:border-jade-500/40 transition-all duration-200
+           hover:-translate-y-0.5 active:translate-y-0;
+    /* glass-light applied via @apply won't work for backdrop-filter, use it directly */
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm
+           text-ink-300 hover:text-ink-100 hover:bg-white/5
+           transition-all duration-150;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl text-sm
+           bg-white/5 border border-white/10
+           text-ink-100 placeholder-ink-400
+           focus:outline-none focus:border-jade-500/60 focus:bg-white/10
+           transition-all duration-200;
+  }
+
+  .section-label {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full
+           text-xs font-mono font-medium
+           bg-jade-500/10 text-jade-400 border border-jade-500/20;
+  }
+
+  .divider {
+    @apply w-full h-px bg-white/[0.07];
+  }
+
+  .nav-link {
+    @apply text-sm text-ink-300 hover:text-ink-100 transition-colors duration-150;
+  }
+
+  /* Stagger delays */
+  .delay-100 {
+    animation-delay: 100ms;
+  }
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+  .delay-400 {
+    animation-delay: 400ms;
+  }
+  .delay-500 {
+    animation-delay: 500ms;
+  }
+  .delay-600 {
+    animation-delay: 600ms;
+  }
+}

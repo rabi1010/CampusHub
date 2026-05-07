@@ -98,7 +98,8 @@ export default function Footer() {
                         justify-between gap-4 text-xs text-ink-500"
         >
           <p>
-            © {new Date().getFullYear()} CampusHub. Built with React + Node.js.
+            ©OwnerRabiChy{new Date().getFullYear()} CampusHub. Built with React
+            + Java Spring
           </p>
           <p className="font-mono">v1.0.0-beta</p>
         </div>

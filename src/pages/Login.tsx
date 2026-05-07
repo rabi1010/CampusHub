@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -9,14 +10,15 @@ import {
   UserCog,
   BookOpen,
   AlertCircle,
+  CheckCircle2,
 } from "lucide-react";
 import {
   loginSchema,
   type LoginFormValues,
 } from "../features/auth/authSchemas";
 import { useLogin } from "../features/auth/useLogin";
-import { useState } from "react";
 
+// ── Role definitions ────────────────────────────────────
 const ROLES = [
   {
     id: "admin" as const,
@@ -42,61 +44,56 @@ const ROLES = [
 ];
 
 export default function Login() {
+  const location = useLocation();
   const [showPass, setShowPass] = useState(false);
   const login = useLogin();
 
-  // ── React Hook Form + Zod ─────────────────────────────
+  // Read success message passed from Register page via router state
+  const successMessage = (location.state as { message?: string } | null)
+    ?.message;
+
+  // ── React Hook Form + Zod ───────────────────────────
   const {
-    register, // connects input to RHF
-    handleSubmit, // wraps onSubmit with validation
-    formState: { errors, isSubmitting },
-    setValue, // programmatic field set (for demo fill)
-    watch, // watch field values reactively
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
     clearErrors,
   } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema), // Zod does the validation
-    defaultValues: {
-      role: "student",
-    },
+    resolver: zodResolver(loginSchema),
+    defaultValues: { role: "student" },
   });
 
   const selectedRole = watch("role");
   const selected = ROLES.find((r) => r.id === selectedRole)!;
 
+  // Fill demo credentials for the currently selected role
   const fillDemo = () => {
     setValue("email", selected.demo);
     setValue("password", "demo123");
     clearErrors();
   };
 
-  // ── Submit — RHF calls this only after Zod passes ─────
+  // Called only after Zod validation passes
   const onSubmit = (data: LoginFormValues) => {
     login.mutate(data);
   };
 
   return (
-    <div
-      className="grid-texture min-h-screen flex items-center
-                    justify-center px-4 pt-20"
-    >
-      <div
-        className="orb w-150 h-150 bg-jade-500
-                      top-[-200px] right-[-200px] opacity-[0.08]"
-      />
-      <div
-        className="orb w-[400px] h-[400px] bg-ink-500
-                      bottom-[-100px] left-[-100px] opacity-[0.1]"
-      />
+    <div className="grid-texture min-h-screen flex items-center justify-center px-4 py-24">
+      {/* Background orbs */}
+      <div className="orb w-[600px] h-[600px] bg-jade-500 top-[-200px] right-[-200px] opacity-[0.08]" />
+      <div className="orb w-[400px] h-[400px] bg-ink-500 bottom-[-100px] left-[-100px] opacity-[0.1]" />
 
       <div className="w-full max-w-md">
-        {/* Logo */}
+        {/* ── Logo + heading ──────────────────────────── */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2.5 group">
             <div
-              className="w-10 h-10 rounded-xl bg-jade-500/20
-                            border border-jade-500/30 flex items-center
-                            justify-center group-hover:bg-jade-500/30
-                            transition-colors"
+              className="w-10 h-10 rounded-xl bg-jade-500/20 border border-jade-500/30
+                         flex items-center justify-center
+                         group-hover:bg-jade-500/30 transition-colors"
             >
               <GraduationCap size={18} className="text-jade-400" />
             </div>
@@ -104,21 +101,21 @@ export default function Login() {
               Campus<span className="text-jade-400">Hub</span>
             </span>
           </Link>
+
           <h1 className="font-display text-3xl text-ink-50 mt-5 mb-1">
             Welcome back
           </h1>
           <p className="text-sm text-ink-400">Sign in to your portal</p>
         </div>
 
+        {/* ── Card ────────────────────────────────────── */}
         <div className="glass rounded-2xl p-8 animate-fade-up">
-          {/* Role selector — writes to RHF via setValue */}
+          {/* Role selector */}
           <div className="mb-6">
-            <p
-              className="text-xs font-mono text-ink-500 uppercase
-                          tracking-widest mb-3"
-            >
+            <p className="text-xs font-mono text-ink-500 uppercase tracking-widest mb-3">
               Select your role
             </p>
+
             <div className="grid grid-cols-3 gap-2">
               {ROLES.map(({ id, label, icon: Icon }) => (
                 <button
@@ -141,37 +138,47 @@ export default function Login() {
                 </button>
               ))}
             </div>
+
             <p className="text-xs text-ink-500 mt-2 text-center">
               {selected.desc}
             </p>
           </div>
 
-          <div className="divider mb-6" />
+          {/* Success message from Register page */}
+          {successMessage && (
+            <div
+              className="flex items-start gap-2.5 px-4 py-3 rounded-xl
+                         bg-jade-500/10 border border-jade-500/20
+                         text-jade-300 text-sm mb-4"
+            >
+              <CheckCircle2 size={15} className="mt-0.5 shrink-0" />
+              {successMessage}
+            </div>
+          )}
 
-          {/* API error (from TanStack Query) */}
+          {/* API error from TanStack Query */}
           {login.isError && (
             <div
               className="flex items-center gap-2 px-3 py-2.5 rounded-lg
-                            bg-red-500/10 border border-red-500/20
-                            text-red-400 text-sm mb-4"
+                         bg-red-500/10 border border-red-500/20
+                         text-red-400 text-sm mb-4"
             >
               <AlertCircle size={14} />
               Invalid credentials. Please try again.
             </div>
           )}
 
-          {/* Form — handleSubmit runs Zod validation first */}
+          <div className="divider mb-6" />
+
+          {/* ── Form ──────────────────────────────────── */}
           <form
             onSubmit={handleSubmit(onSubmit)}
             noValidate
             className="flex flex-col gap-4"
           >
-            {/* Email — registered with RHF */}
+            {/* Email */}
             <div>
-              <label
-                className="block text-xs font-mono text-ink-400
-                                mb-1.5 uppercase tracking-wider"
-              >
+              <label className="block text-xs font-mono text-ink-400 mb-1.5 uppercase tracking-wider">
                 Email address
               </label>
               <input
@@ -192,20 +199,17 @@ export default function Login() {
             {/* Password */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label
-                  className="text-xs font-mono text-ink-400
-                                  uppercase tracking-wider"
-                >
+                <label className="text-xs font-mono text-ink-400 uppercase tracking-wider">
                   Password
                 </label>
                 <button
                   type="button"
-                  className="text-xs text-jade-500
-                                   hover:text-jade-400 transition-colors"
+                  className="text-xs text-jade-500 hover:text-jade-400 transition-colors"
                 >
                   Forgot password?
                 </button>
               </div>
+
               <div className="relative">
                 <input
                   type={showPass ? "text" : "password"}
@@ -225,6 +229,7 @@ export default function Login() {
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+
               {errors.password && (
                 <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
                   <AlertCircle size={11} />
@@ -233,7 +238,7 @@ export default function Login() {
               )}
             </div>
 
-            {/* Submit */}
+            {/* Submit button */}
             <button
               type="submit"
               disabled={login.isPending}
@@ -245,7 +250,7 @@ export default function Login() {
                 <>
                   <span
                     className="w-4 h-4 border-2 border-white/30
-                                   border-t-white rounded-full animate-spin"
+                               border-t-white rounded-full animate-spin"
                   />
                   Signing in…
                 </>
@@ -260,7 +265,7 @@ export default function Login() {
 
           <div className="divider my-5" />
 
-          {/* Demo helper */}
+          {/* Demo credentials helper */}
           <button
             type="button"
             onClick={fillDemo}
@@ -272,9 +277,18 @@ export default function Login() {
           </button>
         </div>
 
+        {/* ── Footer links ─────────────────────────────── */}
         <p className="text-center text-sm text-ink-500 mt-6">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-jade-400 hover:text-jade-300 transition-colors font-medium"
+          >
+            Register
+          </Link>
+          {" · "}
           <Link to="/" className="hover:text-jade-400 transition-colors">
-            ← Back to home
+            Home
           </Link>
         </p>
       </div>

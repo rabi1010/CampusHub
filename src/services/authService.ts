@@ -1,5 +1,23 @@
 import api from "./axios";
+// Add this interface at the top with the others
+export interface RegisterPayload {
+  fullName: string;
+  email: string;
+  phone: string;
+  role: "teacher" | "student";
+  password: string;
+}
 
+export interface RegisterResponse {
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    fullName: string;
+    role: "teacher" | "student";
+    status: "pending"; // always pending until admin approves
+  };
+}
 export interface LoginPayload {
   email: string;
   password: string;

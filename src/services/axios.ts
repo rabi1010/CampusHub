@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8080/api",
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
@@ -29,31 +29,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-api.interceptors.request.use((config) => {
-  if (config.url?.includes("/auth/login")) {
-    // Cancel the real request and throw a mock response
-    const controller = new AbortController();
-    config.signal = controller.signal;
-    controller.abort(
-      JSON.stringify({
-        __mock: true,
-        token: "mock-jwt-token",
-        user: {
-          id: "1",
-          email: config.data
-            ? JSON.parse(config.data).email
-            : "admin@campushub.edu",
-          fullName:
-            config.data && JSON.parse(config.data).role === "admin"
-              ? "Admin User"
-              : config.data && JSON.parse(config.data).role === "teacher"
-                ? "John Doe"
-                : "Aarav Sharma",
-          role: config.data ? JSON.parse(config.data).role : "student",
-        },
-      }),
-    );
-  }
-  return config;
-});
+
 export default api;

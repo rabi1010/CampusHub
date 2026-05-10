@@ -70,7 +70,7 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
 
   return (
     <header
-      className="h-16 flex items-center justify-between px-4 md:px-6
+      className="relative z-50 h-16 flex items-center justify-between px-4 md:px-6
                  border-b border-white/[0.07] bg-ink-950/60 backdrop-blur-xl
                  shrink-0"
     >
@@ -95,7 +95,7 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
             type="text"
             placeholder="Search..."
             className="w-52 lg:w-72 pl-9 pr-4 py-2 rounded-xl text-sm
-                       bg-white/5 border border-white/[0.08]
+                       bg-white/5 border border-white/8
                        text-ink-200 placeholder-ink-600
                        focus:outline-none focus:border-jade-500/40
                        focus:bg-white/8 transition-all duration-200"
@@ -130,12 +130,12 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
             <div
               className="absolute right-0 top-full mt-2 w-80
                          glass rounded-2xl shadow-card-lg
-                         border border-white/[0.08] z-50
+                         border border-white/8 z-50
                          animate-fade-up"
             >
               <div
                 className="flex items-center justify-between
-                              px-4 py-3 border-b border-white/[0.07]"
+                              px-4 py-3 border-b border-white/7"
               >
                 <p className="text-sm font-medium text-ink-100">
                   Notifications
@@ -225,11 +225,11 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
             <div
               className="absolute right-0 top-full mt-2 w-52
                          glass rounded-2xl shadow-card-lg
-                         border border-white/[0.08] z-50
+                         border border-white/8 z-50
                          animate-fade-up overflow-hidden"
             >
               {/* User info */}
-              <div className="px-4 py-3 border-b border-white/[0.07]">
+              <div className="px-4 py-3 border-b border-white/7">
                 <p className="text-sm font-medium text-ink-100">
                   {user?.fullName}
                 </p>

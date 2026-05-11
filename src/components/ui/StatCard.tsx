@@ -6,15 +6,16 @@ interface StatCardProps {
   value: string | number;
   icon: LucideIcon;
   change?: string; // e.g. "+12% this month"
-  positive?: boolean; // green vs red change indicator
-  color?: "jade" | "ink" | "gold" | "red";
+  positive?: boolean; // emerald vs rose change indicator
+  color?: "brand" | "slate" | "emerald" | "amber" | "rose";
 }
 
 const COLOR_MAP = {
-  jade: "bg-jade-500/10 text-jade-400 border-jade-500/20",
-  ink: "bg-ink-500/20  text-ink-300  border-ink-400/20",
-  gold: "bg-gold-500/10 text-gold-400 border-gold-500/20",
-  red: "bg-red-500/10  text-red-400  border-red-500/20",
+  brand: "bg-brand-50 text-brand-600 border-brand-100",
+  slate: "bg-slate-50 text-slate-500 border-slate-100",
+  emerald: "bg-emerald-50 text-emerald-600 border-emerald-100",
+  amber: "bg-amber-50 text-amber-600 border-amber-100",
+  rose: "bg-rose-50 text-rose-600 border-rose-100",
 };
 
 export default function StatCard({
@@ -23,41 +24,40 @@ export default function StatCard({
   icon: Icon,
   change,
   positive = true,
-  color = "jade",
+  color = "brand",
 }: StatCardProps) {
   return (
-    <div
-      className="glass rounded-2xl p-5 flex flex-col gap-4
-                 hover:border-white/20 transition-all duration-300
-                 hover:-translate-y-0.5 hover:shadow-card-lg"
-    >
+    <div className="bg-white rounded-2xl p-6 flex flex-col gap-5 border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-mono text-ink-500 uppercase tracking-wider mb-1">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-1.5">
             {label}
           </p>
-          <p className="font-display text-3xl text-ink-50">{value}</p>
+          <p className="font-display text-3xl font-bold text-slate-900 tracking-tight">{value}</p>
         </div>
 
         <div
           className={clsx(
-            "w-10 h-10 rounded-xl border flex items-center justify-center shrink-0",
+            "w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 shadow-sm",
             COLOR_MAP[color],
           )}
         >
-          <Icon size={18} />
+          <Icon size={20} />
         </div>
       </div>
 
       {change && (
-        <p
-          className={clsx(
-            "text-xs font-mono",
-            positive ? "text-jade-500" : "text-red-400",
-          )}
-        >
-          {positive ? "↑" : "↓"} {change}
-        </p>
+        <div className="flex items-center gap-2">
+          <div className={clsx(
+            "px-1.5 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1",
+            positive ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
+          )}>
+            {positive ? "↑" : "↓"} {change.split(' ')[0]}
+          </div>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            {change.split(' ').slice(1).join(' ')}
+          </span>
+        </div>
       )}
     </div>
   );

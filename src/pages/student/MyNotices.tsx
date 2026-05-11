@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Bell } from "lucide-react";
+import { Bell, Megaphone, Search, Calendar, User, Info, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useMyNotices } from "../../features/notices/useNotices";
 import PageHeader from "../../components/ui/PageHeader";
 
@@ -17,7 +18,6 @@ export default function MyNotices() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<RoleFilter | "all">("all");
 
-  // Filter by search + role
   const filtered = notices.filter((n) => {
     const matchesSearch =
       !search ||
@@ -32,38 +32,43 @@ export default function MyNotices() {
   const urgentCount = notices.filter((n) => n.urgent).length;
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="My Notices"
-        subtitle={`${notices.length} notices · ${urgentCount} urgent`}
-      />
-
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <SearchInput
-          value={search}
-          onChange={setSearch}
-          placeholder="Search notices..."
-          className="w-full sm:w-72"
+    <div className="space-y-8">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+        <PageHeader
+          title="Campus Announcements"
+          subtitle={`Reviewing ${notices.length} active notifications · ${urgentCount} require attention.`}
         />
+      </motion.div>
 
-        <div className="flex items-center gap-2">
+      {/* Filters & Search */}
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full md:w-96 group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 transition-colors" size={18} />
+          <SearchInput
+            value={search}
+            onChange={setSearch}
+            placeholder="Search bulletins..."
+            className="w-full pl-11 pr-4 py-3 bg-white border-slate-100 rounded-2xl focus:ring-4 focus:ring-brand-500/5 transition-all outline-none"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-2xl border border-slate-100 w-full md:w-auto">
           {(
             [
-              { value: "all", label: "All" },
-              { value: "ALL", label: "General" },
-              { value: "STUDENT", label: "Students" },
+              { value: "all", label: "All Broadscasts" },
+              { value: "ALL", label: "Campus Wide" },
+              { value: "STUDENT", label: "For Students" },
             ] as { value: string; label: string }[]
           ).map(({ value, label }) => (
             <button
               key={value}
               onClick={() => setRoleFilter(value as RoleFilter | "all")}
-              className={`px-4 py-2 rounded-xl text-sm font-medium
-                          border transition-all duration-200 ${
-                            roleFilter === value
-                              ? "bg-jade-500/15 border-jade-500/40 text-jade-300"
-                              : "border-white/[0.07] text-ink-400 hover:border-white/20"
-                          }`}
+              className={clsx(
+                "flex-1 md:flex-none px-5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap",
+                roleFilter === value
+                  ? "bg-white text-slate-900 shadow-sm border border-slate-100"
+                  : "text-slate-400 hover:text-slate-600"
+              )}
             >
               {label}
             </button>
@@ -73,110 +78,109 @@ export default function MyNotices() {
 
       {/* Notices list */}
       {isLoading ? (
-        <div className="glass rounded-2xl overflow-hidden">
+        <div className="card-base bg-white p-8">
           <TableSkeleton rows={4} />
         </div>
       ) : filtered.length === 0 ? (
-        <EmptyState
-          icon={Bell}
-          title="No notices found"
-          description={
-            search
-              ? "No notices match your search."
-              : "No notices have been posted yet."
-          }
-        />
+        <div className="card-base bg-white p-12">
+          <EmptyState
+            icon={Bell}
+            title="No Bulletins Found"
+            description={
+              search
+                ? "Refine your search parameters to find specific announcements."
+                : "The notice board is currently clear of any active broadcasts."
+            }
+          />
+        </div>
       ) : (
-        <div className="flex flex-col gap-3">
-          {/* Urgent notices first */}
-          {filtered
-            .sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0))
-            .map((notice) => (
-              <div
-                key={notice.id}
-                className={clsx(
-                  "glass rounded-2xl p-5 transition-all duration-200",
-                  "hover:border-white/20",
-                  notice.urgent && "border-red-500/20 bg-red-500/3",
-                )}
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={clsx(
-                        "w-9 h-9 rounded-xl flex items-center justify-center shrink-0",
-                        notice.urgent
-                          ? "bg-red-500/10 border border-red-500/20"
-                          : "bg-jade-500/10 border border-jade-500/20",
-                      )}
-                    >
-                      <Bell
-                        size={15}
-                        className={
-                          notice.urgent ? "text-red-400" : "text-jade-400"
-                        }
-                      />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-medium text-ink-100">
-                          {notice.title}
-                        </h3>
-                        {notice.urgent && (
-                          <span
-                            className="text-[10px] font-mono font-medium
-                                           bg-red-500/15 text-red-400
-                                           border border-red-500/20
-                                           px-1.5 py-0.5 rounded-full"
-                          >
-                            URGENT
-                          </span>
+        <div className="grid gap-4">
+          <AnimatePresence mode="popLayout">
+            {filtered
+              .sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0))
+              .map((notice, index) => (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  key={notice.id}
+                  className={clsx(
+                    "card-base p-6 bg-white border-slate-100 transition-all hover:shadow-md hover:border-brand-100 group",
+                    notice.urgent && "border-rose-100 bg-rose-50/30 ring-1 ring-rose-500/5"
+                  )}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+                    <div className="flex gap-5 flex-1 min-w-0">
+                      <div
+                        className={clsx(
+                          "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm",
+                          notice.urgent
+                            ? "bg-rose-100 text-rose-600 border border-rose-200"
+                            : "bg-brand-50 text-brand-600 border border-brand-100"
                         )}
+                      >
+                        {notice.urgent ? <Megaphone size={22} /> : <Bell size={22} />}
                       </div>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs text-ink-500">
-                          {notice.author}
-                        </span>
-                        <span className="text-ink-700">·</span>
-                        <span className="text-xs text-ink-500">
-                          {new Date(notice.createdAt).toLocaleDateString(
-                            "en-US",
-                            {
+                      <div className="min-w-0 space-y-2">
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                            {notice.title}
+                          </h3>
+                          {notice.urgent && (
+                            <span className="text-[10px] font-bold bg-rose-600 text-white px-2 py-0.5 rounded-md uppercase tracking-wider animate-pulse">
+                              Urgent Action
+                            </span>
+                          )}
+                          <Badge
+                            label={
+                              notice.forRole === "ALL"
+                                ? "General"
+                                : notice.forRole === "STUDENT"
+                                  ? "Student Body"
+                                  : "Faculty Group"
+                            }
+                            variant={
+                              notice.forRole === "ALL"
+                                ? "info"
+                                : notice.forRole === "STUDENT"
+                                  ? "success"
+                                  : "warning"
+                            }
+                          />
+                        </div>
+
+                        <p className="text-sm text-slate-600 leading-relaxed max-w-4xl">
+                          {notice.content}
+                        </p>
+
+                        <div className="flex items-center gap-4 pt-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                          <div className="flex items-center gap-1.5">
+                            <User size={14} className="text-slate-300" />
+                            {notice.author}
+                          </div>
+                          <div className="w-1 h-1 rounded-full bg-slate-200" />
+                          <div className="flex items-center gap-1.5">
+                            <Calendar size={14} className="text-slate-300" />
+                            {new Date(notice.createdAt).toLocaleDateString("en-US", {
                               month: "short",
                               day: "numeric",
                               year: "numeric",
-                            },
-                          )}
-                        </span>
+                            })}
+                          </div>
+                        </div>
                       </div>
                     </div>
+
+                    <div className="flex items-center gap-2 self-end sm:self-auto">
+                       <button className="flex items-center gap-2 text-xs font-bold text-brand-600 px-5 py-2.5 rounded-xl hover:bg-brand-50 transition-all border border-slate-100 hover:border-brand-200">
+                          View Bulletin <ArrowRight size={14} />
+                       </button>
+                    </div>
                   </div>
-
-                  <Badge
-                    label={
-                      notice.forRole === "ALL"
-                        ? "General"
-                        : notice.forRole === "STUDENT"
-                          ? "Students"
-                          : "Teachers"
-                    }
-                    variant={
-                      notice.forRole === "ALL"
-                        ? "info"
-                        : notice.forRole === "STUDENT"
-                          ? "success"
-                          : "warning"
-                    }
-                  />
-                </div>
-
-                {/* Content */}
-                <p className="text-sm text-ink-400 leading-relaxed pl-12">
-                  {notice.content}
-                </p>
-              </div>
-            ))}
+                </motion.div>
+              ))}
+          </AnimatePresence>
         </div>
       )}
     </div>

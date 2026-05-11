@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { UserPlus, Pencil, Trash2 } from "lucide-react";
+import { UserPlus, Pencil, Trash2, Filter, Hash, Layers } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   useStudents,
   useCreateStudent,
@@ -20,44 +21,30 @@ import Modal from "../../Component/ui/Modal";
 import StudentForm from "../../features/students/StudentForm";
 import ConfirmDialog from "../../Component/ui/ConfirmDialog";
 
-// ── ID lookup maps ───────────────────────────────────────
-const DEPARTMENT_MAP: Record<string, number> = {
-  "Computer Science": 1,
-  "Information Technology": 2,
-  Electronics: 3,
-  "Civil Engineering": 4,
-  "Mechanical Engineering": 5,
-};
-
-const BATCH_MAP: Record<string, number> = {
-  "2021-2024": 1,
-  "2022-2025": 2,
-  "2023-2026": 3,
-  "2024-2027": 4,
-};
-
-// ── Table column definitions ─────────────────────────────
 const COLUMNS: Column<Student>[] = [
   {
     key: "fullName",
-    label: "Student",
+    label: "Student Profile",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-3">
-        <Avatar name={row.fullName} size="sm" />
+      <div className="flex items-center gap-4 py-1">
+        <Avatar name={row.fullName} size="md" className="shadow-sm border-2 border-white ring-1 ring-slate-100" />
         <div>
-          <p className="text-sm font-medium text-ink-100">{row.fullName}</p>
-          <p className="text-xs text-ink-500">{row.email}</p>
+          <p className="text-sm font-bold text-slate-900 leading-tight">{row.fullName}</p>
+          <p className="text-[11px] font-medium text-slate-400">{row.email}</p>
         </div>
       </div>
     ),
   },
   {
     key: "rollNo",
-    label: "Roll No",
+    label: "Roll Number",
     sortable: true,
     render: (row) => (
-      <span className="font-mono text-sm text-ink-300">{row.rollNo}</span>
+      <div className="flex items-center gap-2 font-mono text-[11px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
+        <Hash size={12} className="text-brand-500" />
+        {row.rollNo}
+      </div>
     ),
   },
   {
@@ -65,20 +52,25 @@ const COLUMNS: Column<Student>[] = [
     label: "Department",
     sortable: true,
     render: (row) => (
-      <span className="text-sm text-ink-300">{row.department}</span>
+      <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <Layers size={14} className="text-slate-300" />
+        {row.department}
+      </div>
     ),
   },
   {
     key: "batch",
-    label: "Batch",
+    label: "Academic Year",
     sortable: true,
     render: (row) => (
-      <span className="font-mono text-xs text-ink-400">{row.batch}</span>
+      <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50/50 px-2 py-0.5 rounded border border-slate-50">
+        Batch {row.batch}
+      </div>
     ),
   },
   {
     key: "status",
-    label: "Status",
+    label: "Current Status",
     render: (row) => (
       <Badge
         label={row.status}
@@ -94,7 +86,6 @@ const COLUMNS: Column<Student>[] = [
   },
 ];
 
-// ── Component ────────────────────────────────────────────
 export default function Students() {
   const [addOpen, setAddOpen] = useState(false);
   const [editStudent, setEditStudent] = useState<Student | null>(null);
@@ -127,86 +118,107 @@ export default function Students() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Manage Students"
-        subtitle={`${students.length} students enrolled`}
-        action={
-          <button onClick={() => setAddOpen(true)} className="btn-primary">
-            <UserPlus size={16} />
-            Add student
-          </button>
-        }
-      />
-
-      <DataTable
-        data={students}
-        columns={COLUMNS}
-        loading={isLoading}
-        searchable
-        searchKeys={["fullName", "email", "rollNo", "department"]}
-        searchPlaceholder="Search by name, email, roll no..."
-        pageSize={10}
-        emptyTitle="No students found"
-        emptyDesc="Add your first student using the button above."
-        actions={(row) => (
-          <>
+    <div className="space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <PageHeader
+          title="Student Registry"
+          subtitle={`Actively managing ${students.length} institutional academic profiles.`}
+          action={
             <button
-              onClick={() => setEditStudent(row)}
-              className="p-1.5 rounded-lg text-ink-500 hover:text-jade-400
-                         hover:bg-jade-500/10 transition-colors"
-              title="Edit student"
+              onClick={() => setAddOpen(true)}
+              className="btn-primary py-3.5 px-8 shadow-xl shadow-brand-500/15"
             >
-              <Pencil size={14} />
+              <UserPlus size={18} />
+              Enroll Student
             </button>
-            <button
-              onClick={() => setDeleteTarget(row)}
-              className="p-1.5 rounded-lg text-ink-500 hover:text-red-400
-                         hover:bg-red-500/10 transition-colors"
-              title="Delete student"
-            >
-              <Trash2 size={14} />
-            </button>
-          </>
-        )}
-      />
+          }
+        />
+      </motion.div>
 
-      {/* Add modal */}
+      <div className="card-base bg-white border-slate-100 overflow-hidden shadow-sm">
+        <div className="p-5 border-b border-slate-50 bg-slate-50/30 flex flex-col sm:flex-row justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400">
+              <Filter size={18} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-0.5">Filter Analytics</p>
+              <p className="text-xs font-bold text-slate-600">Showing all records from the current semester.</p>
+            </div>
+          </div>
+        </div>
+
+        <DataTable
+          data={students}
+          columns={COLUMNS}
+          loading={isLoading}
+          searchable
+          searchKeys={["fullName", "email", "rollNo", "department"]}
+          searchPlaceholder="Filter registry by name, roll no, or curriculum department..."
+          pageSize={10}
+          emptyTitle="Registry is Empty"
+          emptyDesc="No student records were found matching your current parameters."
+          actions={(row) => (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setEditStudent(row)}
+                className="p-2.5 rounded-xl text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100"
+                title="Modify Record"
+              >
+                <Pencil size={16} />
+              </button>
+              <button
+                onClick={() => setDeleteTarget(row)}
+                className="p-2.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
+                title="Purge Record"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          )}
+        />
+      </div>
+
       <Modal
         open={addOpen}
         onClose={() => setAddOpen(false)}
-        title="Add new student"
-        subtitle="Fill in the details to register a new student"
+        title="Student Enrollment"
+        subtitle="Complete the primary registration form to initialize a student record."
         size="lg"
       >
-        <StudentForm onSubmit={handleAdd} isLoading={createStudent.isPending} />
+        <div className="p-4">
+          <StudentForm onSubmit={handleAdd} isLoading={createStudent.isPending} />
+        </div>
       </Modal>
 
-      {/* Edit modal */}
       <Modal
         open={!!editStudent}
         onClose={() => setEditStudent(null)}
-        title="Edit student"
-        subtitle={`Editing ${editStudent?.fullName ?? ""}`}
+        title="Record Modification"
+        subtitle={`Updating academic credentials for ${editStudent?.fullName}`}
         size="lg"
       >
-        {editStudent && (
-          <StudentForm
-            student={editStudent}
-            onSubmit={handleEdit}
-            isLoading={updateStudent.isPending}
-          />
-        )}
+        <div className="p-4">
+          {editStudent && (
+            <StudentForm
+              student={editStudent}
+              onSubmit={handleEdit}
+              isLoading={updateStudent.isPending}
+            />
+          )}
+        </div>
       </Modal>
 
-      {/* Delete confirmation */}
       <ConfirmDialog
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
-        title="Delete student"
-        description={`Are you sure you want to delete ${deleteTarget?.fullName ?? "this student"}? This action cannot be undone.`}
-        confirmLabel="Delete student"
+        title="Institutional Record Deletion"
+        description={`You are about to permanently purge the student record for ${deleteTarget?.fullName}. This operation will invalidate all associated academic history and cannot be reversed.`}
+        confirmLabel="Execute Deletion"
         loading={deleteStudent.isPending}
       />
     </div>

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, User, Hash, Mail, Smartphone, MapPin, Layers, GraduationCap, Save, Plus } from "lucide-react";
 import {
   studentSchema,
   studentEditSchema,
@@ -19,9 +19,10 @@ const DEPARTMENTS = [
 
 const BATCHES = ["2021-2024", "2022-2025", "2023-2026", "2024-2027"];
 
-function FieldLabel({ children }: { children: React.ReactNode }) {
+function FieldLabel({ children, icon: Icon }: { children: React.ReactNode; icon: any }) {
   return (
-    <label className="block text-xs font-mono text-ink-400 mb-1.5 uppercase tracking-wider">
+    <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-[0.2em]">
+      <Icon size={12} className="text-slate-300" />
       {children}
     </label>
   );
@@ -30,8 +31,8 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p className="text-xs text-red-400 mt-1.5 flex items-center gap-1">
-      <AlertCircle size={11} />
+    <p className="text-[11px] text-rose-500 mt-2 flex items-center gap-1.5 font-bold">
+      <AlertCircle size={12} />
       {message}
     </p>
   );
@@ -103,135 +104,136 @@ export default function StudentForm({
     <form
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      className="flex flex-col gap-5"
+      className="space-y-6"
     >
-      {/* Row 1: Full name + Roll No */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
-          <FieldLabel>Full name</FieldLabel>
+      <div className="grid sm:grid-cols-2 gap-6">
+        <div className="space-y-1">
+          <FieldLabel icon={User}>Full Identity</FieldLabel>
           <input
             type="text"
-            placeholder="Aarav Sharma"
-            className={`input-field ${errors.fullName ? "input-error" : ""}`}
+            placeholder="e.g. Aarav Sharma"
+            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
+              errors.fullName ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            }`}
             {...register("fullName")}
           />
           <FieldError message={errors.fullName?.message} />
         </div>
-        <div>
-          <FieldLabel>Roll number</FieldLabel>
+        <div className="space-y-1">
+          <FieldLabel icon={Hash}>Registration Index</FieldLabel>
           <input
             type="text"
-            placeholder="BCA001"
-            className={`input-field ${errors.rollNo ? "input-error" : ""}`}
+            placeholder="e.g. BCA001"
+            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
+              errors.rollNo ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            }`}
             {...register("rollNo")}
           />
           <FieldError message={errors.rollNo?.message} />
         </div>
       </div>
 
-      {/* Row 2: Email + Phone */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
-          <FieldLabel>Email address</FieldLabel>
+      <div className="grid sm:grid-cols-2 gap-6">
+        <div className="space-y-1">
+          <FieldLabel icon={Mail}>Institutional Email</FieldLabel>
           <input
             type="email"
-            placeholder="student@college.edu"
-            className={`input-field ${errors.email ? "input-error" : ""}`}
+            placeholder="e.g. student@college.edu"
+            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
+              errors.email ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            }`}
             {...register("email")}
           />
           <FieldError message={errors.email?.message} />
         </div>
-        <div>
-          <FieldLabel>Phone number</FieldLabel>
+        <div className="space-y-1">
+          <FieldLabel icon={Smartphone}>Contact Number</FieldLabel>
           <input
             type="tel"
-            placeholder="+977 9800000000"
-            className={`input-field ${errors.phone ? "input-error" : ""}`}
+            placeholder="e.g. +977 9800000000"
+            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
+              errors.phone ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            }`}
             {...register("phone")}
           />
           <FieldError message={errors.phone?.message} />
         </div>
       </div>
 
-      {/* Row 3: Department + Batch */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
-          <FieldLabel>Department</FieldLabel>
+      <div className="grid sm:grid-cols-2 gap-6">
+        <div className="space-y-1">
+          <FieldLabel icon={Layers}>Academic Faculty</FieldLabel>
           <select
-            className={`input-field ${errors.department ? "input-error" : ""}`}
+            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none appearance-none ${
+              errors.department ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            }`}
             {...register("department")}
           >
             <option value="">Select department</option>
             {DEPARTMENTS.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
+              <option key={d} value={d}>{d}</option>
             ))}
           </select>
           <FieldError message={errors.department?.message} />
         </div>
-        <div>
-          <FieldLabel>Batch</FieldLabel>
+        <div className="space-y-1">
+          <FieldLabel icon={GraduationCap}>Enrollment Batch</FieldLabel>
           <select
-            className={`input-field ${errors.batch ? "input-error" : ""}`}
+            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none appearance-none ${
+              errors.batch ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            }`}
             {...register("batch")}
           >
             <option value="">Select batch</option>
             {BATCHES.map((b) => (
-              <option key={b} value={b}>
-                {b}
-              </option>
+              <option key={b} value={b}>{b}</option>
             ))}
           </select>
           <FieldError message={errors.batch?.message} />
         </div>
       </div>
 
-      {/* Address */}
-      <div>
-        <FieldLabel>Address</FieldLabel>
+      <div className="space-y-1">
+        <FieldLabel icon={MapPin}>Physical Address</FieldLabel>
         <input
           type="text"
-          placeholder="Kathmandu, Nepal"
-          className={`input-field ${errors.address ? "input-error" : ""}`}
+          placeholder="e.g. Kathmandu, Nepal"
+          className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
+            errors.address ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+          }`}
           {...register("address")}
         />
         <FieldError message={errors.address?.message} />
       </div>
 
-      {/* Password */}
-      <div>
-        <FieldLabel>
-          {isEdit ? "New password (leave blank to keep)" : "Password"}
+      <div className="space-y-1">
+        <FieldLabel icon={Save}>
+          {isEdit ? "Authentication Refresh" : "Access Credentials"}
         </FieldLabel>
         <input
           type="password"
-          placeholder={
-            isEdit ? "Leave blank to keep current" : "Min 6 characters"
-          }
+          placeholder={isEdit ? "Leave blank to preserve existing" : "Minimum 6 characters"}
           autoComplete="new-password"
-          className={`input-field ${errors.password ? "input-error" : ""}`}
+          className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
+            errors.password ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+          }`}
           {...register("password")}
         />
         <FieldError message={errors.password?.message} />
       </div>
 
-      {/* Submit */}
-      <div className="flex items-center justify-end gap-3 pt-2 border-t border-white/[0.07]">
+      <div className="pt-6 border-t border-slate-50 flex items-center justify-end">
         <button
           type="submit"
           disabled={isLoading}
-          className="btn-primary px-8 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+          className="btn-primary py-3.5 px-10 shadow-xl shadow-brand-500/15 disabled:opacity-50"
         >
           {isLoading ? (
-            <>
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              {isEdit ? "Saving..." : "Adding..."}
-            </>
+             <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
           ) : isEdit ? (
-            "Save changes"
+            <><Save size={18} /> Synchronize Record</>
           ) : (
-            "Add student"
+            <><Plus size={18} /> Initialize Enrollment</>
           )}
         </button>
       </div>

@@ -41,34 +41,27 @@ export default function Pagination({
   const to = Math.min(page * pageSize, totalItems ?? page * pageSize);
 
   return (
-    <div
-      className="flex flex-col sm:flex-row items-center
-                    justify-between gap-3 pt-4
-                    border-t border-white/[0.07]"
-    >
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-50">
       {/* Count */}
       {totalItems !== undefined && (
-        <p className="text-xs text-ink-500 font-mono">
-          Showing {from}–{to} of {totalItems}
+        <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">
+          Showing <span className="text-slate-900">{from}–{to}</span> of {totalItems} records
         </p>
       )}
 
       {/* Pages */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
         <button
           onClick={() => onPage(page - 1)}
           disabled={page === 1}
-          className="p-1.5 rounded-lg text-ink-400
-                     hover:text-ink-100 hover:bg-white/5
-                     disabled:opacity-30 disabled:cursor-not-allowed
-                     transition-colors"
+          className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
         >
           <ChevronLeft size={16} />
         </button>
 
         {getPages().map((p, i) =>
           p === "..." ? (
-            <span key={`e${i}`} className="px-1 text-ink-600 text-sm">
+            <span key={`e${i}`} className="px-2 text-slate-300 text-sm font-bold">
               …
             </span>
           ) : (
@@ -76,24 +69,21 @@ export default function Pagination({
               key={p}
               onClick={() => onPage(p as number)}
               className={clsx(
-                "w-8 h-8 rounded-lg text-sm font-mono transition-all",
+                "w-9 h-9 rounded-xl text-xs font-bold transition-all",
                 page === p
-                  ? "bg-jade-500/20 text-jade-300 border border-jade-500/30"
-                  : "text-ink-400 hover:text-ink-100 hover:bg-white/5",
+                  ? "bg-brand-600 text-white shadow-lg shadow-brand-500/20"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
               )}
             >
               {p}
             </button>
-          ),
+          )
         )}
 
         <button
           onClick={() => onPage(page + 1)}
           disabled={page === totalPages}
-          className="p-1.5 rounded-lg text-ink-400
-                     hover:text-ink-100 hover:bg-white/5
-                     disabled:opacity-30 disabled:cursor-not-allowed
-                     transition-colors"
+          className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
         >
           <ChevronRight size={16} />
         </button>

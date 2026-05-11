@@ -17,7 +17,6 @@ interface TopbarProps {
   onMobileMenuToggle: () => void;
 }
 
-// ── Fake notifications (replace with real API later) ────
 const MOCK_NOTIFICATIONS = [
   { id: 1, text: "New student registered", time: "2m ago", unread: true },
   { id: 2, text: "Attendance sheet updated", time: "1h ago", unread: true },
@@ -35,7 +34,6 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
@@ -59,7 +57,6 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
 
   const unreadCount = MOCK_NOTIFICATIONS.filter((n) => n.unread).length;
 
-  // Get initials from full name
   const initials =
     user?.fullName
       .split(" ")
@@ -69,224 +66,147 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
       .slice(0, 2) ?? "U";
 
   return (
-    <header
-      className="relative z-50 h-16 flex items-center justify-between px-4 md:px-6
-                 border-b border-white/[0.07] bg-ink-950/60 backdrop-blur-xl
-                 shrink-0"
-    >
-      {/* ── Left — mobile menu + search ─────────────── */}
-      <div className="flex items-center gap-3">
-        {/* Mobile hamburger */}
+    <header className="h-20 flex items-center justify-between px-6 bg-white border-b border-slate-100 z-10 sticky top-0">
+      {/* ── Left: Mobile Toggle & Search ─────────────────── */}
+      <div className="flex items-center gap-4 flex-1">
         <button
           onClick={onMobileMenuToggle}
-          className="md:hidden p-2 rounded-lg hover:bg-white/5
-                     text-ink-400 transition-colors"
+          className="lg:hidden p-2.5 rounded-xl bg-slate-50 text-slate-500 hover:text-brand-600 hover:bg-brand-50 transition-all border border-slate-100"
         >
-          <Menu size={18} />
+          <Menu size={20} />
         </button>
 
-        {/* Search bar */}
-        <div className="relative hidden sm:block">
-          <Search
-            size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-500"
-          />
+        <div className="relative max-w-md w-full hidden md:block">
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Search..."
-            className="w-52 lg:w-72 pl-9 pr-4 py-2 rounded-xl text-sm
-                       bg-white/5 border border-white/8
-                       text-ink-200 placeholder-ink-600
-                       focus:outline-none focus:border-jade-500/40
-                       focus:bg-white/8 transition-all duration-200"
+            placeholder="Search dashboard, students, reports..."
+            className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
           />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 px-2 py-1 bg-white border border-slate-200 rounded-md text-[10px] font-bold text-slate-400">
+            ⌘K
+          </div>
         </div>
       </div>
 
-      {/* ── Right — notifications + profile ─────────── */}
-      <div className="flex items-center gap-2">
-        {/* Notifications */}
+      {/* ── Right: Notifications & User Profile ─────────── */}
+      <div className="flex items-center gap-4">
+        {/* Notifications Dropdown */}
         <div ref={notifRef} className="relative">
           <button
             onClick={() => {
-              setNotifOpen((o) => !o);
+              setNotifOpen(!notifOpen);
               setProfileOpen(false);
             }}
-            className="relative p-2.5 rounded-xl hover:bg-white/5
-                       text-ink-400 hover:text-ink-100
-                       transition-colors"
+            className={clsx(
+              "relative p-2.5 rounded-xl transition-all border duration-200",
+              notifOpen 
+                ? "bg-brand-50 text-brand-600 border-brand-200" 
+                : "bg-white text-slate-500 border-slate-100 hover:bg-slate-50 hover:text-slate-900 hover:scale-105 active:scale-95"
+            )}
           >
-            <Bell size={17} />
+            <Bell size={20} />
             {unreadCount > 0 && (
-              <span
-                className="absolute top-1.5 right-1.5 w-2 h-2
-                           rounded-full bg-jade-500"
-              />
+              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white ring-1 ring-red-500/30" />
             )}
           </button>
 
-          {/* Notifications dropdown */}
           {notifOpen && (
-            <div
-              className="absolute right-0 top-full mt-2 w-80
-                         glass rounded-2xl shadow-card-lg
-                         border border-white/8 z-50
-                         animate-fade-up"
-            >
-              <div
-                className="flex items-center justify-between
-                              px-4 py-3 border-b border-white/7"
-              >
-                <p className="text-sm font-medium text-ink-100">
-                  Notifications
-                </p>
-                <span
-                  className="text-xs font-mono bg-jade-500/15
-                             text-jade-400 px-2 py-0.5 rounded-full"
-                >
-                  {unreadCount} new
+            <div className="absolute right-0 mt-4 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+              <div className="px-6 py-4 border-b border-slate-50 flex items-center justify-between">
+                <h3 className="font-bold text-slate-900">Notifications</h3>
+                <span className="bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                  {unreadCount} NEW
                 </span>
               </div>
-
-              <ul className="py-2 max-h-72 overflow-y-auto">
+              <div className="max-h-96 overflow-y-auto">
                 {MOCK_NOTIFICATIONS.map((n) => (
-                  <li
-                    key={n.id}
+                  <div 
+                    key={n.id} 
                     className={clsx(
-                      "flex items-start gap-3 px-4 py-3 text-sm",
-                      "hover:bg-white/5 transition-colors cursor-pointer",
-                      n.unread && "bg-jade-500/5",
+                      "px-6 py-4 hover:bg-slate-50 transition-colors cursor-pointer border-b border-slate-50 flex gap-4",
+                      n.unread && "bg-brand-50/30"
                     )}
                   >
-                    {n.unread && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-jade-500 mt-1.5 shrink-0" />
-                    )}
-                    {!n.unread && (
-                      <span className="w-1.5 h-1.5 mt-1.5 shrink-0" />
-                    )}
-                    <div className="flex-1">
-                      <p className="text-ink-200 leading-snug">{n.text}</p>
-                      <p className="text-xs text-ink-500 mt-0.5">{n.time}</p>
+                    <div className={clsx(
+                      "w-2 h-2 rounded-full mt-1.5 shrink-0",
+                      n.unread ? "bg-brand-600" : "bg-slate-200"
+                    )} />
+                    <div>
+                      <p className="text-sm font-medium text-slate-900 leading-tight mb-1">{n.text}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase">{n.time}</p>
                     </div>
-                  </li>
+                  </div>
                 ))}
-              </ul>
-
-              <div className="px-4 py-3 border-t border-white/[0.07]">
-                <button className="text-xs text-jade-400 hover:text-jade-300 transition-colors">
-                  Mark all as read
-                </button>
+              </div>
+              <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
+                <button className="text-xs font-bold text-brand-600 hover:underline">View all activity</button>
               </div>
             </div>
           )}
         </div>
 
-        {/* Profile dropdown */}
+        {/* Vertical Divider */}
+        <div className="h-8 w-px bg-slate-100 hidden md:block" />
+
+        {/* Profile Dropdown */}
         <div ref={profileRef} className="relative">
           <button
             onClick={() => {
-              setProfileOpen((o) => !o);
+              setProfileOpen(!profileOpen);
               setNotifOpen(false);
             }}
-            className="flex items-center gap-2.5 pl-2 pr-3 py-1.5
-                       rounded-xl hover:bg-white/5
-                       transition-colors group"
+            className={clsx(
+              "flex items-center gap-3 p-1.5 rounded-2xl transition-all border duration-200",
+              profileOpen 
+                ? "bg-brand-50 border-brand-200" 
+                : "bg-white border-slate-100 hover:bg-slate-50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+            )}
           >
-            {/* Avatar */}
-            <div
-              className="w-8 h-8 rounded-lg bg-jade-500/20
-                         border border-jade-500/30
-                         flex items-center justify-center
-                         text-xs font-semibold text-jade-300"
-            >
+            <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-sm shadow-brand-500/30 shadow-md">
               {initials}
             </div>
-
-            <div className="hidden md:block text-left">
-              <p className="text-sm font-medium text-ink-100 leading-none">
-                {user?.fullName ?? "User"}
-              </p>
-              <p className="text-[11px] text-ink-500 mt-0.5 capitalize">
-                {user?.role}
-              </p>
+            <div className="hidden lg:block text-left">
+              <p className="text-sm font-bold text-slate-900 leading-none mb-1">{user?.fullName}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{user?.role}</p>
             </div>
-
-            <ChevronDown
-              size={14}
-              className={clsx(
-                "text-ink-500 transition-transform duration-200",
-                profileOpen && "rotate-180",
-              )}
-            />
+            <ChevronDown size={16} className={clsx("text-slate-400 transition-transform", profileOpen && "rotate-180")} />
           </button>
 
-          {/* Profile dropdown menu */}
           {profileOpen && (
-            <div
-              className="absolute right-0 top-full mt-2 w-52
-                         glass rounded-2xl shadow-card-lg
-                         border border-white/8 z-50
-                         animate-fade-up overflow-hidden"
-            >
-              {/* User info */}
-              <div className="px-4 py-3 border-b border-white/7">
-                <p className="text-sm font-medium text-ink-100">
-                  {user?.fullName}
-                </p>
-                <p className="text-xs text-ink-500 mt-0.5 truncate">
-                  {user?.email}
-                </p>
+            <div className="absolute right-0 mt-4 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+              <div className="p-6 bg-slate-50 border-b border-slate-100">
+                <p className="text-sm font-bold text-slate-900">{user?.fullName}</p>
+                <p className="text-xs text-slate-500 truncate">{user?.email}</p>
               </div>
-
-              {/* Menu items */}
-              <div className="py-1.5">
+              <div className="p-2">
                 <button
                   onClick={() => {
                     setProfileOpen(false);
-                    navigate(
-                      user?.role === "admin"
-                        ? "/admin/settings"
-                        : user?.role === "teacher"
-                          ? "/dashboard/teacher"
-                          : "/student/profile",
-                    );
+                    navigate(user?.role === "admin" ? "/admin/settings" : "/dashboard/teacher");
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-2.5
-                             text-sm text-ink-300 hover:text-ink-100
-                             hover:bg-white/5 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                 >
-                  <User size={14} />
-                  My Profile
+                  <User size={18} className="text-slate-400" />
+                  My Account
                 </button>
-
-                {user?.role === "admin" && (
-                  <button
-                    onClick={() => {
-                      setProfileOpen(false);
-                      navigate("/admin/settings");
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5
-                               text-sm text-ink-300 hover:text-ink-100
-                               hover:bg-white/5 transition-colors"
-                  >
-                    <Settings size={14} />
-                    Settings
-                  </button>
-                )}
-              </div>
-
-              <div className="divider" />
-
-              {/* Logout */}
-              <div className="py-1.5">
+                <button
+                  onClick={() => {
+                    setProfileOpen(false);
+                    navigate("/admin/settings");
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                >
+                  <Settings size={18} className="text-slate-400" />
+                  Settings
+                </button>
+                <div className="h-px bg-slate-100 my-2 mx-4" />
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-2.5
-                             text-sm text-red-400 hover:text-red-300
-                             hover:bg-red-500/10 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
                 >
-                  <LogOut size={14} />
-                  Sign out
+                  <LogOut size={18} />
+                  Sign Out
                 </button>
               </div>
             </div>

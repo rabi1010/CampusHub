@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { BookOpen } from "lucide-react";
+import { BookOpen, GraduationCap, Phone, Hash, Layers, Users } from "lucide-react";
+import { motion } from "framer-motion";
 import { useStudents } from "../../features/students/useStudents";
 import { useCourses } from "../../features/courses/useCourses";
 
@@ -9,54 +10,64 @@ import Avatar from "../../Component/ui/Avatar";
 import Badge from "../../Component/ui/Badge";
 import PageHeader from "../../components/ui/PageHeader";
 import DataTable from "../../Component/ui/DataTable";
+import clsx from "clsx";
 
-// ── Mock schedule (teacher's assigned courses) ───────────
 const MY_COURSES = [
   { id: "1", name: "Data Structures", code: "CS101" },
   { id: "2", name: "Database Systems", code: "CS102" },
   { id: "3", name: "Web Development", code: "IT201" },
 ];
 
-// ── Table columns — read only, no actions ────────────────
 const COLUMNS: Column<Student>[] = [
   {
     key: "fullName",
-    label: "Student",
+    label: "Student Profile",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-3">
-        <Avatar name={row.fullName} size="sm" />
+      <div className="flex items-center gap-4 py-1">
+        <Avatar name={row.fullName} size="md" className="border-2 border-white shadow-sm ring-1 ring-slate-100" />
         <div>
-          <p className="text-sm font-medium text-ink-100">{row.fullName}</p>
-          <p className="text-xs text-ink-500">{row.email}</p>
+          <p className="text-sm font-bold text-slate-900 leading-tight">{row.fullName}</p>
+          <p className="text-[11px] font-medium text-slate-400">{row.email}</p>
         </div>
       </div>
     ),
   },
   {
     key: "rollNo",
-    label: "Roll No",
+    label: "Roll Number",
     sortable: true,
     render: (row) => (
-      <span className="font-mono text-sm text-ink-300">{row.rollNo}</span>
+      <div className="flex items-center gap-2 font-mono text-[11px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
+        <Hash size={12} className="text-brand-500" />
+        {row.rollNo}
+      </div>
     ),
   },
   {
     key: "batch",
-    label: "Batch",
+    label: "Academic Year",
     sortable: true,
     render: (row) => (
-      <span className="font-mono text-xs text-ink-400">{row.batch}</span>
+      <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+        <Layers size={14} className="text-slate-300" />
+        Batch {row.batch}
+      </div>
     ),
   },
   {
     key: "phone",
-    label: "Phone",
-    render: (row) => <span className="text-sm text-ink-400">{row.phone}</span>,
+    label: "Contact",
+    render: (row) => (
+      <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
+        <Phone size={14} className="text-slate-400" />
+        {row.phone}
+      </div>
+    ),
   },
   {
     key: "status",
-    label: "Status",
+    label: "Current Status",
     render: (row) => (
       <Badge
         label={row.status}
@@ -79,57 +90,73 @@ export default function StudentsList() {
   const selected = MY_COURSES.find((c) => c.id === selectedCourse)!;
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Students List"
-        subtitle="View students enrolled in your courses"
-      />
+    <div className="space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <PageHeader
+          title="Student Registry"
+          subtitle="Directory of students enrolled in your academic modules."
+        />
+      </motion.div>
 
-      {/* Course filter tabs */}
-      <div className="flex items-center gap-2 flex-wrap">
+      {/* Course filter pills */}
+      <div className="flex items-center gap-3 flex-wrap">
         {MY_COURSES.map((course) => (
           <button
             key={course.id}
             onClick={() => setSelectedCourse(course.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl
-                        text-sm font-medium border transition-all duration-200 ${
-                          selectedCourse === course.id
-                            ? "bg-jade-500/15 border-jade-500/40 text-jade-300"
-                            : "border-white/[0.07] text-ink-400 hover:border-white/20 hover:text-ink-200"
-                        }`}
+            className={clsx(
+              "flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all border",
+              selectedCourse === course.id
+                ? "bg-brand-600 border-brand-600 text-white shadow-lg shadow-brand-500/20"
+                : "bg-white border-slate-100 text-slate-500 hover:border-slate-200 hover:bg-slate-50"
+            )}
           >
-            <BookOpen size={13} />
+            <BookOpen size={16} />
             {course.name}
-            <span className="font-mono text-[10px] opacity-60">
+            <span className={clsx("text-[10px] ml-1 px-1.5 py-0.5 rounded-md font-mono", selectedCourse === course.id ? "bg-white/20 text-white" : "bg-slate-100 text-slate-400")}>
               {course.code}
             </span>
           </button>
         ))}
       </div>
 
-      {/* Student count for selected course */}
-      <div className="glass rounded-xl px-4 py-3 flex items-center gap-3">
-        <div className="w-2 h-2 rounded-full bg-jade-500" />
-        <p className="text-sm text-ink-300">
-          Showing students enrolled in{" "}
-          <span className="text-jade-400 font-medium">{selected.name}</span>
-        </p>
-        <span className="ml-auto font-mono text-xs text-ink-500">
-          {students.length} students
-        </span>
-      </div>
+      {/* Summary indicator */}
+      <motion.div 
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="flex items-center gap-4 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm"
+      >
+        <div className="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
+          <GraduationCap size={24} />
+        </div>
+        <div>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Active Enrollment</p>
+          <p className="text-sm font-bold text-slate-900">
+            Showing roster for <span className="text-brand-600">{selected.name}</span>
+          </p>
+        </div>
+        <div className="ml-auto flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
+          <Users size={16} className="text-slate-400" />
+          <span className="font-mono text-sm font-bold text-slate-600">{students.length} Total</span>
+        </div>
+      </motion.div>
 
-      <DataTable
-        data={students}
-        columns={COLUMNS}
-        loading={isLoading}
-        searchable
-        searchKeys={["fullName", "email", "rollNo"]}
-        searchPlaceholder="Search students..."
-        pageSize={10}
-        emptyTitle="No students found"
-        emptyDesc="No students are enrolled in this course yet."
-      />
+      <div className="card-base bg-white border-slate-100 overflow-hidden shadow-sm">
+        <DataTable
+          data={students}
+          columns={COLUMNS}
+          loading={isLoading}
+          searchable
+          searchKeys={["fullName", "email", "rollNo"]}
+          searchPlaceholder="Filter roster by name, email or roll number..."
+          pageSize={10}
+          emptyTitle="Registry is Empty"
+          emptyDesc="No students are currently enrolled in this curriculum module."
+        />
+      </div>
     </div>
   );
 }

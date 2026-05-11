@@ -10,7 +10,14 @@ import {
   EyeOff,
   AlertCircle,
   Save,
+  ChevronRight,
+  ShieldCheck,
+  Smartphone,
+  Mail,
+  Globe,
+  MapPin,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   profileSchema,
   passwordSchema,
@@ -26,13 +33,16 @@ import clsx from "clsx";
 import { useToast } from "../../Component/ui/Toast";
 import Avatar from "../../Component/ui/Avatar";
 
-// ── Reusable field components ────────────────────────────
-function FieldLabel({ children }: { children: React.ReactNode }) {
+function FieldLabel({
+  children,
+  icon: Icon,
+}: {
+  children: React.ReactNode;
+  icon?: any;
+}) {
   return (
-    <label
-      className="block text-xs font-mono text-ink-400
-                      mb-1.5 uppercase tracking-wider"
-    >
+    <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-[0.2em]">
+      {Icon && <Icon size={12} className="text-slate-300" />}
       {children}
     </label>
   );
@@ -41,14 +51,13 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p className="text-xs text-red-400 mt-1.5 flex items-center gap-1">
-      <AlertCircle size={11} />
+    <p className="text-xs text-rose-500 mt-2 flex items-center gap-1.5 font-medium">
+      <AlertCircle size={12} />
       {message}
     </p>
   );
 }
 
-// ── Section wrapper ──────────────────────────────────────
 function SettingsSection({
   icon: Icon,
   title,
@@ -65,44 +74,73 @@ function SettingsSection({
   onClick: () => void;
 }) {
   return (
-    <div className="glass rounded-2xl overflow-hidden">
-      {/* Section header — clickable to expand */}
+    <div
+      className={clsx(
+        "card-base transition-all duration-500 overflow-hidden",
+        active
+          ? "border-brand-200 shadow-2xl shadow-brand-500/5 ring-1 ring-brand-100"
+          : "border-slate-100 hover:border-slate-200 shadow-sm",
+      )}
+    >
       <button
         type="button"
         onClick={onClick}
-        className="w-full flex items-center gap-4 p-5
-                   hover:bg-white/2 transition-colors text-left"
+        className={clsx(
+          "w-full flex items-center gap-6 p-6 transition-all text-left group",
+          active ? "bg-slate-50/30" : "bg-white hover:bg-slate-50/50",
+        )}
       >
         <div
-          className="w-10 h-10 rounded-xl bg-jade-500/10
-                        border border-jade-500/20
-                        flex items-center justify-center shrink-0"
+          className={clsx(
+            "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-sm border",
+            active
+              ? "bg-brand-600 text-white border-brand-500 shadow-brand-200"
+              : "bg-white text-slate-400 border-slate-100 group-hover:border-slate-200 group-hover:text-slate-600",
+          )}
         >
-          <Icon size={18} className="text-jade-400" />
+          <Icon size={22} />
         </div>
-        <div className="flex-1">
-          <p className="font-medium text-ink-100">{title}</p>
-          <p className="text-xs text-ink-500 mt-0.5">{subtitle}</p>
+        <div className="flex-1 min-w-0">
+          <p
+            className={clsx(
+              "font-bold text-lg leading-tight tracking-tight",
+              active ? "text-slate-900" : "text-slate-700",
+            )}
+          >
+            {title}
+          </p>
+          <p className="text-sm text-slate-400 font-medium mt-1 truncate">
+            {subtitle}
+          </p>
         </div>
         <div
           className={clsx(
-            "w-1.5 h-1.5 rounded-full transition-colors",
-            active ? "bg-jade-400" : "bg-white/20",
+            "w-8 h-8 rounded-full flex items-center justify-center transition-all",
+            active
+              ? "bg-brand-50 text-brand-600 rotate-90"
+              : "bg-slate-50 text-slate-300 group-hover:text-slate-500",
           )}
-        />
+        >
+          <ChevronRight size={18} />
+        </div>
       </button>
 
-      {/* Section content */}
-      {active && (
-        <div className="px-5 pb-6 border-t border-white/[0.07]">
-          <div className="pt-5">{children}</div>
-        </div>
-      )}
+      <AnimatePresence>
+        {active && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="border-t border-slate-100"
+          >
+            <div className="p-8 bg-white">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-// ── Main component ───────────────────────────────────────
 export default function Settings() {
   const dispatch = useAppDispatch();
   const user = useAppSelector((s) => s.auth.user);
@@ -111,7 +149,6 @@ export default function Settings() {
   const [activeSection, setActiveSection] = useState<
     "profile" | "password" | "college" | null
   >("profile");
-
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -120,7 +157,6 @@ export default function Settings() {
     setActiveSection((s) => (s === section ? null : section));
   };
 
-  // ── Profile form ───────────────────────────────────────
   const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -131,10 +167,7 @@ export default function Settings() {
   });
 
   const onProfileSubmit = async (data: ProfileFormValues) => {
-    // Simulate API call
     await new Promise((r) => setTimeout(r, 800));
-
-    // Update Redux store with new name
     if (user) {
       dispatch(
         setCredentials({
@@ -143,10 +176,12 @@ export default function Settings() {
         }),
       );
     }
-    toast.success("Profile updated", "Your details have been saved");
+    toast.success(
+      "Identity synchronized",
+      "Your account credentials have been updated successfully.",
+    );
   };
 
-  // ── Password form ──────────────────────────────────────
   const passwordForm = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
@@ -159,389 +194,380 @@ export default function Settings() {
   const onPasswordSubmit = async (_data: PasswordFormValues) => {
     await new Promise((r) => setTimeout(r, 800));
     passwordForm.reset();
-    setShowCurrent(false);
-    setShowNew(false);
-    setShowConfirm(false);
-    toast.success("Password changed", "Your password has been updated");
+    toast.success(
+      "Security vault updated",
+      "Your authentication credentials have been reset.",
+    );
   };
 
-  // ── College form ───────────────────────────────────────
   const collegeForm = useForm<CollegeFormValues>({
     resolver: zodResolver(collegeSchema),
     defaultValues: {
-      name: "Global Tech College",
-      email: "info@globaltech.edu",
-      phone: "+977 9800 123456",
-      address: "Kathmandu, Nepal",
-      website: "https://globaltech.edu",
+      name: "CampusHub Academy",
+      email: "administration@campushub.edu",
+      phone: "+1 (555) 000-1234",
+      address: "Academic Square, Silicon Valley, CA",
+      website: "https://campushub.edu",
     },
   });
 
   const onCollegeSubmit = async (_data: CollegeFormValues) => {
     await new Promise((r) => setTimeout(r, 800));
-    toast.success("College info updated", "Changes saved successfully");
+    toast.success(
+      "Institution config saved",
+      "Campus configuration has been synchronized globally.",
+    );
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-2xl">
-      {/* Page title */}
-      <div>
-        <h1 className="font-display text-2xl md:text-3xl text-ink-50">
-          Settings
+    <div className="max-w-5xl space-y-10">
+      {/* Dynamic Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-2"
+      >
+        <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 leading-tight tracking-tight">
+          System <span className="text-brand-600">Preferences</span>
         </h1>
-        <p className="text-sm text-ink-400 mt-1">
-          Manage your account and college configuration
+        <p className="text-slate-500 font-medium text-lg">
+          Configure your personal identity, security layers, and institutional
+          defaults.
         </p>
-      </div>
+      </motion.div>
 
-      {/* ── User card ─────────────────────────────────── */}
-      <div className="glass rounded-2xl p-5 flex items-center gap-4">
-        <Avatar name={user?.fullName ?? "Admin"} size="lg" color="jade" />
-        <div>
-          <p className="font-medium text-ink-100">{user?.fullName}</p>
-          <p className="text-sm text-ink-500">{user?.email}</p>
-          <span
-            className="inline-flex mt-1.5 text-[10px] font-mono
-                           font-medium uppercase tracking-wider
-                           bg-jade-500/10 text-jade-400
-                           border border-jade-500/20
-                           px-2 py-0.5 rounded-full"
+      <div className="grid lg:grid-cols-3 gap-10">
+        {/* Profile Insight Card */}
+        <div className="lg:col-span-1">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            className="card-base p-8 bg-white border-slate-100 sticky top-24 shadow-sm"
           >
-            {user?.role} portal
-          </span>
+            <div className="flex flex-col items-center text-center">
+              <div className="relative mb-6 shadow-xl shadow-brand-500/10 border-4 border-white ring-1 ring-slate-100 rounded-full w-fit">
+                <Avatar name={user?.fullName ?? "Admin"} size="lg" />
+                <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-emerald-500 border-4 border-white flex items-center justify-center text-white shadow-sm">
+                  <CheckCircle2 size={16} />
+                </div>
+              </div>
+              <h2 className="text-2xl font-display font-bold text-slate-900 leading-tight tracking-tight">
+                {user?.fullName}
+              </h2>
+              <p className="text-sm text-slate-500 font-medium mt-1">
+                {user?.email}
+              </p>
+
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
+                <div className="px-3 py-1 bg-brand-50 text-brand-600 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-brand-100 flex items-center gap-1.5">
+                  <ShieldCheck size={12} /> {user?.role} Access
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-10 pt-10 border-t border-slate-50 space-y-4">
+              <div className="flex items-center justify-between py-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  System UID
+                </span>
+                <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-50 px-2 py-0.5 rounded border border-slate-100 tracking-tighter">
+                  USR-842-990-CLG
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  Status
+                </span>
+                <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />{" "}
+                  Synchronized
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Configuration Sections */}
+        <div className="lg:col-span-2 space-y-6">
+          <SettingsSection
+            icon={User}
+            title="Personal Credentials"
+            subtitle="Manage your public identity and contact touchpoints."
+            active={activeSection === "profile"}
+            onClick={() => toggleSection("profile")}
+          >
+            <form
+              onSubmit={profileForm.handleSubmit(onProfileSubmit)}
+              className="space-y-8"
+            >
+              <div className="grid sm:grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <FieldLabel icon={User}>Full Identity</FieldLabel>
+                  <input
+                    type="text"
+                    className={clsx(
+                      "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none",
+                      profileForm.formState.errors.fullName
+                        ? "border-rose-200 bg-rose-50/30 text-rose-600"
+                        : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                    )}
+                    {...profileForm.register("fullName")}
+                  />
+                  <FieldError
+                    message={profileForm.formState.errors.fullName?.message}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <FieldLabel icon={Smartphone}>Mobile Contact</FieldLabel>
+                  <input
+                    type="tel"
+                    className={clsx(
+                      "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none",
+                      profileForm.formState.errors.phone
+                        ? "border-rose-200 bg-rose-50/30 text-rose-600"
+                        : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                    )}
+                    {...profileForm.register("phone")}
+                  />
+                  <FieldError
+                    message={profileForm.formState.errors.phone?.message}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <FieldLabel icon={Mail}>Institutional Email</FieldLabel>
+                <input
+                  type="email"
+                  className={clsx(
+                    "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none",
+                    profileForm.formState.errors.email
+                      ? "border-rose-200 bg-rose-50/30 text-rose-600"
+                      : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                  )}
+                  {...profileForm.register("email")}
+                />
+                <FieldError
+                  message={profileForm.formState.errors.email?.message}
+                />
+              </div>
+
+              <div className="pt-6 border-t border-slate-50 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={profileForm.formState.isSubmitting}
+                  className="btn-primary py-3.5 px-10 shadow-xl shadow-brand-500/15 disabled:opacity-50"
+                >
+                  {profileForm.formState.isSubmitting ? (
+                    "Processing..."
+                  ) : (
+                    <>
+                      <Save size={18} /> Synchronize Profile
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </SettingsSection>
+
+          <SettingsSection
+            icon={Lock}
+            title="Authentication Layers"
+            subtitle="Rotate your login credentials and enhance security."
+            active={activeSection === "password"}
+            onClick={() => toggleSection("password")}
+          >
+            <form
+              onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
+              className="space-y-8"
+            >
+              <div className="space-y-2">
+                <FieldLabel icon={Lock}>
+                  Current Verification Password
+                </FieldLabel>
+                <div className="relative">
+                  <input
+                    type={showCurrent ? "text" : "password"}
+                    className={clsx(
+                      "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none pr-12",
+                      passwordForm.formState.errors.currentPassword
+                        ? "border-rose-200 bg-rose-50/30 text-rose-600"
+                        : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                    )}
+                    {...passwordForm.register("currentPassword")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrent(!showCurrent)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors"
+                  >
+                    {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                <FieldError
+                  message={
+                    passwordForm.formState.errors.currentPassword?.message
+                  }
+                />
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <FieldLabel icon={Lock}>New Secure Password</FieldLabel>
+                  <div className="relative">
+                    <input
+                      type={showNew ? "text" : "password"}
+                      className={clsx(
+                        "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none pr-12",
+                        passwordForm.formState.errors.newPassword
+                          ? "border-rose-200 bg-rose-50/30 text-rose-600"
+                          : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                      )}
+                      {...passwordForm.register("newPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNew(!showNew)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors"
+                    >
+                      {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <FieldError
+                    message={passwordForm.formState.errors.newPassword?.message}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <FieldLabel icon={ShieldCheck}>Confirm Rotation</FieldLabel>
+                  <div className="relative">
+                    <input
+                      type={showConfirm ? "text" : "password"}
+                      className={clsx(
+                        "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none pr-12",
+                        passwordForm.formState.errors.confirmPassword
+                          ? "border-rose-200 bg-rose-50/30 text-rose-600"
+                          : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                      )}
+                      {...passwordForm.register("confirmPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirm(!showConfirm)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors"
+                    >
+                      {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <FieldError
+                    message={
+                      passwordForm.formState.errors.confirmPassword?.message
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3 shadow-inner">
+                <div className="flex items-center gap-3 text-xs font-bold text-slate-500 tracking-tight">
+                  <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+                    <CheckCircle2 size={12} />
+                  </div>
+                  Must contain a minimum of 8 high-entropy characters.
+                </div>
+                <div className="flex items-center gap-3 text-xs font-bold text-slate-500 tracking-tight">
+                  <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+                    <CheckCircle2 size={12} />
+                  </div>
+                  Encryption layer will be updated upon synchronization.
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-slate-50 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={passwordForm.formState.isSubmitting}
+                  className="btn-primary py-3.5 px-10 shadow-xl shadow-brand-500/15"
+                >
+                  <Lock size={18} /> Update Security Vault
+                </button>
+              </div>
+            </form>
+          </SettingsSection>
+
+          <SettingsSection
+            icon={Building2}
+            title="Institutional Blueprint"
+            subtitle="Configure global campus identity and operational defaults."
+            active={activeSection === "college"}
+            onClick={() => toggleSection("college")}
+          >
+            <form
+              onSubmit={collegeForm.handleSubmit(onCollegeSubmit)}
+              className="space-y-8"
+            >
+              <div className="space-y-2">
+                <FieldLabel icon={Building2}>
+                  Institution Designation
+                </FieldLabel>
+                <input
+                  type="text"
+                  className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 outline-none transition-all shadow-sm"
+                  {...collegeForm.register("name")}
+                />
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <FieldLabel icon={Mail}>Global Support Email</FieldLabel>
+                  <input
+                    type="email"
+                    className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 outline-none transition-all shadow-sm"
+                    {...collegeForm.register("email")}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <FieldLabel icon={Smartphone}>
+                    Primary Administration Line
+                  </FieldLabel>
+                  <input
+                    type="tel"
+                    className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 outline-none transition-all shadow-sm"
+                    {...collegeForm.register("phone")}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <FieldLabel icon={MapPin}>Geographic HQ Address</FieldLabel>
+                <input
+                  type="text"
+                  className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 outline-none transition-all shadow-sm"
+                  {...collegeForm.register("address")}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <FieldLabel icon={Globe}>Institutional Web Domain</FieldLabel>
+                <input
+                  type="url"
+                  className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 outline-none transition-all shadow-sm"
+                  {...collegeForm.register("website")}
+                />
+              </div>
+
+              <div className="pt-6 border-t border-slate-50 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={collegeForm.formState.isSubmitting}
+                  className="btn-primary py-3.5 px-10 shadow-xl shadow-brand-500/15"
+                >
+                  <Save size={18} /> Synchronize Institutional Logic
+                </button>
+              </div>
+            </form>
+          </SettingsSection>
         </div>
       </div>
-
-      {/* ── Profile section ───────────────────────────── */}
-      <SettingsSection
-        icon={User}
-        title="Profile"
-        subtitle="Update your name, email and phone number"
-        active={activeSection === "profile"}
-        onClick={() => toggleSection("profile")}
-      >
-        <form
-          onSubmit={profileForm.handleSubmit(onProfileSubmit)}
-          noValidate
-          className="flex flex-col gap-4"
-        >
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <FieldLabel>Full name</FieldLabel>
-              <input
-                type="text"
-                className={`input-field ${
-                  profileForm.formState.errors.fullName ? "input-error" : ""
-                }`}
-                {...profileForm.register("fullName")}
-              />
-              <FieldError
-                message={profileForm.formState.errors.fullName?.message}
-              />
-            </div>
-
-            <div>
-              <FieldLabel>Phone number</FieldLabel>
-              <input
-                type="tel"
-                placeholder="+977 9800000000"
-                className={`input-field ${
-                  profileForm.formState.errors.phone ? "input-error" : ""
-                }`}
-                {...profileForm.register("phone")}
-              />
-              <FieldError
-                message={profileForm.formState.errors.phone?.message}
-              />
-            </div>
-          </div>
-
-          <div>
-            <FieldLabel>Email address</FieldLabel>
-            <input
-              type="email"
-              className={`input-field ${
-                profileForm.formState.errors.email ? "input-error" : ""
-              }`}
-              {...profileForm.register("email")}
-            />
-            <FieldError message={profileForm.formState.errors.email?.message} />
-          </div>
-
-          <div className="flex justify-end pt-2 border-t border-white/[0.07]">
-            <button
-              type="submit"
-              disabled={profileForm.formState.isSubmitting}
-              className="btn-primary px-6 disabled:opacity-60
-                         disabled:cursor-not-allowed disabled:transform-none"
-            >
-              {profileForm.formState.isSubmitting ? (
-                <>
-                  <span
-                    className="w-4 h-4 border-2 border-white/30
-                                   border-t-white rounded-full animate-spin"
-                  />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save size={15} />
-                  Save profile
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </SettingsSection>
-
-      {/* ── Password section ──────────────────────────── */}
-      <SettingsSection
-        icon={Lock}
-        title="Password"
-        subtitle="Change your login password"
-        active={activeSection === "password"}
-        onClick={() => toggleSection("password")}
-      >
-        <form
-          onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
-          noValidate
-          className="flex flex-col gap-4"
-        >
-          {/* Current password */}
-          <div>
-            <FieldLabel>Current password</FieldLabel>
-            <div className="relative">
-              <input
-                type={showCurrent ? "text" : "password"}
-                placeholder="••••••••"
-                autoComplete="current-password"
-                className={`input-field pr-10 ${
-                  passwordForm.formState.errors.currentPassword
-                    ? "input-error"
-                    : ""
-                }`}
-                {...passwordForm.register("currentPassword")}
-              />
-              <button
-                type="button"
-                onClick={() => setShowCurrent((p) => !p)}
-                className="absolute right-3 top-1/2 -translate-y-1/2
-                           text-ink-500 hover:text-ink-300 transition-colors"
-              >
-                {showCurrent ? <EyeOff size={15} /> : <Eye size={15} />}
-              </button>
-            </div>
-            <FieldError
-              message={passwordForm.formState.errors.currentPassword?.message}
-            />
-          </div>
-
-          {/* New password */}
-          <div>
-            <FieldLabel>New password</FieldLabel>
-            <div className="relative">
-              <input
-                type={showNew ? "text" : "password"}
-                placeholder="Min 8 chars, 1 uppercase, 1 number"
-                autoComplete="new-password"
-                className={`input-field pr-10 ${
-                  passwordForm.formState.errors.newPassword ? "input-error" : ""
-                }`}
-                {...passwordForm.register("newPassword")}
-              />
-              <button
-                type="button"
-                onClick={() => setShowNew((p) => !p)}
-                className="absolute right-3 top-1/2 -translate-y-1/2
-                           text-ink-500 hover:text-ink-300 transition-colors"
-              >
-                {showNew ? <EyeOff size={15} /> : <Eye size={15} />}
-              </button>
-            </div>
-            <FieldError
-              message={passwordForm.formState.errors.newPassword?.message}
-            />
-          </div>
-
-          {/* Confirm password */}
-          <div>
-            <FieldLabel>Confirm new password</FieldLabel>
-            <div className="relative">
-              <input
-                type={showConfirm ? "text" : "password"}
-                placeholder="Repeat your new password"
-                autoComplete="new-password"
-                className={`input-field pr-10 ${
-                  passwordForm.formState.errors.confirmPassword
-                    ? "input-error"
-                    : ""
-                }`}
-                {...passwordForm.register("confirmPassword")}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirm((p) => !p)}
-                className="absolute right-3 top-1/2 -translate-y-1/2
-                           text-ink-500 hover:text-ink-300 transition-colors"
-              >
-                {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
-              </button>
-            </div>
-            <FieldError
-              message={passwordForm.formState.errors.confirmPassword?.message}
-            />
-          </div>
-
-          {/* Password rules */}
-          <div className="glass-light rounded-xl p-3 flex flex-col gap-1.5">
-            {[
-              "At least 8 characters",
-              "At least one uppercase letter",
-              "At least one number",
-              "Different from current password",
-            ].map((rule) => (
-              <div key={rule} className="flex items-center gap-2">
-                <CheckCircle2 size={12} className="text-jade-500 shrink-0" />
-                <p className="text-xs text-ink-500">{rule}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-end pt-2 border-t border-white/[0.07]">
-            <button
-              type="submit"
-              disabled={passwordForm.formState.isSubmitting}
-              className="btn-primary px-6 disabled:opacity-60
-                         disabled:cursor-not-allowed disabled:transform-none"
-            >
-              {passwordForm.formState.isSubmitting ? (
-                <>
-                  <span
-                    className="w-4 h-4 border-2 border-white/30
-                                   border-t-white rounded-full animate-spin"
-                  />
-                  Updating...
-                </>
-              ) : (
-                <>
-                  <Lock size={15} />
-                  Update password
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </SettingsSection>
-
-      {/* ── College info section ──────────────────────── */}
-      <SettingsSection
-        icon={Building2}
-        title="College Information"
-        subtitle="Update your institution details"
-        active={activeSection === "college"}
-        onClick={() => toggleSection("college")}
-      >
-        <form
-          onSubmit={collegeForm.handleSubmit(onCollegeSubmit)}
-          noValidate
-          className="flex flex-col gap-4"
-        >
-          <div>
-            <FieldLabel>College name</FieldLabel>
-            <input
-              type="text"
-              className={`input-field ${
-                collegeForm.formState.errors.name ? "input-error" : ""
-              }`}
-              {...collegeForm.register("name")}
-            />
-            <FieldError message={collegeForm.formState.errors.name?.message} />
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <FieldLabel>Email address</FieldLabel>
-              <input
-                type="email"
-                className={`input-field ${
-                  collegeForm.formState.errors.email ? "input-error" : ""
-                }`}
-                {...collegeForm.register("email")}
-              />
-              <FieldError
-                message={collegeForm.formState.errors.email?.message}
-              />
-            </div>
-
-            <div>
-              <FieldLabel>Phone number</FieldLabel>
-              <input
-                type="tel"
-                className={`input-field ${
-                  collegeForm.formState.errors.phone ? "input-error" : ""
-                }`}
-                {...collegeForm.register("phone")}
-              />
-              <FieldError
-                message={collegeForm.formState.errors.phone?.message}
-              />
-            </div>
-          </div>
-
-          <div>
-            <FieldLabel>Address</FieldLabel>
-            <input
-              type="text"
-              className={`input-field ${
-                collegeForm.formState.errors.address ? "input-error" : ""
-              }`}
-              {...collegeForm.register("address")}
-            />
-            <FieldError
-              message={collegeForm.formState.errors.address?.message}
-            />
-          </div>
-
-          <div>
-            <FieldLabel>Website (optional)</FieldLabel>
-            <input
-              type="url"
-              placeholder="https://yourcollege.edu"
-              className={`input-field ${
-                collegeForm.formState.errors.website ? "input-error" : ""
-              }`}
-              {...collegeForm.register("website")}
-            />
-            <FieldError
-              message={collegeForm.formState.errors.website?.message}
-            />
-          </div>
-
-          <div className="flex justify-end pt-2 border-t border-white/[0.07]">
-            <button
-              type="submit"
-              disabled={collegeForm.formState.isSubmitting}
-              className="btn-primary px-6 disabled:opacity-60
-                         disabled:cursor-not-allowed disabled:transform-none"
-            >
-              {collegeForm.formState.isSubmitting ? (
-                <>
-                  <span
-                    className="w-4 h-4 border-2 border-white/30
-                                   border-t-white rounded-full animate-spin"
-                  />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save size={15} />
-                  Save changes
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </SettingsSection>
     </div>
   );
 }

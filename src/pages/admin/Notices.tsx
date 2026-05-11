@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Bell } from "lucide-react";
+import { Plus, Pencil, Trash2, Bell, Megaphone, Calendar, User } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   useNotices,
   useCreateNotice,
@@ -22,39 +23,29 @@ import ConfirmDialog from "../../Component/ui/ConfirmDialog";
 const COLUMNS: Column<Notice>[] = [
   {
     key: "title",
-    label: "Notice",
+    label: "Bulletin Update",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-3">
-        <div
-          className={clsx(
-            "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
-            row.urgent
-              ? "bg-red-500/10 border border-red-500/20"
-              : "bg-jade-500/10 border border-jade-500/20",
-          )}
-        >
-          <Bell
-            size={14}
-            className={row.urgent ? "text-red-400" : "text-jade-400"}
-          />
+      <div className="flex items-center gap-4 py-1">
+        <div className={clsx(
+          "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border shadow-sm transition-all",
+          row.urgent 
+            ? "bg-rose-50 border-rose-100 text-rose-600" 
+            : "bg-brand-50 border-brand-100 text-brand-600"
+        )}>
+          {row.urgent ? <Megaphone size={18} /> : <Bell size={18} />}
         </div>
-        <div>
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-medium text-ink-100">{row.title}</p>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <p className="text-sm font-bold text-slate-900 truncate">{row.title}</p>
             {row.urgent && (
-              <span
-                className="text-[10px] font-mono font-medium
-                               bg-red-500/15 text-red-400
-                               border border-red-500/20
-                               px-1.5 py-0.5 rounded-full"
-              >
-                URGENT
+              <span className="text-[9px] font-bold bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
+                Urgent
               </span>
             )}
           </div>
-          <p className="text-xs text-ink-500 mt-0.5">
-            {row.content.slice(0, 50)}...
+          <p className="text-xs text-slate-400 font-medium truncate max-w-[200px]">
+            {row.content}
           </p>
         </div>
       </div>
@@ -62,15 +53,15 @@ const COLUMNS: Column<Notice>[] = [
   },
   {
     key: "forRole",
-    label: "Audience",
+    label: "Target Audience",
     render: (row) => (
       <Badge
         label={
           row.forRole === "ALL"
-            ? "Everyone"
+            ? "Public"
             : row.forRole === "STUDENT"
               ? "Students"
-              : "Teachers"
+              : "Faculty"
         }
         variant={
           row.forRole === "ALL"
@@ -84,27 +75,32 @@ const COLUMNS: Column<Notice>[] = [
   },
   {
     key: "author",
-    label: "Posted by",
+    label: "Publisher",
     sortable: true,
-    render: (row) => <span className="text-sm text-ink-400">{row.author}</span>,
+    render: (row) => (
+      <div className="flex items-center gap-2 text-slate-600 font-medium text-sm">
+        <User size={14} className="text-slate-400" />
+        {row.author}
+      </div>
+    ),
   },
   {
     key: "createdAt",
-    label: "Date",
+    label: "Publication Date",
     sortable: true,
     render: (row) => (
-      <span className="text-xs font-mono text-ink-500">
+      <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider">
+        <Calendar size={12} />
         {new Date(row.createdAt).toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
           year: "numeric",
         })}
-      </span>
+      </div>
     ),
   },
 ];
 
-// ── Component ────────────────────────────────────────────
 export default function Notices() {
   const [addOpen, setAddOpen] = useState(false);
   const [editNotice, setEditNotice] = useState<Notice | null>(null);
@@ -136,92 +132,99 @@ export default function Notices() {
     });
   };
 
-  // Urgent notices count for header subtitle
   const urgentCount = notices.filter((n) => n.urgent).length;
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Manage Notices"
-        subtitle={`${notices.length} notices · ${urgentCount} urgent`}
-        action={
-          <button onClick={() => setAddOpen(true)} className="btn-primary">
-            <Plus size={16} />
-            Post notice
-          </button>
-        }
-      />
-
-      <DataTable
-        data={notices}
-        columns={COLUMNS}
-        loading={isLoading}
-        searchable
-        searchKeys={["title", "content", "author"]}
-        searchPlaceholder="Search notices..."
-        pageSize={10}
-        emptyTitle="No notices posted"
-        emptyDesc="Post your first notice using the button above."
-        actions={(row) => (
-          <>
-            <button
-              onClick={() => setEditNotice(row)}
-              className="p-1.5 rounded-lg text-ink-500
-                         hover:text-jade-400 hover:bg-jade-500/10
-                         transition-colors"
-              title="Edit notice"
+    <div className="space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <PageHeader
+          title="Campus Bulletin"
+          subtitle={`${notices.length} active announcements · ${urgentCount} flagged as urgent`}
+          action={
+            <button 
+              onClick={() => setAddOpen(true)} 
+              className="btn-primary py-3 px-6 shadow-brand-500/10"
             >
-              <Pencil size={14} />
+              <Plus size={18} />
+              Create Announcement
             </button>
-            <button
-              onClick={() => setDeleteTarget(row)}
-              className="p-1.5 rounded-lg text-ink-500
-                         hover:text-red-400 hover:bg-red-500/10
-                         transition-colors"
-              title="Delete notice"
-            >
-              <Trash2 size={14} />
-            </button>
-          </>
-        )}
-      />
+          }
+        />
+      </motion.div>
 
-      {/* Add modal */}
+      <div className="card-base bg-white border-slate-100 overflow-hidden">
+        <DataTable
+          data={notices}
+          columns={COLUMNS}
+          loading={isLoading}
+          searchable
+          searchKeys={["title", "content", "author"]}
+          searchPlaceholder="Filter announcements by title, content or publisher..."
+          pageSize={10}
+          emptyTitle="No Announcements Found"
+          emptyDesc="The bulletin is currently empty. Create a notice to inform the campus."
+          actions={(row) => (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setEditNotice(row)}
+                className="p-2 rounded-xl text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100"
+                title="Edit Announcement"
+              >
+                <Pencil size={16} />
+              </button>
+              <button
+                onClick={() => setDeleteTarget(row)}
+                className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
+                title="Delete Announcement"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          )}
+        />
+      </div>
+
+      {/* Modals & Dialogs */}
       <Modal
         open={addOpen}
         onClose={() => setAddOpen(false)}
-        title="Post new notice"
-        subtitle="This will be visible to the selected audience immediately"
+        title="Post Announcement"
+        subtitle="Inform students and faculty about important updates"
         size="md"
       >
-        <NoticeForm onSubmit={handleAdd} isLoading={createNotice.isPending} />
+        <div className="p-2">
+          <NoticeForm onSubmit={handleAdd} isLoading={createNotice.isPending} />
+        </div>
       </Modal>
 
-      {/* Edit modal */}
       <Modal
         open={!!editNotice}
         onClose={() => setEditNotice(null)}
-        title="Edit notice"
-        subtitle={`Editing "${editNotice?.title ?? ""}"`}
+        title="Update Bulletin"
+        subtitle={`Modifying announcement: ${editNotice?.title}`}
         size="md"
       >
-        {editNotice && (
-          <NoticeForm
-            notice={editNotice}
-            onSubmit={handleEdit}
-            isLoading={updateNotice.isPending}
-          />
-        )}
+        <div className="p-2">
+          {editNotice && (
+            <NoticeForm
+              notice={editNotice}
+              onSubmit={handleEdit}
+              isLoading={updateNotice.isPending}
+            />
+          )}
+        </div>
       </Modal>
 
-      {/* Delete confirm */}
       <ConfirmDialog
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
-        title="Delete notice"
-        description={`Are you sure you want to delete "${deleteTarget?.title ?? "this notice"}"? It will be removed for all users immediately.`}
-        confirmLabel="Delete notice"
+        title="Remove Announcement"
+        description={`This will permanently remove the notice "${deleteTarget?.title}" from the bulletin. This action cannot be reversed.`}
+        confirmLabel="Confirm Removal"
         loading={deleteNotice.isPending}
       />
     </div>

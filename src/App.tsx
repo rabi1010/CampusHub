@@ -154,9 +154,10 @@ import MyNotices from "./pages/student/MyNotices";
 // Temporary placeholder — replace as you build each page
 const ComingSoon = ({ label }: { label: string }) => (
   <div className="flex items-center justify-center min-h-[60vh]">
-    <div className="glass rounded-2xl p-12 text-center">
-      <p className="font-mono text-jade-400 text-sm mb-2">Coming next</p>
-      <h2 className="font-display text-3xl text-ink-100">{label}</h2>
+    <div className="bg-white border border-slate-100 rounded-3xl p-16 text-center shadow-xl shadow-slate-200/50">
+      <p className="font-mono text-brand-500 text-[10px] font-bold uppercase tracking-widest mb-4">Development in progress</p>
+      <h2 className="font-display text-4xl text-slate-900 font-bold mb-4">{label}</h2>
+      <p className="text-slate-500 max-w-xs mx-auto text-sm leading-relaxed">We're building something amazing. This feature will be available in the next release.</p>
     </div>
   </div>
 );

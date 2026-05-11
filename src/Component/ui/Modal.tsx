@@ -28,7 +28,6 @@ export default function Modal({
 }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  // Close on Escape key
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -37,55 +36,43 @@ export default function Modal({
     return () => document.removeEventListener("keydown", handler);
   }, [open, onClose]);
 
-  // Prevent body scroll when modal is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [open]);
 
   if (!open) return null;
 
   return (
-    // Backdrop
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center
-                 p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-      onClick={(e) => {
-        // Close when clicking backdrop — not the modal itself
-        if (e.target === overlayRef.current) onClose();
-      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in"
+      onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
-      {/* Modal panel */}
       <div
         className={clsx(
-          "w-full glass rounded-2xl shadow-card-lg",
+          "w-full bg-white rounded-2xl shadow-2xl border border-slate-100",
           "flex flex-col max-h-[90vh] animate-fade-up",
           SIZES[size],
         )}
       >
         {/* Header */}
-        <div
-          className="flex items-start justify-between
-                        px-6 py-5 border-b border-white/[0.07] shrink-0"
-        >
-          <div>
-            <h2 className="font-display text-lg text-ink-50">{title}</h2>
-            {subtitle && (
-              <p className="text-sm text-ink-400 mt-0.5">{subtitle}</p>
-            )}
+        {title && (
+          <div className="flex items-start justify-between px-6 py-5 border-b border-slate-100 shrink-0">
+            <div>
+              <h2 className="font-display text-lg font-bold text-slate-900">{title}</h2>
+              {subtitle && (
+                <p className="text-sm text-slate-500 mt-0.5">{subtitle}</p>
+              )}
+            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors ml-4 shrink-0"
+            >
+              <X size={18} />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-ink-500
-                       hover:text-ink-200 hover:bg-white/5
-                       transition-colors ml-4 shrink-0"
-          >
-            <X size={18} />
-          </button>
-        </div>
+        )}
 
         {/* Scrollable content */}
         <div className="overflow-y-auto flex-1 px-6 py-5">{children}</div>

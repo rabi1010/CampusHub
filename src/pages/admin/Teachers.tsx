@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { UserPlus, Pencil, Trash2 } from "lucide-react";
+import { UserPlus, Pencil, Trash2, ShieldCheck, Briefcase, GraduationCap, ChevronRight, Search as SearchIcon, Filter } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   useTeachers,
   useCreateTeacher,
@@ -25,24 +26,27 @@ import ConfirmDialog from "../../Component/ui/ConfirmDialog";
 const COLUMNS: Column<Teacher>[] = [
   {
     key: "fullName",
-    label: "Teacher",
+    label: "Faculty Profile",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-3">
-        <Avatar name={row.fullName} size="sm" color="ink" />
+      <div className="flex items-center gap-4 py-1">
+        <Avatar name={row.fullName} size="md" className="shadow-sm border-2 border-white ring-1 ring-slate-100" />
         <div>
-          <p className="text-sm font-medium text-ink-100">{row.fullName}</p>
-          <p className="text-xs text-ink-500">{row.email}</p>
+          <p className="text-sm font-bold text-slate-900 leading-tight">{row.fullName}</p>
+          <p className="text-[11px] font-medium text-slate-400">{row.email}</p>
         </div>
       </div>
     ),
   },
   {
     key: "employeeId",
-    label: "Employee ID",
+    label: "Employee Index",
     sortable: true,
     render: (row) => (
-      <span className="font-mono text-sm text-ink-300">{row.employeeId}</span>
+      <div className="flex items-center gap-2 font-mono text-[11px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
+        <ShieldCheck size={12} className="text-brand-500" />
+        {row.employeeId}
+      </div>
     ),
   },
   {
@@ -50,20 +54,26 @@ const COLUMNS: Column<Teacher>[] = [
     label: "Department",
     sortable: true,
     render: (row) => (
-      <span className="text-sm text-ink-300">{row.department}</span>
+      <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <Briefcase size={14} className="text-slate-300" />
+        {row.department}
+      </div>
     ),
   },
   {
     key: "qualification",
-    label: "Qualification",
+    label: "Academic Credentials",
     sortable: true,
     render: (row) => (
-      <span className="text-sm text-ink-400">{row.qualification}</span>
+      <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50/50 px-2 py-0.5 rounded border border-slate-50">
+        <GraduationCap size={14} className="text-slate-300" />
+        {row.qualification}
+      </div>
     ),
   },
   {
     key: "status",
-    label: "Status",
+    label: "Account Status",
     render: (row) => (
       <Badge
         label={row.status}
@@ -79,7 +89,6 @@ const COLUMNS: Column<Teacher>[] = [
   },
 ];
 
-// ── Component ────────────────────────────────────────────
 export default function Teachers() {
   const [addOpen, setAddOpen] = useState(false);
   const [editTeacher, setEditTeacher] = useState<Teacher | null>(null);
@@ -112,88 +121,108 @@ export default function Teachers() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Manage Teachers"
-        subtitle={`${teachers.length} teachers registered`}
-        action={
-          <button onClick={() => setAddOpen(true)} className="btn-primary">
-            <UserPlus size={16} />
-            Add teacher
-          </button>
-        }
-      />
-
-      <DataTable
-        data={teachers}
-        columns={COLUMNS}
-        loading={isLoading}
-        searchable
-        searchKeys={["fullName", "email", "employeeId", "department"]}
-        searchPlaceholder="Search by name, email, employee ID..."
-        pageSize={10}
-        emptyTitle="No teachers found"
-        emptyDesc="Add your first teacher using the button above."
-        actions={(row) => (
-          <>
-            <button
-              onClick={() => setEditTeacher(row)}
-              className="p-1.5 rounded-lg text-ink-500
-                         hover:text-jade-400 hover:bg-jade-500/10
-                         transition-colors"
-              title="Edit teacher"
+    <div className="space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <PageHeader
+          title="Faculty Directory"
+          subtitle={`Coordinating ${teachers.length} academic professionals across all departments.`}
+          action={
+            <button 
+              onClick={() => setAddOpen(true)} 
+              className="btn-primary py-3.5 px-8 shadow-xl shadow-brand-500/15"
             >
-              <Pencil size={14} />
+              <UserPlus size={18} />
+              Register Faculty
             </button>
-            <button
-              onClick={() => setDeleteTarget(row)}
-              className="p-1.5 rounded-lg text-ink-500
-                         hover:text-red-400 hover:bg-red-500/10
-                         transition-colors"
-              title="Delete teacher"
-            >
-              <Trash2 size={14} />
-            </button>
-          </>
-        )}
-      />
+          }
+        />
+      </motion.div>
 
-      {/* Add modal */}
+      <div className="card-base bg-white border-slate-100 overflow-hidden shadow-sm">
+        <div className="p-5 border-b border-slate-50 bg-slate-50/30 flex flex-col sm:flex-row justify-between gap-6">
+           <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400">
+                 <Filter size={18} />
+              </div>
+              <div>
+                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-0.5">Faculty Analytics</p>
+                 <p className="text-xs font-bold text-slate-600">Reviewing institutional staffing and credentials.</p>
+              </div>
+           </div>
+        </div>
+
+        <DataTable
+          data={teachers}
+          columns={COLUMNS}
+          loading={isLoading}
+          searchable
+          searchKeys={["fullName", "email", "employeeId", "department"]}
+          searchPlaceholder="Filter directory by member name, employee index or department..."
+          pageSize={10}
+          emptyTitle="Directory is Empty"
+          emptyDesc="No faculty members were found matching your current parameters."
+          actions={(row) => (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setEditTeacher(row)}
+                className="p-2.5 rounded-xl text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100"
+                title="Modify Profile"
+              >
+                <Pencil size={16} />
+              </button>
+              <button
+                onClick={() => setDeleteTarget(row)}
+                className="p-2.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
+                title="Purge Record"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          )}
+        />
+      </div>
+
+      {/* Modals & Dialogs */}
       <Modal
         open={addOpen}
         onClose={() => setAddOpen(false)}
-        title="Add new teacher"
-        subtitle="Fill in the details to register a new teacher"
+        title="Faculty Registration"
+        subtitle="Initialize academic credentials to register a new faculty member."
         size="lg"
       >
-        <TeacherForm onSubmit={handleAdd} isLoading={createTeacher.isPending} />
+        <div className="p-4">
+          <TeacherForm onSubmit={handleAdd} isLoading={createTeacher.isPending} />
+        </div>
       </Modal>
 
-      {/* Edit modal */}
       <Modal
         open={!!editTeacher}
         onClose={() => setEditTeacher(null)}
-        title="Edit teacher"
-        subtitle={`Editing ${editTeacher?.fullName ?? ""}`}
+        title="Credential Update"
+        subtitle={`Modifying faculty record and department assignments for ${editTeacher?.fullName}`}
         size="lg"
       >
-        {editTeacher && (
-          <TeacherForm
-            teacher={editTeacher}
-            onSubmit={handleEdit}
-            isLoading={updateTeacher.isPending}
-          />
-        )}
+        <div className="p-4">
+          {editTeacher && (
+            <TeacherForm
+              teacher={editTeacher}
+              onSubmit={handleEdit}
+              isLoading={updateTeacher.isPending}
+            />
+          )}
+        </div>
       </Modal>
 
-      {/* Delete confirm */}
       <ConfirmDialog
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
-        title="Delete teacher"
-        description={`Are you sure you want to delete ${deleteTarget?.fullName ?? "this teacher"}? This action cannot be undone.`}
-        confirmLabel="Delete teacher"
+        title="Institutional Faculty Deletion"
+        description={`You are about to permanently purge ${deleteTarget?.fullName} from the institutional directory. This will invalidate all associated course assignments and staffing history.`}
+        confirmLabel="Execute Deletion"
         loading={deleteTeacher.isPending}
       />
     </div>

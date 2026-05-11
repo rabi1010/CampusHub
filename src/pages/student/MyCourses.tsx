@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { BookOpen } from "lucide-react";
+import { BookOpen, User, CreditCard, Calendar, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "../../components/ui/PageHeader";
 import EmptyState from "../../Component/ui/EmptyState";
 import Badge from "../../Component/ui/Badge";
+import clsx from "clsx";
 
 const MY_COURSES = [
   {
@@ -17,8 +19,7 @@ const MY_COURSES = [
     attendance: 88,
     grade: "A",
     status: "ACTIVE" as const,
-    description:
-      "Introduction to data structures and algorithms including arrays, linked lists, trees and graphs.",
+    description: "Introduction to data structures and algorithms including arrays, linked lists, trees and graphs.",
   },
   {
     id: "2",
@@ -32,8 +33,7 @@ const MY_COURSES = [
     attendance: 92,
     grade: "B+",
     status: "ACTIVE" as const,
-    description:
-      "Fundamentals of database design, SQL, normalization and transaction management.",
+    description: "Fundamentals of database design, SQL, normalization and transaction management.",
   },
   {
     id: "3",
@@ -47,8 +47,7 @@ const MY_COURSES = [
     attendance: 78,
     grade: "A+",
     status: "ACTIVE" as const,
-    description:
-      "Modern web development using HTML, CSS, JavaScript and popular frameworks.",
+    description: "Modern web development using HTML, CSS, JavaScript and popular frameworks.",
   },
   {
     id: "4",
@@ -62,18 +61,18 @@ const MY_COURSES = [
     attendance: 70,
     grade: "B",
     status: "ACTIVE" as const,
-    description:
-      "Network architectures, protocols, TCP/IP, routing and switching fundamentals.",
+    description: "Network architectures, protocols, TCP/IP, routing and switching fundamentals.",
   },
 ];
 
-// ── Progress bar ─────────────────────────────────────────
-function ProgressBar({ value, color }: { value: number; color: string }) {
+function ProgressBar({ value, colorClass }: { value: number; colorClass: string }) {
   return (
-    <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-      <div
-        className={`h-full rounded-full transition-all duration-500 ${color}`}
-        style={{ width: `${Math.min(value, 100)}%` }}
+    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-50">
+      <motion.div
+        initial={{ width: 0 }}
+        animate={{ width: `${Math.min(value, 100)}%` }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className={clsx("h-full rounded-full", colorClass)}
       />
     </div>
   );
@@ -92,24 +91,26 @@ export default function MyCourses() {
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="My Courses"
-        subtitle={`${MY_COURSES.length} courses enrolled this semester`}
-      />
+    <div className="space-y-8">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+        <PageHeader
+          title="Academic Registry"
+          subtitle={`Actively enrolled in ${MY_COURSES.length} curriculum modules.`}
+        />
+      </motion.div>
 
       {/* Filter tabs */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {(["all", "active", "completed"] as FilterType[]).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium
-                        border capitalize transition-all duration-200 ${
-                          filter === f
-                            ? "bg-jade-500/15 border-jade-500/40 text-jade-300"
-                            : "border-white/[0.07] text-ink-400 hover:border-white/20"
-                        }`}
+            className={clsx(
+              "px-6 py-2.5 rounded-full text-sm font-bold transition-all border capitalize",
+              filter === f
+                ? "bg-brand-600 border-brand-600 text-white shadow-lg shadow-brand-500/20"
+                : "bg-white border-slate-100 text-slate-500 hover:border-slate-200 hover:bg-slate-50"
+            )}
           >
             {f}
           </button>
@@ -118,111 +119,121 @@ export default function MyCourses() {
 
       {/* Course grid */}
       {filtered.length === 0 ? (
-        <EmptyState
-          icon={BookOpen}
-          title="No courses found"
-          description="No courses match the selected filter."
-        />
+        <div className="card-base bg-white p-12">
+          <EmptyState
+            icon={BookOpen}
+            title="Registry Empty"
+            description="No academic modules match your current filter criteria."
+          />
+        </div>
       ) : (
-        <div className="grid md:grid-cols-2 gap-5">
-          {filtered.map((course) => (
-            <div
-              key={course.id}
-              className="glass rounded-2xl p-6 flex flex-col gap-5
-                         hover:border-white/20 transition-all duration-300
-                         hover:-translate-y-0.5 hover:shadow-card-lg"
-            >
-              {/* Course header */}
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-10 h-10 rounded-xl bg-gold-500/10
-                                  border border-gold-500/20
-                                  flex items-center justify-center shrink-0"
-                  >
-                    <BookOpen size={18} className="text-gold-400" />
+        <div className="grid md:grid-cols-2 gap-6">
+          <AnimatePresence mode="popLayout">
+            {filtered.map((course, index) => (
+              <motion.div
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.05 }}
+                key={course.id}
+                className="card-base p-6 bg-white border-slate-100 flex flex-col gap-6 hover:shadow-xl hover:border-brand-100 transition-all group"
+              >
+                {/* Course header */}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-600 shadow-sm">
+                      <BookOpen size={24} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-0.5">
+                         <span className="font-mono text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded border border-brand-100">
+                           {course.code}
+                         </span>
+                         <Badge
+                          label={course.grade}
+                          variant={
+                            course.grade.startsWith("A")
+                              ? "success"
+                              : course.grade.startsWith("B")
+                                ? "warning"
+                                : "danger"
+                          }
+                        />
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                        {course.name}
+                      </h3>
+                    </div>
                   </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">
+                  {course.description}
+                </p>
+
+                {/* Meta info */}
+                <div className="grid grid-cols-2 gap-4 py-2 border-y border-slate-50">
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <User size={14} className="text-slate-300" />
+                    <span className="truncate">{course.teacher}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <CreditCard size={14} className="text-slate-300" />
+                    {course.credits} Credits
+                  </div>
+                </div>
+
+                {/* Performance trackers */}
+                <div className="space-y-4">
                   <div>
-                    <p className="font-mono text-xs text-jade-400 mb-0.5">
-                      {course.code}
-                    </p>
-                    <h3 className="font-medium text-ink-100">{course.name}</h3>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                        <CheckCircle2 size={12} className="text-emerald-500" /> Academic Progress
+                      </span>
+                      <span className="font-mono text-xs font-bold text-slate-600">{course.progress}%</span>
+                    </div>
+                    <ProgressBar
+                      value={course.progress}
+                      colorClass={
+                        course.progress >= 70
+                          ? "bg-emerald-500"
+                          : course.progress >= 40
+                            ? "bg-amber-500"
+                            : "bg-rose-500"
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                        {course.attendance < 75 ? (
+                          <AlertCircle size={12} className="text-rose-500" />
+                        ) : (
+                          <CheckCircle2 size={12} className="text-emerald-500" />
+                        )}
+                        Session Attendance
+                      </span>
+                      <span className={clsx("font-mono text-xs font-bold", course.attendance < 75 ? "text-rose-600" : "text-slate-600")}>
+                        {course.attendance}%
+                      </span>
+                    </div>
+                    <ProgressBar
+                      value={course.attendance}
+                      colorClass={course.attendance >= 75 ? "bg-emerald-500" : "bg-rose-500"}
+                    />
                   </div>
                 </div>
-                <Badge
-                  label={course.grade}
-                  variant={
-                    course.grade.startsWith("A")
-                      ? "success"
-                      : course.grade.startsWith("B")
-                        ? "warning"
-                        : "danger"
-                  }
-                />
-              </div>
 
-              {/* Description */}
-              <p className="text-sm text-ink-500 leading-relaxed">
-                {course.description}
-              </p>
-
-              {/* Meta info */}
-              <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-xs text-ink-500">
-                  👤 {course.teacher}
-                </span>
-                <span className="text-xs text-ink-500">
-                  📚 {course.credits} credits
-                </span>
-                <span className="text-xs text-ink-500">
-                  📅 Semester {course.semester}
-                </span>
-              </div>
-
-              {/* Progress bars */}
-              <div className="flex flex-col gap-3">
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs text-ink-500">Progress</span>
-                    <span className="text-xs font-mono text-ink-300">
-                      {course.progress}%
-                    </span>
-                  </div>
-                  <ProgressBar
-                    value={course.progress}
-                    color={
-                      course.progress >= 70
-                        ? "bg-jade-500"
-                        : course.progress >= 40
-                          ? "bg-gold-500"
-                          : "bg-red-500"
-                    }
-                  />
+                <div className="pt-2">
+                   <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-50 text-slate-600 text-xs font-bold hover:bg-brand-600 hover:text-white hover:shadow-lg hover:shadow-brand-500/20 transition-all border border-slate-100 hover:border-brand-500">
+                      Access Course Materials <ArrowRight size={14} />
+                   </button>
                 </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs text-ink-500">Attendance</span>
-                    <span
-                      className={`text-xs font-mono ${
-                        course.attendance >= 75
-                          ? "text-jade-400"
-                          : "text-red-400"
-                      }`}
-                    >
-                      {course.attendance}%{course.attendance < 75 && " ⚠️"}
-                    </span>
-                  </div>
-                  <ProgressBar
-                    value={course.attendance}
-                    color={
-                      course.attendance >= 75 ? "bg-jade-500" : "bg-red-500"
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
     </div>

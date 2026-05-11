@@ -26,40 +26,41 @@ const SOCIALS = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/[0.07] bg-ink-950/80">
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
+    <footer className="border-t border-slate-100 bg-white">
+      <div className="max-w-6xl mx-auto px-6 py-20">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-12 md:gap-8">
           {/* Brand column */}
-          <div className="col-span-2">
-            <Link to="/" className="flex items-center gap-2.5 mb-4">
+          <div className="col-span-2 space-y-6">
+            <Link to="/" className="flex items-center gap-2.5 group transition-all active:scale-95">
               <div
-                className="w-8 h-8 rounded-lg bg-jade-500/20 border border-jade-500/30
-                              flex items-center justify-center"
+                className="w-9 h-9 rounded-lg bg-brand-600 shadow-lg shadow-brand-500/20
+                              flex items-center justify-center
+                              group-hover:rotate-6 transition-all duration-300"
               >
-                <GraduationCap size={16} className="text-jade-400" />
+                <GraduationCap size={18} className="text-white" />
               </div>
-              <span className="font-display text-lg text-ink-50">
-                Campus<span className="text-jade-400">Hub</span>
+              <span className="font-display text-xl font-bold text-slate-900">
+                Campus<span className="text-brand-600">Hub</span>
               </span>
             </Link>
 
-            <p className="text-sm text-ink-400 leading-relaxed max-w-xs">
-              A modern college management platform built for administrators,
-              teachers, and students.
+            <p className="text-sm text-slate-500 leading-relaxed max-w-xs font-medium">
+              A premium college management ecosystem designed to empower administrators,
+              faculty, and students with high-performance digital tools.
             </p>
 
             {/* Social icons */}
-            <div className="flex items-center gap-3 mt-6">
+            <div className="flex items-center gap-3">
               {SOCIALS.map(({ Icon, href, label }) => (
                 <a
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-8 h-8 rounded-lg glass-light flex items-center justify-center
-                             text-ink-400 hover:text-jade-400 hover:border-jade-500/30
-                             transition-colors"
+                  className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center
+                             text-slate-400 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50/50
+                             hover:-translate-y-1 transition-all duration-300"
                 >
-                  <Icon size={14} />
+                  <Icon size={16} />
                 </a>
               ))}
             </div>
@@ -67,22 +68,22 @@ export default function Footer() {
 
           {/* Link columns */}
           {Object.entries(LINKS).map(([title, items]) => (
-            <div key={title}>
+            <div key={title} className="space-y-6">
               <p
-                className="text-xs font-mono font-medium text-ink-400
-                            uppercase tracking-widest mb-4"
+                className="text-[10px] font-bold text-slate-400
+                            uppercase tracking-[0.2em]"
               >
                 {title}
               </p>
-              <ul className="flex flex-col gap-2.5">
+              <ul className="flex flex-col gap-4">
                 {items.map(({ l, to }) => (
                   <li key={l}>
                     <Link
                       to={to}
-                      className="text-sm text-ink-400 hover:text-jade-400
-                                 transition-colors"
+                      className="text-sm font-medium text-slate-600 hover:text-brand-600
+                                 transition-all duration-300 group inline-block"
                     >
-                      {l}
+                      <span className="link-underline">{l}</span>
                     </Link>
                   </li>
                 ))}
@@ -91,17 +92,20 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="divider mt-12 mb-6" />
+        <div className="h-px bg-slate-100 mt-20 mb-8" />
 
         <div
           className="flex flex-col md:flex-row items-center
-                        justify-between gap-4 text-xs text-ink-500"
+                        justify-between gap-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest"
         >
-          <p>
-            ©OwnerRabiChy{new Date().getFullYear()} CampusHub. Built with React
-            + Java Spring
+          <p className="text-center md:text-left">
+            © {new Date().getFullYear()} <span className="text-slate-900">CampusHub Enterprise</span>. All rights reserved.
           </p>
-          <p className="font-mono">v1.0.0-beta</p>
+          <div className="flex items-center gap-4">
+            <span className="hover:text-slate-900 cursor-pointer transition-colors">v1.0.0 Stable</span>
+            <span className="w-1 h-1 bg-slate-200 rounded-full" />
+            <span className="hover:text-slate-900 cursor-pointer transition-colors">System Status: Online</span>
+          </div>
         </div>
       </div>
     </footer>

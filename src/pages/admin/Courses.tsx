@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, BookOpen } from "lucide-react";
+import { Plus, Pencil, Trash2, BookOpen, Layers, Users, Hash } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   useCourses,
   useCreateCourse,
@@ -21,22 +22,17 @@ import ConfirmDialog from "../../Component/ui/ConfirmDialog";
 const COLUMNS: Column<Course>[] = [
   {
     key: "name",
-    label: "Course",
+    label: "Curriculum Item",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-3">
-        {/* Course icon instead of avatar */}
-        <div
-          className="w-8 h-8 rounded-lg bg-gold-500/10
-                        border border-gold-500/20
-                        flex items-center justify-center shrink-0"
-        >
-          <BookOpen size={14} className="text-gold-400" />
+      <div className="flex items-center gap-4 py-1">
+        <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shadow-sm">
+          <BookOpen size={18} />
         </div>
-        <div>
-          <p className="text-sm font-medium text-ink-100">{row.name}</p>
-          <p className="text-xs text-ink-500">
-            {row.description.slice(0, 40)}...
+        <div className="min-w-0">
+          <p className="text-sm font-bold text-slate-900 leading-tight truncate">{row.name}</p>
+          <p className="text-[11px] font-medium text-slate-400 mt-0.5 truncate max-w-[200px]">
+            {row.description}
           </p>
         </div>
       </div>
@@ -44,12 +40,13 @@ const COLUMNS: Column<Course>[] = [
   },
   {
     key: "code",
-    label: "Code",
+    label: "Course Code",
     sortable: true,
     render: (row) => (
-      <span className="font-mono text-sm font-medium text-jade-400">
+      <div className="flex items-center gap-2 font-mono text-[11px] font-bold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-100">
+        <Hash size={12} />
         {row.code}
-      </span>
+      </div>
     ),
   },
   {
@@ -57,30 +54,38 @@ const COLUMNS: Column<Course>[] = [
     label: "Department",
     sortable: true,
     render: (row) => (
-      <span className="text-sm text-ink-300">{row.department}</span>
+      <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
+        <Layers size={14} className="text-slate-400" />
+        {row.department}
+      </div>
     ),
   },
   {
     key: "semester",
-    label: "Sem",
+    label: "Level",
     render: (row) => (
-      <span className="font-mono text-sm text-ink-400">Sem {row.semester}</span>
+      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+        Semester {row.semester}
+      </span>
     ),
   },
   {
     key: "credits",
-    label: "Credits",
+    label: "Units",
     render: (row) => (
-      <span className="font-mono text-sm text-ink-400">{row.credits} cr</span>
+      <div className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-bold text-[10px] inline-block border border-slate-200">
+        {row.credits} CREDITS
+      </div>
     ),
   },
   {
     key: "enrolledCount",
-    label: "Enrolled",
+    label: "Enrollment",
     render: (row) => (
-      <span className="font-mono text-sm text-ink-300">
+      <div className="flex items-center gap-1.5 text-slate-500 font-bold text-xs">
+        <Users size={12} className="text-slate-400" />
         {row.enrolledCount}
-      </span>
+      </div>
     ),
   },
   {
@@ -95,7 +100,6 @@ const COLUMNS: Column<Course>[] = [
   },
 ];
 
-// ── Component ────────────────────────────────────────────
 export default function Courses() {
   const [addOpen, setAddOpen] = useState(false);
   const [editCourse, setEditCourse] = useState<Course | null>(null);
@@ -128,88 +132,96 @@ export default function Courses() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Manage Courses"
-        subtitle={`${courses.length} courses available`}
-        action={
-          <button onClick={() => setAddOpen(true)} className="btn-primary">
-            <Plus size={16} />
-            Add course
-          </button>
-        }
-      />
-
-      <DataTable
-        data={courses}
-        columns={COLUMNS}
-        loading={isLoading}
-        searchable
-        searchKeys={["name", "code", "department"]}
-        searchPlaceholder="Search by name, code or department..."
-        pageSize={10}
-        emptyTitle="No courses found"
-        emptyDesc="Add your first course using the button above."
-        actions={(row) => (
-          <>
-            <button
-              onClick={() => setEditCourse(row)}
-              className="p-1.5 rounded-lg text-ink-500
-                         hover:text-jade-400 hover:bg-jade-500/10
-                         transition-colors"
-              title="Edit course"
+    <div className="space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <PageHeader
+          title="Course Management"
+          subtitle={`${courses.length} educational programs currently defined`}
+          action={
+            <button 
+              onClick={() => setAddOpen(true)} 
+              className="btn-primary py-3 px-6 shadow-brand-500/10"
             >
-              <Pencil size={14} />
+              <Plus size={18} />
+              Design New Course
             </button>
-            <button
-              onClick={() => setDeleteTarget(row)}
-              className="p-1.5 rounded-lg text-ink-500
-                         hover:text-red-400 hover:bg-red-500/10
-                         transition-colors"
-              title="Delete course"
-            >
-              <Trash2 size={14} />
-            </button>
-          </>
-        )}
-      />
+          }
+        />
+      </motion.div>
 
-      {/* Add modal */}
+      <div className="card-base bg-white border-slate-100 overflow-hidden">
+        <DataTable
+          data={courses}
+          columns={COLUMNS}
+          loading={isLoading}
+          searchable
+          searchKeys={["name", "code", "department"]}
+          searchPlaceholder="Filter catalog by name, code or department..."
+          pageSize={10}
+          emptyTitle="Catalog is Empty"
+          emptyDesc="No courses found. Create a new curriculum item to begin."
+          actions={(row) => (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setEditCourse(row)}
+                className="p-2 rounded-xl text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100"
+                title="Edit Course"
+              >
+                <Pencil size={16} />
+              </button>
+              <button
+                onClick={() => setDeleteTarget(row)}
+                className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
+                title="Delete Course"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          )}
+        />
+      </div>
+
+      {/* Modals & Dialogs */}
       <Modal
         open={addOpen}
         onClose={() => setAddOpen(false)}
-        title="Add new course"
-        subtitle="Create a new course for a department"
+        title="Course Designer"
+        subtitle="Specify academic requirements and unit structure"
         size="lg"
       >
-        <CourseForm onSubmit={handleAdd} isLoading={createCourse.isPending} />
+        <div className="p-2">
+          <CourseForm onSubmit={handleAdd} isLoading={createCourse.isPending} />
+        </div>
       </Modal>
 
-      {/* Edit modal */}
       <Modal
         open={!!editCourse}
         onClose={() => setEditCourse(null)}
-        title="Edit course"
-        subtitle={`Editing ${editCourse?.name ?? ""}`}
+        title="Modify Curriculum"
+        subtitle={`Editing requirements for: ${editCourse?.name}`}
         size="lg"
       >
-        {editCourse && (
-          <CourseForm
-            course={editCourse}
-            onSubmit={handleEdit}
-            isLoading={updateCourse.isPending}
-          />
-        )}
+        <div className="p-2">
+          {editCourse && (
+            <CourseForm
+              course={editCourse}
+              onSubmit={handleEdit}
+              isLoading={updateCourse.isPending}
+            />
+          )}
+        </div>
       </Modal>
 
-      {/* Delete confirm */}
       <ConfirmDialog
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
-        title="Delete course"
-        description={`Are you sure you want to delete "${deleteTarget?.name ?? "this course"}"? All enrollments will be affected.`}
-        confirmLabel="Delete course"
+        title="Delete Curriculum Item"
+        description={`This will permanently remove "${deleteTarget?.name}" from the catalog. This action may affect existing student enrollments.`}
+        confirmLabel="Confirm Deletion"
         loading={deleteCourse.isPending}
       />
     </div>

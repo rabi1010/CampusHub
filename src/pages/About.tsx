@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Target,
@@ -7,28 +8,30 @@ import {
   Globe,
   Code2,
   Database,
+  ShieldCheck,
+  Cpu,
 } from "lucide-react";
 
 const VALUES = [
   {
     icon: Target,
-    title: "Purpose-built",
-    desc: "Every feature exists because a real campus needs it — no bloat.",
+    title: "Mission-Driven",
+    desc: "We build tools that solve real academic challenges, prioritizing functionality and user success.",
   },
   {
     icon: Zap,
-    title: "Fast by design",
-    desc: "Optimised queries, lazy loading, and client-side caching built in.",
+    title: "High Performance",
+    desc: "Optimized architectures ensure the system remains lightning-fast, even with thousands of records.",
   },
   {
     icon: Heart,
-    title: "User-first",
-    desc: "Tested with real students and teachers. Complexity lives in the backend.",
+    title: "User-Centric",
+    desc: "Designed with empathy for students and faculty, ensuring a steep learning curve and high adoption.",
   },
   {
     icon: Globe,
-    title: "Scale-ready",
-    desc: "Monolith today, architected to split into microservices tomorrow.",
+    title: "Future-Ready",
+    desc: "Scalable infrastructure built to grow alongside your institution, from small colleges to large universities.",
   },
 ];
 
@@ -36,194 +39,232 @@ const TEAM = [
   {
     initials: "RS",
     name: "Rabi Shankar Chy",
-    role: "Full-stack developer",
-    color: "bg-jade-500/20 text-jade-300",
+    role: "Architect & Lead Dev",
+    color: "bg-brand-50 text-brand-700",
   },
   {
-    initials: "RS",
-    name: "Rabi Shankar Chy",
-    role: "UI / UX designer",
-    color: "bg-ink-500/30 text-ink-200",
+    initials: "JD",
+    name: "Jane Doe",
+    role: "UX Strategy",
+    color: "bg-slate-100 text-slate-700",
   },
   {
-    initials: "RS",
-    name: "Rabi Shankar Chy",
-    role: "Backend engineer",
-    color: "bg-gold-500/10 text-gold-300",
+    initials: "AS",
+    name: "Alex Smith",
+    role: "System Engineer",
+    color: "bg-slate-100 text-slate-700",
   },
 ];
 
 const STACK = [
   {
     icon: Code2,
-    label: "Frontend",
-    items: ["React 18 + Vite", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    label: "Frontend Ecosystem",
+    items: ["React 19 + Vite", "TypeScript", "Tailwind CSS 4", "Framer Motion"],
   },
   {
     icon: Database,
-    label: "Backend",
-    items: ["Java Spring boot", "PostgreSQL", "Prisma ORM", "JWT Auth"],
+    label: "Backend & Data",
+    items: ["Java Spring Boot", "PostgreSQL", "JPA / Hibernate", "JWT Security"],
   },
 ];
 
 export default function About() {
   return (
-    <div className="grid-texture">
-      {/* Hero */}
-      <section className="relative pt-36 pb-24 overflow-hidden">
-        <div
-          className="orb w-[500px] h-[500px] bg-jade-500
-                        top-0 right-[-100px] opacity-[0.1]"
-        />
-        <div className="max-w-4xl mx-auto px-6">
-          <span className="section-label">About CampusHub</span>
-          <h1
-            className="font-display text-5xl md:text-6xl text-ink-50
-                         mt-5 mb-6 leading-tight"
+    <div className="bg-slate-50 min-h-screen">
+      {/* ── HERO SECTION ─────────────────────────────────── */}
+      <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 overflow-hidden bg-white border-b border-slate-100">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-50/30 -skew-x-12 translate-x-1/4 -z-10" />
+        
+        <div className="section-container relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-3xl"
           >
-            Built by students,
-            <br />
-            <span className="gradient-text italic">for institutions</span>
-          </h1>
-          <p className="text-lg text-ink-300 max-w-2xl leading-relaxed">
-            CampusHub started as a semester project and grew into a fully
-            architected platform. We set out to replace outdated, fragmented
-            college management tools with a single modern system that actually
-            feels good to use.
-          </p>
+            <span className="inline-block px-3 py-1 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-xs font-bold mb-6">
+              Our Journey
+            </span>
+            <h1 className="text-5xl lg:text-6xl font-display font-bold text-slate-900 leading-tight mb-6">
+              Revolutionizing Campus <br />
+              <span className="text-brand-600 italic">Management</span>
+            </h1>
+            <p className="text-xl text-slate-600 leading-relaxed max-w-2xl">
+              CampusHub was born from a simple observation: educational institutions deserve better 
+              software. We've combined deep academic insights with modern engineering to create a 
+              platform that actually works.
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* Mission quote */}
-      <section className="py-16 border-t border-white/[0.06]">
-        <div className="max-w-6xl mx-auto px-6">
-          <div
-            className="glass rounded-3xl p-10 md:p-16
-                          relative overflow-hidden"
-          >
-            <div
-              className="orb w-96 h-96 bg-jade-500
-                            -bottom-32 -left-32 opacity-[0.08]"
-            />
-            <div className="relative z-10 max-w-2xl">
-              <p className="section-label mb-6">Our mission</p>
-              <blockquote
-                className="font-display text-3xl md:text-4xl
-                                     text-ink-50 leading-snug"
-              >
-                "To revolutionise how educational institutions operate by
-                providing a secure, efficient, and{" "}
-                <span className="gradient-text italic">user-friendly</span>{" "}
-                management platform."
-              </blockquote>
+      {/* ── MISSION QUOTE ────────────────────────────────── */}
+      <section className="py-24">
+        <div className="section-container">
+          <div className="card-base p-12 lg:p-20 relative overflow-hidden bg-slate-900 text-white">
+            <div className="absolute bottom-0 right-0 p-12 opacity-5">
+              <ShieldCheck size={240} />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Values */}
-      <section className="py-24 max-w-6xl mx-auto px-6">
-        <span className="section-label">What we stand for</span>
-        <h2 className="font-display text-4xl text-ink-50 mt-4 mb-12">
-          Our values
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {VALUES.map(({ icon: Icon, title, desc }, i) => (
-            <div
-              key={title}
-              className={`glass rounded-2xl p-6 hover:border-white/20
-                             transition-all duration-300
-                             animate-fade-up delay-${(i + 1) * 100}`}
+            
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="relative z-10 max-w-3xl"
             >
-              <div
-                className="w-9 h-9 rounded-lg bg-jade-500/10
-                              border border-jade-500/20
-                              flex items-center justify-center mb-4"
-              >
-                <Icon size={16} className="text-jade-400" />
+              <div className="w-12 h-1 bg-brand-500 mb-8" />
+              <h2 className="text-3xl lg:text-4xl font-display font-medium leading-snug mb-8">
+                "Our mission is to empower educational institutions with secure, 
+                intelligent, and <span className="text-brand-400">human-centric</span> technology 
+                that simplifies administration and amplifies learning."
+              </h2>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center text-brand-400">
+                  <Cpu size={20} />
+                </div>
+                <p className="text-slate-400 font-mono text-sm tracking-widest uppercase">
+                  Est. 2024 • Academic Excellence
+                </p>
               </div>
-              <h3 className="font-medium text-ink-100 mb-2">{title}</h3>
-              <p className="text-sm text-ink-400 leading-relaxed">{desc}</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── VALUES GRID ─────────────────────────────────── */}
+      <section className="py-24 bg-white border-y border-slate-100">
+        <div className="section-container">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+            <div>
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">What we stand for</h2>
+              <p className="text-slate-600 max-w-md">The principles that guide our product development and engineering decisions every day.</p>
             </div>
-          ))}
-        </div>
-      </section>
+            <Link to="/register" className="btn-primary">Join our community</Link>
+          </div>
 
-      {/* Team */}
-      <section className="py-16 border-t border-white/[0.06]">
-        <div className="max-w-6xl mx-auto px-6">
-          <span className="section-label">The people</span>
-          <h2 className="font-display text-4xl text-ink-50 mt-4 mb-12">
-            Who built this
-          </h2>
-          <div className="grid sm:grid-cols-3 gap-5 max-w-2xl">
-            {TEAM.map(({ initials, name, role, color }) => (
-              <div
-                key={name}
-                className="glass rounded-2xl p-6 text-center
-                              hover:border-white/20 transition-all"
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {VALUES.map((value, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                viewport={{ once: true }}
+                className="p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl hover:border-brand-100 transition-all group"
               >
-                <div
-                  className={`w-14 h-14 rounded-full ${color}
-                                 flex items-center justify-center
-                                 text-lg font-semibold mx-auto mb-3`}
-                >
-                  {initials}
+                <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-brand-600 mb-6 shadow-sm group-hover:scale-110 transition-transform">
+                  <value.icon size={24} />
                 </div>
-                <p className="font-medium text-ink-100 text-sm">{name}</p>
-                <p className="text-xs text-ink-500 mt-0.5">{role}</p>
-              </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{value.title}</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">{value.desc}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Tech stack */}
-      <section className="py-16 border-t border-white/[0.06]">
-        <div className="max-w-6xl mx-auto px-6">
-          <span className="section-label">Technology</span>
-          <h2 className="font-display text-4xl text-ink-50 mt-4 mb-12">
-            Built on solid foundations
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-5 max-w-2xl">
-            {STACK.map(({ icon: Icon, label, items }) => (
-              <div key={label} className="glass rounded-2xl p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Icon size={16} className="text-jade-400" />
-                  <p className="text-sm font-mono font-medium text-ink-300">
-                    {label}
-                  </p>
+      {/* ── TEAM SECTION ────────────────────────────────── */}
+      <section className="py-24">
+        <div className="section-container">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">The minds behind CampusHub</h2>
+            <p className="text-slate-600">A dedicated team of educators, designers, and engineers.</p>
+          </div>
+          
+          <div className="grid sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {TEAM.map((member, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="card-base p-8 text-center"
+              >
+                <div className={`w-20 h-20 rounded-2xl ${member.color} flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-inner`}>
+                  {member.initials}
                 </div>
-                <ul className="flex flex-col gap-2">
-                  {items.map((item) => (
-                    <li
-                      key={item}
-                      className="text-sm text-ink-400
-                                   flex items-center gap-2"
-                    >
-                      <span className="w-1 h-1 rounded-full bg-jade-500" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                <h4 className="text-lg font-bold text-slate-900 mb-1">{member.name}</h4>
+                <p className="text-sm text-slate-500">{member.role}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 px-6 text-center">
-        <h2 className="font-display text-4xl text-ink-50 mb-4">
-          Curious? Try it yourself.
-        </h2>
-        <p className="text-ink-400 mb-8">
-          Sign in and explore the dashboards for each role.
-        </p>
-        <Link to="/login" className="btn-primary px-8 py-3.5 text-base">
-          Go to login <ArrowRight size={16} />
-        </Link>
+      {/* ── TECH STACK ──────────────────────────────────── */}
+      <section className="py-24 bg-slate-900 text-white overflow-hidden">
+        <div className="section-container">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-4xl font-bold mb-6">Engineered for <br /><span className="text-brand-400">Scale and Speed</span></h2>
+              <p className="text-slate-400 text-lg mb-10">We use the most reliable and modern technology stack to ensure your data is secure and the performance is unmatched.</p>
+              
+              <div className="grid sm:grid-cols-2 gap-8">
+                {STACK.map((group, i) => (
+                  <div key={i}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-brand-400">
+                        <group.icon size={18} />
+                      </div>
+                      <p className="font-bold text-slate-200">{group.label}</p>
+                    </div>
+                    <ul className="space-y-2">
+                      {group.items.map((item, j) => (
+                        <li key={j} className="flex items-center gap-2 text-slate-400 text-sm">
+                          <span className="w-1 h-1 rounded-full bg-brand-500" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="relative">
+              <div className="absolute inset-0 bg-brand-500/20 blur-[100px] rounded-full" />
+              <div className="relative card-base bg-white/5 border-white/10 backdrop-blur-xl p-10">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-400" />
+                    <div className="w-3 h-3 rounded-full bg-amber-400" />
+                    <div className="w-3 h-3 rounded-full bg-green-400" />
+                  </div>
+                  <div className="px-3 py-1 rounded-md bg-white/10 text-[10px] font-mono text-slate-300">Terminal</div>
+                </div>
+                <div className="space-y-3 font-mono text-sm">
+                  <p className="text-emerald-400">➜ <span className="text-white">campushub-os</span> <span className="text-slate-500">git:(main)</span> <span className="text-green-400">npm run deploy</span></p>
+                  <p className="text-slate-400">Optimizing production build...</p>
+                  <p className="text-slate-400">Initializing PostgreSQL connection...</p>
+                  <p className="text-slate-400">Spring Boot context started in 2.45s</p>
+                  <p className="text-green-400 font-bold">✓ Deployment successful. Campus is live.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FINAL CTA ───────────────────────────────────── */}
+      <section className="py-32 text-center">
+        <div className="section-container">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-bold text-slate-900 mb-6">Ready to see it in action?</h2>
+            <p className="text-lg text-slate-600 mb-10 max-w-lg mx-auto">Join the institutions that are choosing the future of education management today.</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link to="/login" className="btn-primary px-10 py-4 text-base">
+                Explore Portal <ArrowRight size={18} />
+              </Link>
+            </div>
+          </motion.div>
+        </div>
       </section>
     </div>
   );
 }
+

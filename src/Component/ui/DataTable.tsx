@@ -6,7 +6,6 @@ import EmptyState from "./EmptyState";
 import Pagination from "./Pagination";
 import SearchInput from "./SearchInput";
 
-// ── Types ───────────────────────────────────────────────
 export interface Column<T> {
   key: string;
   label: string;
@@ -26,12 +25,11 @@ interface DataTableProps<T extends { id: string }> {
   emptyTitle?: string;
   emptyDesc?: string;
   pageSize?: number;
-  toolbar?: React.ReactNode; // extra filters/buttons
+  toolbar?: React.ReactNode;
 }
 
 type SortDir = "asc" | "desc" | null;
 
-// ── Component ────────────────────────────────────────────
 export default function DataTable<T extends { id: string }>({
   data,
   columns,
@@ -50,18 +48,14 @@ export default function DataTable<T extends { id: string }>({
   const [sortDir, setSortDir] = useState<SortDir>(null);
   const [page, setPage] = useState(1);
 
-  // ── Search filter ──────────────────────────────────────
   const filtered = data.filter((row) => {
     if (!search) return true;
     const q = search.toLowerCase();
     return searchKeys.some((key) =>
-      String(row[key] ?? "")
-        .toLowerCase()
-        .includes(q),
+      String(row[key] ?? "").toLowerCase().includes(q),
     );
   });
 
-  // ── Sort ───────────────────────────────────────────────
   const sorted = [...filtered].sort((a, b) => {
     if (!sortKey || !sortDir) return 0;
     const av = String((a as Record<string, unknown>)[sortKey] ?? "");
@@ -69,55 +63,36 @@ export default function DataTable<T extends { id: string }>({
     return sortDir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
   });
 
-  // ── Paginate ───────────────────────────────────────────
   const totalPages = Math.ceil(sorted.length / pageSize);
   const paginated = sorted.slice((page - 1) * pageSize, page * pageSize);
 
   const handleSort = (key: string) => {
-    if (sortKey !== key) {
-      setSortKey(key);
-      setSortDir("asc");
-      return;
-    }
-    if (sortDir === "asc") {
-      setSortDir("desc");
-      return;
-    }
-    setSortKey(null);
-    setSortDir(null);
+    if (sortKey !== key) { setSortKey(key); setSortDir("asc"); return; }
+    if (sortDir === "asc") { setSortDir("desc"); return; }
+    setSortKey(null); setSortDir(null);
   };
 
-  // Reset to page 1 when search changes
-  const handleSearch = (val: string) => {
-    setSearch(val);
-    setPage(1);
-  };
+  const handleSearch = (val: string) => { setSearch(val); setPage(1); };
 
   const SortIcon = ({ col }: { col: Column<T> }) => {
     if (!col.sortable) return null;
-    if (sortKey !== col.key)
-      return <ChevronsUpDown size={13} className="text-ink-600" />;
-    return sortDir === "asc" ? (
-      <ChevronUp size={13} className="text-jade-400" />
-    ) : (
-      <ChevronDown size={13} className="text-jade-400" />
-    );
+    if (sortKey !== col.key) return <ChevronsUpDown size={13} className="text-slate-300" />;
+    return sortDir === "asc"
+      ? <ChevronUp size={13} className="text-brand-500" />
+      : <ChevronDown size={13} className="text-brand-500" />;
   };
 
   return (
-    <div className="glass rounded-2xl overflow-hidden">
-      {/* ── Toolbar ──────────────────────────────────── */}
+    <div className="rounded-2xl overflow-hidden">
+      {/* Toolbar */}
       {(searchable || toolbar) && (
-        <div
-          className="flex flex-col sm:flex-row items-start sm:items-center
-                        gap-3 p-4 border-b border-white/[0.07]"
-        >
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 border-b border-slate-100 bg-slate-50/50">
           {searchable && (
             <SearchInput
               value={search}
               onChange={handleSearch}
               placeholder={searchPlaceholder}
-              className="w-full sm:w-64"
+              className="w-full sm:w-72"
             />
           )}
           {toolbar && (
@@ -126,28 +101,24 @@ export default function DataTable<T extends { id: string }>({
         </div>
       )}
 
-      {/* ── Loading ───────────────────────────────────── */}
       {loading ? (
         <TableSkeleton rows={pageSize} />
       ) : paginated.length === 0 ? (
-        /* ── Empty ────────────────────────────────────── */
         <EmptyState title={emptyTitle} description={emptyDesc} />
       ) : (
-        /* ── Table ────────────────────────────────────── */
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-white/[0.07]">
+              <tr className="border-b border-slate-100 bg-slate-50/50">
                 {columns.map((col) => (
                   <th
                     key={col.key}
                     style={{ width: col.width }}
                     onClick={() => col.sortable && handleSort(col.key)}
                     className={clsx(
-                      "px-4 py-3 text-left text-xs font-mono",
-                      "font-medium text-ink-500 uppercase tracking-wider",
-                      col.sortable &&
-                        "cursor-pointer hover:text-ink-300 select-none",
+                      "px-4 py-3.5 text-left text-[10px] font-bold",
+                      "text-slate-400 uppercase tracking-widest",
+                      col.sortable && "cursor-pointer hover:text-slate-600 select-none",
                     )}
                   >
                     <div className="flex items-center gap-1.5">
@@ -157,42 +128,25 @@ export default function DataTable<T extends { id: string }>({
                   </th>
                 ))}
                 {actions && (
-                  <th
-                    className="px-4 py-3 text-right text-xs font-mono
-                                 font-medium text-ink-500 uppercase
-                                 tracking-wider w-24"
-                  >
+                  <th className="px-4 py-3.5 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest w-24">
                     Actions
                   </th>
                 )}
               </tr>
             </thead>
-
-            <tbody className="divide-y divide-white/[0.04]">
+            <tbody className="divide-y divide-slate-50">
               {paginated.map((row) => (
-                <tr
-                  key={row.id}
-                  className="hover:bg-white/[0.02] transition-colors group"
-                >
+                <tr key={row.id} className="hover:bg-slate-50/50 transition-colors group">
                   {columns.map((col) => (
-                    <td
-                      key={col.key}
-                      className="px-4 py-3.5 text-sm text-ink-300"
-                    >
+                    <td key={col.key} className="px-4 py-3.5 text-sm text-slate-700">
                       {col.render
                         ? col.render(row)
-                        : String(
-                            (row as Record<string, unknown>)[col.key] ?? "—",
-                          )}
+                        : String((row as Record<string, unknown>)[col.key] ?? "—")}
                     </td>
                   ))}
                   {actions && (
                     <td className="px-4 py-3.5">
-                      <div
-                        className="flex items-center justify-end gap-1
-                                      opacity-0 group-hover:opacity-100
-                                      transition-opacity"
-                      >
+                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         {actions(row)}
                       </div>
                     </td>
@@ -204,9 +158,8 @@ export default function DataTable<T extends { id: string }>({
         </div>
       )}
 
-      {/* ── Pagination ────────────────────────────────── */}
       {!loading && paginated.length > 0 && (
-        <div className="px-4 pb-4 pt-2">
+        <div className="px-4 pb-4 pt-2 border-t border-slate-50">
           <Pagination
             page={page}
             totalPages={totalPages}

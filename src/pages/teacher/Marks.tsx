@@ -1,9 +1,11 @@
 import { useState, useMemo } from "react";
-import { Save, Download } from "lucide-react";
+import { Save, Download, Calculator, TrendingUp, Users, Target, ClipboardList, GraduationCap } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useStudents } from "../../features/students/useStudents";
 import { useToast } from "../../Component/ui/Toast";
 import PageHeader from "../../components/ui/PageHeader";
 import Avatar from "../../Component/ui/Avatar";
+import clsx from "clsx";
 
 const MY_COURSES = [
   { id: "1", name: "Data Structures", code: "CS101", totalMarks: 100 },
@@ -32,7 +34,6 @@ export default function Marks() {
   const exam = EXAM_TYPES.find((e) => e.value === selectedExam)!;
 
   const setMark = (studentId: string, value: string) => {
-    // Only allow numbers within range
     const num = parseInt(value);
     if (value !== "" && (isNaN(num) || num < 0 || num > exam.max)) return;
     setMarks((prev) => ({ ...prev, [studentId]: value }));
@@ -42,13 +43,9 @@ export default function Marks() {
     setIsSaving(true);
     await new Promise((r) => setTimeout(r, 1000));
     setIsSaving(false);
-    toast.success(
-      "Marks saved",
-      `${selectedExam} marks saved for ${course.name}`,
-    );
+    toast.success("Marks synchronized", `Academic records updated for ${course.name}.`);
   };
 
-  // Stats
   const stats = useMemo(() => {
     const values = students
       .map((s) => parseFloat(marks[s.id] ?? "0"))
@@ -63,192 +60,176 @@ export default function Marks() {
   }, [marks, students]);
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Upload Marks"
-        subtitle="Enter and save student marks"
-        action={
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="btn-primary disabled:opacity-60
-                       disabled:cursor-not-allowed disabled:transform-none"
-          >
-            {isSaving ? (
-              <>
-                <span
-                  className="w-4 h-4 border-2 border-white/30
-                                 border-t-white rounded-full animate-spin"
-                />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save size={15} />
-                Save marks
-              </>
-            )}
-          </button>
-        }
-      />
-
-      {/* Course + exam type selectors */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        {/* Course */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {MY_COURSES.map((c) => (
+    <div className="space-y-8">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+        <PageHeader
+          title="Grade Assessment"
+          subtitle="Submit internal, midterm, and final examination marks."
+          action={
             <button
-              key={c.id}
-              onClick={() => setSelectedCourse(c.id)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium
-                          border transition-all duration-200 ${
-                            selectedCourse === c.id
-                              ? "bg-jade-500/15 border-jade-500/40 text-jade-300"
-                              : "border-white/[0.07] text-ink-400 hover:border-white/20"
-                          }`}
+              onClick={handleSave}
+              disabled={isSaving}
+              className="btn-primary py-3 px-8 shadow-brand-500/10 disabled:opacity-50"
             >
-              {c.code}
+              {isSaving ? "Synchronizing..." : <><Save size={18} /> Publish Grades</>}
             </button>
-          ))}
-        </div>
+          }
+        />
+      </motion.div>
 
-        {/* Exam type */}
-        <div className="flex items-center gap-2 sm:ml-auto">
-          {EXAM_TYPES.map((e) => (
-            <button
-              key={e.value}
-              onClick={() => setSelectedExam(e.value as ExamType)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium
-                          border transition-all duration-200 ${
-                            selectedExam === e.value
-                              ? "bg-ink-500/30 border-ink-400/40 text-ink-200"
-                              : "border-white/[0.07] text-ink-400 hover:border-white/20"
-                          }`}
-            >
-              {e.label}
-              <span className="ml-1.5 font-mono text-xs opacity-60">
-                /{e.max}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Stats bar */}
-      {stats && (
-        <div
-          className="flex items-center gap-6 glass
-                        rounded-xl px-4 py-3"
-        >
-          <div className="text-center">
-            <p className="font-mono text-lg text-jade-400">{stats.avg}</p>
-            <p className="text-xs text-ink-500">Average</p>
-          </div>
-          <div className="text-center">
-            <p className="font-mono text-lg text-ink-200">{stats.max}</p>
-            <p className="text-xs text-ink-500">Highest</p>
-          </div>
-          <div className="text-center">
-            <p className="font-mono text-lg text-ink-200">{stats.min}</p>
-            <p className="text-xs text-ink-500">Lowest</p>
-          </div>
-          <div className="text-center">
-            <p className="font-mono text-lg text-ink-200">{stats.count}</p>
-            <p className="text-xs text-ink-500">Entered</p>
-          </div>
-          <p className="ml-auto text-xs text-ink-500 font-mono">
-            Max marks: {exam.max}
-          </p>
-        </div>
-      )}
-
-      {/* Marks table */}
-      <div className="glass rounded-2xl overflow-hidden">
-        {/* Table header */}
-        <div
-          className="flex items-center gap-4 px-4 py-3
-                        border-b border-white/[0.07]"
-        >
-          <span className="w-6 text-xs font-mono text-ink-600">#</span>
-          <span
-            className="flex-1 text-xs font-mono text-ink-500
-                           uppercase tracking-wider"
-          >
-            Student
-          </span>
-          <span
-            className="w-32 text-xs font-mono text-ink-500
-                           uppercase tracking-wider text-right"
-          >
-            Roll No
-          </span>
-          <span
-            className="w-32 text-xs font-mono text-ink-500
-                           uppercase tracking-wider text-right"
-          >
-            Marks / {exam.max}
-          </span>
-        </div>
-
-        {/* Rows */}
-        <div className="divide-y divide-white/[0.04]">
-          {students.map((student, index) => {
-            const val = marks[student.id] ?? "";
-            const numVal = parseFloat(val);
-            const isPassing = numVal >= exam.max * 0.4;
-            const hasValue = val !== "" && !isNaN(numVal);
-
-            return (
-              <div
-                key={student.id}
-                className="flex items-center gap-4 px-4 py-3
-                           hover:bg-white/[0.02] transition-colors"
-              >
-                <span className="font-mono text-xs text-ink-600 w-6">
-                  {index + 1}
-                </span>
-
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <Avatar name={student.fullName} size="sm" />
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-ink-100 truncate">
-                      {student.fullName}
-                    </p>
-                    <p className="text-xs text-ink-500">{student.department}</p>
-                  </div>
-                </div>
-
-                <span
-                  className="w-32 font-mono text-sm text-ink-400
-                                 text-right shrink-0"
+      <div className="grid lg:grid-cols-4 gap-8">
+        {/* Selection Sidebar */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="card-base p-6 bg-white border-slate-100">
+            <div className="flex items-center gap-2 mb-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+              <ClipboardList size={14} /> Academic Unit
+            </div>
+            <div className="space-y-2">
+              {MY_COURSES.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedCourse(c.id)}
+                  className={clsx(
+                    "w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all",
+                    selectedCourse === c.id
+                      ? "bg-brand-600 text-white shadow-lg shadow-brand-500/20"
+                      : "text-slate-500 hover:bg-slate-50 border border-transparent hover:border-slate-100"
+                  )}
                 >
-                  {student.rollNo}
-                </span>
+                  <p className="text-[10px] opacity-70 mb-0.5">{c.code}</p>
+                  {c.name}
+                </button>
+              ))}
+            </div>
+          </div>
 
-                {/* Marks input */}
-                <div className="w-32 flex justify-end shrink-0">
-                  <input
-                    type="number"
-                    min={0}
-                    max={exam.max}
-                    value={val}
-                    onChange={(e) => setMark(student.id, e.target.value)}
-                    placeholder="—"
-                    className={`w-20 px-3 py-1.5 rounded-lg text-sm
-                                font-mono text-right bg-white/5
-                                border transition-all duration-150
-                                focus:outline-none focus:bg-white/10 ${
+          <div className="card-base p-6 bg-white border-slate-100">
+            <div className="flex items-center gap-2 mb-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+              <Target size={14} /> Assessment Type
+            </div>
+            <div className="space-y-2">
+              {EXAM_TYPES.map((e) => (
+                <button
+                  key={e.value}
+                  onClick={() => setSelectedExam(e.value as ExamType)}
+                  className={clsx(
+                    "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all border",
+                    selectedExam === e.value
+                      ? "bg-slate-900 text-white border-slate-900 shadow-lg"
+                      : "bg-white text-slate-500 border-slate-100 hover:border-slate-200"
+                  )}
+                >
+                  {e.label}
+                  <span className={clsx("text-[10px] font-mono", selectedExam === e.value ? "text-slate-400" : "text-slate-400")}>
+                    MAX: {e.max}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Grade Entry Area */}
+        <div className="lg:col-span-3 space-y-6">
+          {stats && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="card-base p-4 bg-white border-slate-100">
+                <div className="flex items-center gap-2 text-slate-400 mb-2">
+                  <Calculator size={14} /> <span className="text-[10px] font-bold uppercase tracking-wider">Average</span>
+                </div>
+                <p className="text-2xl font-display font-bold text-brand-600">{stats.avg}</p>
+              </div>
+              <div className="card-base p-4 bg-white border-slate-100">
+                <div className="flex items-center gap-2 text-slate-400 mb-2">
+                  <TrendingUp size={14} /> <span className="text-[10px] font-bold uppercase tracking-wider">Highest</span>
+                </div>
+                <p className="text-2xl font-display font-bold text-emerald-600">{stats.max}</p>
+              </div>
+              <div className="card-base p-4 bg-white border-slate-100">
+                <div className="flex items-center gap-2 text-slate-400 mb-2">
+                  <Target size={14} /> <span className="text-[10px] font-bold uppercase tracking-wider">Lowest</span>
+                </div>
+                <p className="text-2xl font-display font-bold text-rose-600">{stats.min}</p>
+              </div>
+              <div className="card-base p-4 bg-white border-slate-100">
+                <div className="flex items-center gap-2 text-slate-400 mb-2">
+                  <Users size={14} /> <span className="text-[10px] font-bold uppercase tracking-wider">Entered</span>
+                </div>
+                <p className="text-2xl font-display font-bold text-slate-900">{stats.count}</p>
+              </div>
+            </div>
+          )}
+
+          <div className="card-base bg-white border-slate-100 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-slate-50 bg-slate-50/50">
+                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest w-16">#</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student Information</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Roll No</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Assessment Score</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  <AnimatePresence mode="popLayout">
+                    {students.map((student, index) => {
+                      const val = marks[student.id] ?? "";
+                      const numVal = parseFloat(val);
+                      const isPassing = numVal >= exam.max * 0.4;
+                      const hasValue = val !== "" && !isNaN(numVal);
+
+                      return (
+                        <motion.tr
+                          layout
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.02 }}
+                          key={student.id}
+                          className="group hover:bg-slate-50/50 transition-colors"
+                        >
+                          <td className="px-6 py-4 font-mono text-xs font-bold text-slate-300">{index + 1}</td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-4">
+                              <Avatar name={student.fullName} size="md" className="border-2 border-white shadow-sm" />
+                              <div className="min-w-0">
+                                <p className="text-sm font-bold text-slate-900 truncate">{student.fullName}</p>
+                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase mt-0.5">
+                                  <GraduationCap size={12} /> {student.department}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-center font-mono text-xs font-bold text-slate-500">{student.rollNo}</td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex items-center justify-end gap-3">
+                              <input
+                                type="number"
+                                min={0}
+                                max={exam.max}
+                                value={val}
+                                onChange={(e) => setMark(student.id, e.target.value)}
+                                placeholder="—"
+                                className={clsx(
+                                  "w-24 px-4 py-2.5 rounded-xl text-sm font-bold text-right transition-all border outline-none",
                                   hasValue
                                     ? isPassing
-                                      ? "border-jade-500/40 text-jade-300"
-                                      : "border-red-500/40 text-red-400"
-                                    : "border-white/10 text-ink-300"
-                                }`}
-                  />
-                </div>
-              </div>
-            );
-          })}
+                                      ? "bg-emerald-50 border-emerald-100 text-emerald-700 ring-2 ring-emerald-500/10"
+                                      : "bg-rose-50 border-rose-100 text-rose-700 ring-2 ring-rose-500/10"
+                                    : "bg-slate-50 border-slate-100 text-slate-400 focus:bg-white focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5"
+                                )}
+                              />
+                              <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter w-8 text-left">/ {exam.max}</span>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      );
+                    })}
+                  </AnimatePresence>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

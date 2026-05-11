@@ -2,19 +2,17 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Eye,
-  EyeOff,
-  ArrowRight,
   GraduationCap,
   BookOpen,
-  AlertCircle,
+  ArrowRight,
+  ArrowLeft,
   CheckCircle2,
-  User,
-  Mail,
-  Phone,
-  Lock,
-  ShieldCheck,
+  AlertCircle,
+  Eye,
+  EyeOff,
+  ChevronLeft,
 } from "lucide-react";
 import {
   registerSchema,
@@ -22,429 +20,318 @@ import {
 } from "../features/auth/authSchemas";
 import { useRegister } from "../features/auth/useRegister";
 
-// ── Role options (admin cannot self-register) ───────────
-const ROLE_OPTIONS = [
+const ROLES = [
+  {
+    id: "teacher" as const,
+    label: "Faculty Member",
+    icon: BookOpen,
+    desc: "Manage classes and academic progress",
+    color: "slate",
+  },
   {
     id: "student" as const,
     label: "Student",
     icon: GraduationCap,
-    desc: "Access courses, marks, and notices",
-  },
-  {
-    id: "teacher" as const,
-    label: "Teacher",
-    icon: BookOpen,
-    desc: "Manage attendance, marks, and classes",
+    desc: "Access learning resources and tracking",
+    color: "brand",
   },
 ];
 
-// ── Password strength indicator ─────────────────────────
-function getPasswordStrength(password: string): {
-  score: number; // 0–4
-  label: string;
-  color: string;
-} {
-  if (!password) return { score: 0, label: "", color: "" };
-  let score = 0;
-  if (password.length >= 8) score++;
-  if (password.length >= 12) score++;
-  if (/[A-Z]/.test(password)) score++;
-  if (/[0-9]/.test(password)) score++;
-  if (/[^A-Za-z0-9]/.test(password)) score++;
-
-  const levels = [
-    { label: "Very weak", color: "bg-red-500" },
-    { label: "Weak", color: "bg-orange-500" },
-    { label: "Fair", color: "bg-yellow-500" },
-    { label: "Strong", color: "bg-jade-500" },
-    { label: "Very strong", color: "bg-jade-400" },
-  ];
-  return { score, ...levels[Math.min(score, 4)] };
-}
-
-// ── Reusable field error message ────────────────────────
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null;
-  return (
-    <p className="text-xs text-red-400 mt-1.5 flex items-center gap-1">
-      <AlertCircle size={11} />
-      {message}
-    </p>
-  );
-}
-
-// ── Reusable field label ────────────────────────────────
-function FieldLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <label
-      className="block text-xs font-mono text-ink-400
-                      mb-1.5 uppercase tracking-wider"
-    >
-      {children}
-    </label>
-  );
-}
-
-// ── Main component ──────────────────────────────────────
 export default function Register() {
+  const navigate = useNavigate();
+  const [step, setStep] = useState(1);
   const [showPass, setShowPass] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const register = useRegister();
+  const registerMutation = useRegister();
 
   const {
-    register: field, // renamed to avoid clash with useRegister()
+    register: field,
     handleSubmit,
     formState: { errors },
-    setValue,
     watch,
-    clearErrors,
+    setValue,
+    trigger,
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: { role: "student" },
   });
 
   const selectedRole = watch("role");
-  const passwordVal = watch("password") ?? "";
-  const strength = getPasswordStrength(passwordVal);
+
+  const nextStep = async () => {
+    if (step === 1) {
+      const isValid = await trigger("role");
+      if (isValid) setStep(2);
+    }
+  };
+
+  const prevStep = () => setStep(1);
 
   const onSubmit = (data: RegisterFormValues) => {
-    // Strip confirmPassword before sending to API
-    const { confirmPassword, ...payload } = data;
-    register.mutate(payload);
+    registerMutation.mutate(data, {
+      onSuccess: () => {
+        navigate("/login", {
+          state: { message: "Account created successfully! Please sign in." },
+        });
+      },
+    });
   };
 
   return (
-    <div
-      className="grid-texture min-h-screen flex items-center
-                    justify-center px-4 py-24"
-    >
-      {/* BG orbs */}
-      <div
-        className="orb w-[500px] h-[500px] bg-jade-500
-                      top-[-100px] right-[-150px] opacity-[0.08]"
-      />
-      <div
-        className="orb w-[400px] h-[400px] bg-ink-500
-                      bottom-[-100px] left-[-100px] opacity-[0.1]"
-      />
+    <div className="min-h-screen bg-white flex">
+      {/* ── LEFT SIDE: FORM ─────────────────────────────── */}
+      <div className="flex-1 flex flex-col justify-center px-8 lg:px-24 py-12 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-brand-50 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 opacity-60" />
 
-      <div className="w-full max-w-lg">
-        {/* Logo + heading */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2.5 group">
-            <div
-              className="w-10 h-10 rounded-xl bg-jade-500/20
-                            border border-jade-500/30 flex items-center
-                            justify-center group-hover:bg-jade-500/30
-                            transition-colors"
-            >
-              <GraduationCap size={18} className="text-jade-400" />
-            </div>
-            <span className="font-display text-xl text-ink-50">
-              Campus<span className="text-jade-400">Hub</span>
-            </span>
-          </Link>
-
-          <h1 className="font-display text-3xl text-ink-50 mt-5 mb-1">
-            Create an account
-          </h1>
-          <p className="text-sm text-ink-400">
-            Register and wait for admin approval to access your portal
-          </p>
-        </div>
-
-        {/* Card */}
-        <div className="glass rounded-2xl p-8 animate-fade-up">
-          {/* ── API error banner ──────────────────────── */}
-          {register.isError && (
-            <div
-              className="flex items-start gap-2.5 px-4 py-3 rounded-xl
-                            bg-red-500/10 border border-red-500/20
-                            text-red-400 text-sm mb-6"
-            >
-              <AlertCircle size={15} className="mt-0.5 shrink-0" />
-              <span>
-                Registration failed. This email may already be registered.
-                Please try again or{" "}
-                <Link
-                  to="/login"
-                  className="underline hover:text-red-300 transition-colors"
-                >
-                  sign in
-                </Link>
-                .
+        <div className="relative z-10 w-full max-w-md mx-auto">
+          {/* Logo & Back */}
+          <div className="flex items-center justify-between mb-12">
+            <Link to="/" className="inline-flex items-center gap-2 group">
+              <div className="w-9 h-9 rounded-lg bg-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+                <GraduationCap size={20} />
+              </div>
+              <span className="font-display text-xl font-bold text-slate-900">
+                Campus<span className="text-brand-600">Hub</span>
               </span>
-            </div>
-          )}
+            </Link>
+            <Link
+              to="/login"
+              className="text-slate-400 hover:text-slate-900 transition-colors flex items-center gap-1 text-sm font-medium"
+            >
+              <ChevronLeft size={16} /> Back to login
+            </Link>
+          </div>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            noValidate
-            className="flex flex-col gap-5"
-          >
-            {/* ── Role selection ────────────────────── */}
-            <div>
-              <FieldLabel>I am registering as</FieldLabel>
-              <div className="grid grid-cols-2 gap-3">
-                {ROLE_OPTIONS.map(({ id, label, icon: Icon, desc }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => {
-                      setValue("role", id);
-                      clearErrors("role");
-                    }}
-                    className={`flex flex-col items-start gap-2 p-4
-                                rounded-xl border text-left
-                                transition-all duration-200 ${
-                                  selectedRole === id
-                                    ? "bg-jade-500/15 border-jade-500/40"
-                                    : "border-white/[0.07] hover:border-white/20"
-                                }`}
-                  >
-                    <div
-                      className={`w-8 h-8 rounded-lg flex items-center
-                                     justify-center ${
-                                       selectedRole === id
-                                         ? "bg-jade-500/20 text-jade-400"
-                                         : "bg-white/5 text-ink-400"
-                                     }`}
-                    >
-                      <Icon size={16} />
-                    </div>
-                    <div>
-                      <p
-                        className={`text-sm font-medium ${
-                          selectedRole === id ? "text-jade-300" : "text-ink-200"
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <AnimatePresence mode="wait">
+              {step === 1 ? (
+                <motion.div
+                  key="step1"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <h1 className="text-3xl font-display font-bold text-slate-900 mb-2">
+                    Join CampusHub
+                  </h1>
+                  <p className="text-slate-500 mb-8">
+                    Choose your role to begin registration.
+                  </p>
+
+                  <div className="space-y-3 mb-8">
+                    {ROLES.map((role) => (
+                      <button
+                        key={role.id}
+                        type="button"
+                        onClick={() => setValue("role", role.id)}
+                        className={`w-full flex items-center gap-4 p-5 rounded-2xl border-2 text-left transition-all duration-200 ${
+                          selectedRole === role.id
+                            ? "border-brand-500 bg-brand-50 shadow-sm"
+                            : "border-slate-100 hover:border-slate-200 bg-slate-50"
                         }`}
                       >
-                        {label}
-                      </p>
-                      <p className="text-xs text-ink-500 mt-0.5 leading-snug">
-                        {desc}
-                      </p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-              <FieldError message={errors.role?.message} />
-            </div>
-
-            <div className="divider" />
-
-            {/* ── Full name ─────────────────────────── */}
-            <div>
-              <FieldLabel>Full name</FieldLabel>
-              <div className="relative">
-                <User
-                  size={15}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2
-                                 text-ink-500 pointer-events-none"
-                />
-                <input
-                  type="text"
-                  placeholder="Aarav Sharma"
-                  className={`input-field pl-10 ${
-                    errors.fullName ? "input-error" : ""
-                  }`}
-                  {...field("fullName")}
-                />
-              </div>
-              <FieldError message={errors.fullName?.message} />
-            </div>
-
-            {/* ── Email + Phone (2-col) ─────────────── */}
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <FieldLabel>Email address</FieldLabel>
-                <div className="relative">
-                  <Mail
-                    size={15}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2
-                                   text-ink-500 pointer-events-none"
-                  />
-                  <input
-                    type="email"
-                    placeholder="you@college.edu"
-                    className={`input-field pl-10 ${
-                      errors.email ? "input-error" : ""
-                    }`}
-                    {...field("email")}
-                  />
-                </div>
-                <FieldError message={errors.email?.message} />
-              </div>
-
-              <div>
-                <FieldLabel>Phone number</FieldLabel>
-                <div className="relative">
-                  <Phone
-                    size={15}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2
-                                    text-ink-500 pointer-events-none"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="+977 9800 000000"
-                    className={`input-field pl-10 ${
-                      errors.phone ? "input-error" : ""
-                    }`}
-                    {...field("phone")}
-                  />
-                </div>
-                <FieldError message={errors.phone?.message} />
-              </div>
-            </div>
-
-            {/* ── Password ──────────────────────────── */}
-            <div>
-              <FieldLabel>Password</FieldLabel>
-              <div className="relative">
-                <Lock
-                  size={15}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2
-                                 text-ink-500 pointer-events-none"
-                />
-                <input
-                  type={showPass ? "text" : "password"}
-                  placeholder="Min 8 chars, 1 uppercase, 1 number"
-                  autoComplete="new-password"
-                  className={`input-field pl-10 pr-10 ${
-                    errors.password ? "input-error" : ""
-                  }`}
-                  {...field("password")}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPass((p) => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2
-                             text-ink-500 hover:text-ink-300 transition-colors"
-                >
-                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-
-              {/* Password strength bar */}
-              {passwordVal && (
-                <div className="mt-2">
-                  <div className="flex gap-1 mb-1">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div
-                        key={i}
-                        className={`h-1 flex-1 rounded-full transition-all
-                                    duration-300 ${
-                                      strength.score >= i
-                                        ? strength.color
-                                        : "bg-white/10"
-                                    }`}
-                      />
+                        <div
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                            selectedRole === role.id
+                              ? "bg-brand-600 text-white"
+                              : "bg-white text-slate-400"
+                          }`}
+                        >
+                          <role.icon size={24} />
+                        </div>
+                        <div className="flex-1">
+                          <p
+                            className={`font-bold ${selectedRole === role.id ? "text-slate-900" : "text-slate-600"}`}
+                          >
+                            {role.label}
+                          </p>
+                          <p className="text-xs text-slate-400">{role.desc}</p>
+                        </div>
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                            selectedRole === role.id
+                              ? "border-brand-500 bg-brand-500"
+                              : "border-slate-200"
+                          }`}
+                        >
+                          {selectedRole === role.id && (
+                            <div className="w-2 h-2 rounded-full bg-white" />
+                          )}
+                        </div>
+                      </button>
                     ))}
                   </div>
-                  <p className="text-xs text-ink-500">
-                    Strength:{" "}
-                    <span
-                      className={`font-medium ${
-                        strength.score >= 3
-                          ? "text-jade-400"
-                          : strength.score >= 2
-                            ? "text-yellow-400"
-                            : "text-red-400"
-                      }`}
-                    >
-                      {strength.label}
-                    </span>
-                  </p>
-                </div>
-              )}
 
-              <FieldError message={errors.password?.message} />
-            </div>
-
-            {/* ── Confirm password ──────────────────── */}
-            <div>
-              <FieldLabel>Confirm password</FieldLabel>
-              <div className="relative">
-                <ShieldCheck
-                  size={15}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2
-                                        text-ink-500 pointer-events-none"
-                />
-                <input
-                  type={showConfirm ? "text" : "password"}
-                  placeholder="Repeat your password"
-                  autoComplete="new-password"
-                  className={`input-field pl-10 pr-10 ${
-                    errors.confirmPassword ? "input-error" : ""
-                  }`}
-                  {...field("confirmPassword")}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirm((p) => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2
-                             text-ink-500 hover:text-ink-300 transition-colors"
-                >
-                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-              <FieldError message={errors.confirmPassword?.message} />
-            </div>
-
-            {/* ── Approval notice ───────────────────── */}
-            <div
-              className="flex items-start gap-2.5 px-4 py-3 rounded-xl
-                            bg-jade-500/5 border border-jade-500/20"
-            >
-              <CheckCircle2
-                size={15}
-                className="text-jade-500 mt-0.5 shrink-0"
-              />
-              <p className="text-xs text-ink-400 leading-relaxed">
-                After registering, your account will be{" "}
-                <span className="text-jade-400 font-medium">
-                  reviewed by an admin
-                </span>{" "}
-                before you can log in. You'll be notified once approved.
-              </p>
-            </div>
-
-            {/* ── Submit ────────────────────────────── */}
-            <button
-              type="submit"
-              disabled={register.isPending}
-              className="btn-primary justify-center py-3.5
-                         disabled:opacity-60 disabled:cursor-not-allowed
-                         disabled:transform-none"
-            >
-              {register.isPending ? (
-                <>
-                  <span
-                    className="w-4 h-4 border-2 border-white/30
-                                   border-t-white rounded-full animate-spin"
-                  />
-                  Creating account…
-                </>
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    className="btn-primary w-full py-4 text-base font-bold shadow-brand-500/20 shadow-xl"
+                  >
+                    Continue Registration{" "}
+                    <ArrowRight size={18} className="ml-2" />
+                  </button>
+                </motion.div>
               ) : (
-                <>
-                  Create account
-                  <ArrowRight size={15} />
-                </>
-              )}
-            </button>
-          </form>
-        </div>
+                <motion.div
+                  key="step2"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="space-y-5"
+                >
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-brand-600 mb-2"
+                  >
+                    <ArrowLeft size={14} /> Change Role
+                  </button>
+                  <h1 className="text-3xl font-display font-bold text-slate-900 mb-2">
+                    Create Account
+                  </h1>
+                  <p className="text-slate-500 mb-6 uppercase text-[10px] font-mono tracking-widest bg-brand-50 px-2 py-1 inline-block rounded">
+                    Registering as {selectedRole}
+                  </p>
 
-        {/* Sign in link */}
-        <p className="text-center text-sm text-ink-500 mt-6">
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-jade-400 hover:text-jade-300 transition-colors
-                           font-medium"
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="John Doe"
+                      className={`input-field ${errors.fullName ? "input-error" : ""}`}
+                      {...field("fullName")}
+                    />
+                    {errors.fullName && (
+                      <p className="text-xs text-rose-500 mt-1.5 font-bold flex items-center gap-1">
+                        <AlertCircle size={12} /> {errors.fullName.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-1">
+                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        placeholder="john@example.com"
+                        className={`input-field ${errors.email ? "input-error" : ""}`}
+                        {...field("email")}
+                      />
+                      {errors.email && (
+                        <p className="text-xs text-rose-500 mt-1.5 font-bold flex items-center gap-1">
+                          <AlertCircle size={12} /> {errors.email.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="+977..."
+                        className={`input-field ${errors.phone ? "input-error" : ""}`}
+                        {...field("phone")}
+                      />
+                      {errors.phone && (
+                        <p className="text-xs text-rose-500 mt-1.5 font-bold flex items-center gap-1">
+                          <AlertCircle size={12} /> {errors.phone.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPass ? "text" : "password"}
+                        placeholder="Minimum 8 characters"
+                        className={`input-field pr-12 ${errors.password ? "input-error" : ""}`}
+                        {...field("password")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPass(!showPass)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                    {errors.password && (
+                      <p className="text-xs text-rose-500 mt-1.5 font-bold flex items-center gap-1">
+                        <AlertCircle size={12} /> {errors.password.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {registerMutation.isError && (
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-xs">
+                      <AlertCircle size={14} /> Registration failed. Please try
+                      again later.
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={registerMutation.isPending}
+                    className="btn-primary w-full py-4 text-base font-bold shadow-brand-500/20 shadow-xl disabled:opacity-70"
+                  >
+                    {registerMutation.isPending
+                      ? "Creating Account..."
+                      : "Finalize Registration"}
+                    {!registerMutation.isPending && (
+                      <CheckCircle2 size={18} className="ml-2" />
+                    )}
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </form>
+
+          <p className="mt-8 text-center text-slate-500 text-sm">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="text-brand-600 font-bold hover:underline"
+            >
+              Sign in here
+            </Link>
+          </p>
+        </div>
+      </div>
+
+      {/* ── RIGHT SIDE: IMAGE ────────────────────────────── */}
+      <div className="hidden lg:flex flex-1 bg-slate-900 relative items-center justify-center overflow-hidden">
+        <img
+          src="/modern_college_campus_building_1778485561678.png"
+          alt="Campus Building"
+          className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-900/40 to-slate-900/90" />
+
+        <div className="relative z-10 max-w-lg p-12 text-white text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            Sign in
-          </Link>
-        </p>
+            <h2 className="text-4xl font-display font-bold mb-6">
+              Built for Excellence
+            </h2>
+            <p className="text-lg text-slate-300">
+              Join a digital-first academic community. Secure, fast, and
+              designed to support every step of your educational journey.
+            </p>
+          </motion.div>
+        </div>
       </div>
     </div>
   );

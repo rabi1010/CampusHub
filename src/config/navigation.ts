@@ -93,9 +93,33 @@ export const STUDENT_NAV: NavGroup[] = [
   },
 ];
 
+// ── Parent navigation ──────────────────────────────────
+export const PARENT_NAV: NavGroup[] = [
+  {
+    group: "Overview",
+    items: [
+      { label: "Dashboard", to: "/parent/dashboard", icon: LayoutDashboard },
+    ],
+  },
+  {
+    group: "Child Progress",
+    items: [
+      { label: "Attendance", to: "/parent/attendance", icon: UserCheck },
+      { label: "Notices", to: "/parent/notices", icon: Bell },
+    ],
+  },
+  {
+    group: "Account",
+    items: [
+      { label: "Profile", to: "/parent/profile", icon: Users },
+    ],
+  },
+];
+
 // ── Role to nav map ─────────────────────────────────────
 export const NAV_BY_ROLE = {
   admin: ADMIN_NAV,
   teacher: TEACHER_NAV,
   student: STUDENT_NAV,
+  parent: PARENT_NAV,
 } as const;

@@ -7,7 +7,7 @@ interface StatCardProps {
   icon: LucideIcon;
   change?: string; // e.g. "+12% this month"
   positive?: boolean; // emerald vs rose change indicator
-  color?: "brand" | "slate" | "emerald" | "amber" | "rose";
+  color?: "brand" | "slate" | "emerald" | "amber" | "rose" | "indigo";
 }
 
 const COLOR_MAP = {
@@ -16,6 +16,7 @@ const COLOR_MAP = {
   emerald: "bg-emerald-50 text-emerald-600 border-emerald-100",
   amber: "bg-amber-50 text-amber-600 border-amber-100",
   rose: "bg-rose-50 text-rose-600 border-rose-100",
+  indigo: "bg-indigo-50 text-indigo-600 border-indigo-100",
 };
 
 export default function StatCard({

@@ -3,69 +3,53 @@
 @import "tailwindcss";
 
 /* ============================================
-   THEME TOKENS (Academic Clarity)
-   ============================================ */
-@theme {
-  /* Colors */
-  --color-brand-50: #ecfdf5;
-  --color-brand-100: #d1fae5;
-  --color-brand-200: #a7f3d0;
-  --color-brand-500: #10b981;
-  --color-brand-600: #059669;
-  --color-brand-700: #047857;
-  
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
-  --color-slate-800: #1e293b;
-  --color-slate-900: #0f172a;
-
-  /* Fonts */
-  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
-
-  /* Shadows */
-  --shadow-soft: 0 1px 2px rgba(0,0,0,0.03), 0 1px 1px rgba(0,0,0,0.01);
-  --shadow-card: 0 4px 12px -2px rgba(0, 0, 0, 0.03), 0 2px 6px -3px rgba(0, 0, 0, 0.02);
-  --shadow-card-lg: 0 12px 24px -6px rgba(0, 0, 0, 0.04), 0 6px 12px -4px rgba(0, 0, 0, 0.02);
-  --shadow-glow: 0 0 15px rgba(99, 102, 241, 0.1);
-
-  /* Animations */
-  --animate-fade-up: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-fade-in: fadeIn 0.4s ease both;
-  --animate-scale-in: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-}
-
-/* ============================================
-   BASE STYLES
+   BASE STYLES & CONFIGURABLE THEME TOKENS
    ============================================ */
 @layer base {
   :root {
+    /* --- Brand Accent Palette (Play with your brand colors here!) --- */
+    --brand-50: #ecfdf5;
+    --brand-100: #d1fae5;
+    --brand-200: #a7f3d0;
+    --brand-500: #10b981;
+    --brand-600: #059669;
+    --brand-700: #047857;
+
+    /* --- Base Slate/Neutral Palette --- */
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-300: #cbd5e1;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+
+    /* --- Typography Families --- */
+    --font-display-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-body-family: "Inter", system-ui, sans-serif;
+    --font-mono-family: "JetBrains Mono", monospace;
+
+    /* --- Font Sizes (Play with your font sizes here!) --- */
+    --font-xs-size: 0.75rem;
+    --font-sm-size: 0.875rem;
+    --font-base-size: 1rem;
+    --font-lg-size: 1.125rem;
+    --font-xl-size: 1.25rem;
+    --font-2xl-size: 1.5rem;
+    --font-3xl-size: 1.875rem;
+    --font-4xl-size: 2.25rem;
+    --font-5xl-size: 3rem;
+
+    /* --- Core Layout Variables --- */
     --bg-main: #fcfdfe;
     --bg-card: #ffffff;
     --border-base: #f1f5f9;
     --text-main: #0f172a;
     --text-muted: #64748b;
-    --brand: #4f46e5;
+    --brand: #059669; /* Unified primary brand color */
   }
 
   * {
@@ -75,14 +59,101 @@
   }
 
   body {
-    font-family: var(--font-body);
+    font-family: var(--font-body-family);
     background-color: var(--bg-main);
     color: var(--text-main);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  /* ============================================
+     THEME TOKENS (Academic Clarity)
+     ============================================ */
+  @theme {
+    /* Colors */
+    --color-brand-50: #ecfdf5;
+    --color-brand-100: #d1fae5;
+    --color-brand-200: #a7f3d0;
+    --color-brand-500: #10b981;
+    --color-brand-600: #059669;
+    --color-brand-700: #047857;
+
+    --color-slate-50: #f8fafc;
+    --color-slate-100: #f1f5f9;
+    --color-slate-200: #e2e8f0;
+    --color-slate-300: #cbd5e1;
+    --color-slate-400: #94a3b8;
+    --color-slate-500: #64748b;
+    --color-slate-600: #475569;
+    --color-slate-700: #334155;
+    --color-slate-800: #1e293b;
+    --color-slate-900: #0f172a;
+
+    /* Fonts */
+    --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-body: "Inter", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+
+    /* Font Sizes */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 3rem;
+
+    /* Shadows */
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 1px rgba(0, 0, 0, 0.01);
+    --shadow-card:
+      0 4px 12px -2px rgba(0, 0, 0, 0.03), 0 2px 6px -3px rgba(0, 0, 0, 0.02);
+    --shadow-card-lg:
+      0 12px 24px -6px rgba(0, 0, 0, 0.04), 0 6px 12px -4px rgba(0, 0, 0, 0.02);
+    --shadow-glow: 0 0 15px rgba(99, 102, 241, 0.1);
+
+    /* Animations */
+    --animate-fade-up: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    --animate-fade-in: fadeIn 0.4s ease both;
+    --animate-scale-in: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -145,8 +216,12 @@
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
 
-  .badge-brand { @apply bg-brand-50 text-brand-700 border border-brand-100; }
-  .badge-slate { @apply bg-slate-100 text-slate-700 border border-slate-200; }
+  .badge-brand {
+    @apply bg-brand-50 text-brand-700 border border-brand-100;
+  }
+  .badge-slate {
+    @apply bg-slate-100 text-slate-700 border border-slate-200;
+  }
 
   .glass-nav {
     @apply sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200;
@@ -167,13 +242,13 @@
 
   /* Smooth Underline Utility */
   .link-underline {
-    @apply relative after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] 
+    @apply relative after:absolute after:-bottom-0.5 after:left-0 after:h-0.5
            after:w-0 after:bg-brand-500 after:transition-all after:duration-300 
            after:ease-out group-hover:after:w-full;
   }
 
   .link-underline-white {
-    @apply relative after:absolute after:bottom-[-2px] after:left-0 after:h-[1px] 
+    @apply relative after:absolute after:-bottom-0.5 after:left-0 after:h-0.5
            after:w-0 after:bg-white/40 after:transition-all after:duration-300 
            after:ease-out group-hover:after:w-full;
   }
@@ -189,4 +264,3 @@
 ::-webkit-scrollbar-thumb {
   @apply bg-slate-200 rounded-full hover:bg-slate-300;
 }
-

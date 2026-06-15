@@ -10,6 +10,7 @@ const ROLE_REDIRECT = {
   admin: "/dashboard/admin",
   teacher: "/dashboard/teacher",
   student: "/dashboard/student",
+  parent: "/parent/dashboard",
 } as const;
 
 export function useLogin() {
@@ -36,7 +37,8 @@ export function useLogin() {
             role: data.user.role.toLowerCase() as
               | "admin"
               | "teacher"
-              | "student",
+              | "student"
+              | "parent",
           },
           token: data.token,
         }),

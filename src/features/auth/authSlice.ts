@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 // ── Types ───────────────────────────────────────────────
-export type Role = "admin" | "teacher" | "student";
+export type Role = "admin" | "teacher" | "student" | "parent";
 
 export interface AuthUser {
   id: string;

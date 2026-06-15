@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react"
+import { useForm, useFieldArray } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   GraduationCap,
   BookOpen,
+  UserCog,
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
@@ -13,73 +13,81 @@ import {
   Eye,
   EyeOff,
   ChevronLeft,
-} from "lucide-react";
-import {
-  registerSchema,
-  type RegisterFormValues,
-} from "../features/auth/authSchemas";
-import { useRegister } from "../features/auth/useRegister";
+  Plus,
+  Trash2,
+} from "lucide-react"
+import { Link } from "react-router-dom"
+import { registerSchema, type RegisterFormData } from "@/features/auth/authSchemas"
+import { useRegister } from "@/features/auth/useRegister"
 
-const ROLES = [
+// ── Role definitions ────────────────────────────────────
+const REGISTER_ROLES = [
   {
-    id: "teacher" as const,
-    label: "Faculty Member",
-    icon: BookOpen,
-    desc: "Manage classes and academic progress",
-    color: "slate",
-  },
-  {
-    id: "student" as const,
+    id: "STUDENT" as const,
     label: "Student",
     icon: GraduationCap,
-    desc: "Access learning resources and tracking",
-    color: "brand",
+    desc: "Access learning resources",
   },
-];
+  {
+    id: "TEACHER" as const,
+    label: "Teacher",
+    icon: BookOpen,
+    desc: "Manage academic progress",
+  },
+  {
+    id: "PARENT" as const,
+    label: "Parent",
+    icon: UserCog,
+    desc: "Monitor your child",
+  },
+]
 
 export default function Register() {
-  const navigate = useNavigate();
-  const [step, setStep] = useState(1);
-  const [showPass, setShowPass] = useState(false);
-  const registerMutation = useRegister();
+  const [step, setStep] = useState(1)
+  const [showPass, setShowPass] = useState(false)
+  const { mutate: register, isPending, isError } = useRegister()
 
   const {
     register: field,
     handleSubmit,
-    formState: { errors },
     watch,
+    control,
+    formState: { errors },
     setValue,
     trigger,
-  } = useForm<RegisterFormValues>({
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { role: "student" },
-  });
+    defaultValues: {
+      role: "STUDENT",
+      childRollNumbers: [""],
+    },
+  })
 
-  const selectedRole = watch("role");
+  const selectedRole = watch("role")
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "childRollNumbers" as never,
+  })
 
   const nextStep = async () => {
     if (step === 1) {
-      const isValid = await trigger("role");
-      if (isValid) setStep(2);
+      const isValid = await trigger("role")
+      if (isValid) setStep(2)
     }
-  };
+  }
 
-  const prevStep = () => setStep(1);
+  const prevStep = () => setStep(1)
 
-  const onSubmit = (data: RegisterFormValues) => {
-    registerMutation.mutate(data, {
-      onSuccess: () => {
-        navigate("/login", {
-          state: { message: "Account created successfully! Please sign in." },
-        });
-      },
-    });
-  };
+  const onSubmit = (data: RegisterFormData) => {
+    register(data)
+  }
 
   return (
     <div className="min-h-screen bg-white flex">
       {/* ── LEFT SIDE: FORM ─────────────────────────────── */}
       <div className="flex-1 flex flex-col justify-center px-8 lg:px-24 py-12 relative overflow-hidden">
+        {/* Subtle background blur */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-brand-50 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 opacity-60" />
 
         <div className="relative z-10 w-full max-w-md mx-auto">
@@ -109,7 +117,7 @@ export default function Register() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.4 }}
+                  transition={{ duration: 0.3 }}
                 >
                   <h1 className="text-3xl font-display font-bold text-slate-900 mb-2">
                     Join CampusHub
@@ -118,8 +126,9 @@ export default function Register() {
                     Choose your role to begin registration.
                   </p>
 
+                  {/* Role selector */}
                   <div className="space-y-3 mb-8">
-                    {ROLES.map((role) => (
+                    {REGISTER_ROLES.map((role) => (
                       <button
                         key={role.id}
                         type="button"
@@ -141,7 +150,11 @@ export default function Register() {
                         </div>
                         <div className="flex-1">
                           <p
-                            className={`font-bold ${selectedRole === role.id ? "text-slate-900" : "text-slate-600"}`}
+                            className={`font-bold ${
+                              selectedRole === role.id
+                                ? "text-slate-900"
+                                : "text-slate-600"
+                            }`}
                           >
                             {role.label}
                           </p>
@@ -167,8 +180,7 @@ export default function Register() {
                     onClick={nextStep}
                     className="btn-primary w-full py-4 text-base font-bold shadow-brand-500/20 shadow-xl"
                   >
-                    Continue Registration{" "}
-                    <ArrowRight size={18} className="ml-2" />
+                    Continue Registration <ArrowRight size={18} className="ml-2" />
                   </button>
                 </motion.div>
               ) : (
@@ -177,7 +189,7 @@ export default function Register() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4 }}
+                  transition={{ duration: 0.3 }}
                   className="space-y-5"
                 >
                   <button
@@ -187,13 +199,22 @@ export default function Register() {
                   >
                     <ArrowLeft size={14} /> Change Role
                   </button>
+
                   <h1 className="text-3xl font-display font-bold text-slate-900 mb-2">
                     Create Account
                   </h1>
                   <p className="text-slate-500 mb-6 uppercase text-[10px] font-mono tracking-widest bg-brand-50 px-2 py-1 inline-block rounded">
-                    Registering as {selectedRole}
+                    Registering as {selectedRole.toLowerCase()}
                   </p>
 
+                  {isError && (
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm mb-6 animate-fade-in">
+                      <AlertCircle size={18} className="shrink-0" />
+                      Registration failed. Please try again.
+                    </div>
+                  )}
+
+                  {/* Full Name */}
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">
                       Full Name
@@ -212,9 +233,10 @@ export default function Register() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
+                    {/* Email */}
                     <div className="col-span-1">
                       <label className="block text-sm font-bold text-slate-700 mb-2">
-                        Email Address
+                        Email
                       </label>
                       <input
                         type="email"
@@ -228,24 +250,22 @@ export default function Register() {
                         </p>
                       )}
                     </div>
+
+                    {/* Phone */}
                     <div className="col-span-1">
                       <label className="block text-sm font-bold text-slate-700 mb-2">
-                        Phone
+                        Phone (optional)
                       </label>
                       <input
                         type="tel"
                         placeholder="+977..."
-                        className={`input-field ${errors.phone ? "input-error" : ""}`}
+                        className="input-field"
                         {...field("phone")}
                       />
-                      {errors.phone && (
-                        <p className="text-xs text-rose-500 mt-1.5 font-bold flex items-center gap-1">
-                          <AlertCircle size={12} /> {errors.phone.message}
-                        </p>
-                      )}
                     </div>
                   </div>
 
+                  {/* Password */}
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">
                       Password
@@ -253,8 +273,10 @@ export default function Register() {
                     <div className="relative">
                       <input
                         type={showPass ? "text" : "password"}
-                        placeholder="Minimum 8 characters"
-                        className={`input-field pr-12 ${errors.password ? "input-error" : ""}`}
+                        placeholder="Minimum 6 characters"
+                        className={`input-field pr-12 ${
+                          errors.password ? "input-error" : ""
+                        }`}
                         {...field("password")}
                       />
                       <button
@@ -272,24 +294,64 @@ export default function Register() {
                     )}
                   </div>
 
-                  {registerMutation.isError && (
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-xs">
-                      <AlertCircle size={14} /> Registration failed. Please try
-                      again later.
+                  {/* Parent — child roll numbers */}
+                  {selectedRole === "PARENT" && (
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                        Child's Roll Number(s)
+                      </label>
+                      <p className="text-xs text-slate-400 mb-3">
+                        Add the roll number of each child enrolled in the college
+                      </p>
+                      <div className="space-y-2">
+                        {fields.map((f, index) => (
+                          <div key={f.id} className="flex gap-2">
+                            <input
+                              {...field(`childRollNumbers.${index}` as any)}
+                              className={`flex-1 input-field ${
+                                errors.childRollNumbers
+                                  ? "input-error"
+                                  : ""
+                              }`}
+                              placeholder={`Roll number ${index + 1}`}
+                            />
+                            {fields.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => remove(index)}
+                                className="p-3 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => append("")}
+                        className="mt-3 inline-flex items-center gap-2 text-sm text-brand-600 hover:text-brand-700 font-bold"
+                      >
+                        <Plus size={16} />
+                        Add another child
+                      </button>
+                      {errors.childRollNumbers && (
+                        <p className="text-xs text-rose-500 mt-2 font-bold flex items-center gap-1">
+                          <AlertCircle size={12} />{" "}
+                          {errors.childRollNumbers.message}
+                        </p>
+                      )}
                     </div>
                   )}
 
+                  {/* Submit */}
                   <button
                     type="submit"
-                    disabled={registerMutation.isPending}
-                    className="btn-primary w-full py-4 text-base font-bold shadow-brand-500/20 shadow-xl disabled:opacity-70"
+                    disabled={isPending}
+                    className="btn-primary w-full py-4 text-base font-bold shadow-brand-500/20 shadow-xl disabled:opacity-70 mt-6"
                   >
-                    {registerMutation.isPending
-                      ? "Creating Account..."
-                      : "Finalize Registration"}
-                    {!registerMutation.isPending && (
-                      <CheckCircle2 size={18} className="ml-2" />
-                    )}
+                    {isPending ? "Creating account..." : "Create Account"}
+                    {!isPending && <CheckCircle2 size={18} className="ml-2" />}
                   </button>
                 </motion.div>
               )}
@@ -324,15 +386,15 @@ export default function Register() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl font-display font-bold mb-6">
-              Built for Excellence
+              Welcome to CampusHub
             </h2>
             <p className="text-lg text-slate-300">
-              Join a digital-first academic community. Secure, fast, and
+              Join our digital-first academic community. Secure, fast, and
               designed to support every step of your educational journey.
             </p>
           </motion.div>
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -12,14 +12,14 @@ export const loginSchema = z.object({
     .min(1, "Password is required")
     .min(6, "Password must be at least 6 characters"),
 
-  role: z.enum(["admin", "teacher", "student"], {
+  role: z.enum(["admin", "teacher", "student", "parent"], {
     error: "Please select a role",
   }),
 });
 
 // ── Infer TypeScript type from schema (no duplication) ──
 export type LoginFormValues = z.infer<typeof loginSchema>;
-// Result: { email: string; password: string; role: 'admin'|'teacher'|'student' }
+// Result: { email: string; password: string; role: 'admin'|'teacher'|'student'|'parent' }
 
 // ── Contact schema ──────────────────────────────────────
 export const contactSchema = z.object({
@@ -47,42 +47,47 @@ export const contactSchema = z.object({
     .max(1000, "Message is too long"),
 });
 // ── Register schema ─────────────────────────────────────
-export const registerSchema = z
-  .object({
-    fullName: z
-      .string()
-      .min(1, "Full name is required")
-      .min(2, "Name must be at least 2 characters")
-      .max(60, "Name is too long")
-      .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
+export const registerSchema = z.object({
+  fullName: z
+    .string()
+    .min(2, "Name must be at least 2 characters"),
 
-    email: z
-      .string()
-      .min(1, "Email is required")
-      .email("Enter a valid email address"),
+  email: z
+    .string()
+    .email("Enter a valid email"),
 
-    phone: z
-      .string()
-      .min(1, "Phone number is required")
-      .regex(/^[0-9+\-\s()]{7,15}$/, "Enter a valid phone number"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters"),
 
-    role: z.enum(["teacher", "student"], {
-      error: "Please select a role",
-    }),
+  phone: z.string().optional(),
 
-    password: z
-      .string()
-      .min(1, "Password is required")
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-      .regex(/[0-9]/, "Must contain at least one number"),
+  role: z.enum(["STUDENT", "TEACHER", "PARENT"], {
+    error: "Please select a role",
+  }),
 
-    confirmPassword: z.string().min(1, "Please confirm your password"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"], // error appears on confirmPassword field
-  });
+  // Only required when role = PARENT
+  // Array of roll numbers for each child
+  childRollNumbers: z
+    .array(z.string().min(1))
+    .optional(),
+})
+.refine(
+  (data) => {
+    if (data.role === "PARENT") {
+      return (
+        data.childRollNumbers &&
+        data.childRollNumbers.length > 0 &&
+        data.childRollNumbers[0] !== ""
+      )
+    }
+    return true
+  },
+  {
+    message: "At least one child roll number is required for parents",
+    path: ["childRollNumbers"],
+  }
+)
 
-export type RegisterFormValues = z.infer<typeof registerSchema>;
+export type RegisterFormData = z.infer<typeof registerSchema>;
 export type ContactFormValues = z.infer<typeof contactSchema>;

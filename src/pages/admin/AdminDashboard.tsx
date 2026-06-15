@@ -250,9 +250,9 @@ export default function AdminDashboard() {
         {/* Operational Insights Sidebar */}
         <div className="space-y-8">
           {/* Capacity Analytics Widget */}
-          <div className="card-base p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-brand-500/5 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-500/5 blur-[80px] rounded-full translate-y-1/2 -translate-x-1/2" />
+          <div className="card-base p-8 bg-slate-900 text-white relative overflow-hidden shadow-2xl">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-brand-500/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-500/10 blur-[80px] rounded-full translate-y-1/2 -translate-x-1/2" />
 
             <div className="relative z-10">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-8">
@@ -290,7 +290,7 @@ export default function AdminDashboard() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
                       Stability
                     </p>
                     <p className="text-2xl font-display font-bold text-emerald-400 leading-none">
@@ -298,7 +298,7 @@ export default function AdminDashboard() {
                     </p>
                   </div>
                   <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
                       New Intake
                     </p>
                     <p className="text-2xl font-display font-bold text-brand-400 leading-none">

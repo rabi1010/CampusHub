@@ -31,7 +31,7 @@ const ROLES = [
   },
   {
     id: "teacher" as const,
-    label: "Faculty",
+    label: "Teacher",
     icon: BookOpen,
     desc: "Academic Portal",
     demo: "teacher@campushub.edu",
@@ -42,6 +42,13 @@ const ROLES = [
     icon: GraduationCap,
     desc: "Learning Portal",
     demo: "student@campushub.edu",
+  },
+  {
+    id: "parent" as const,
+    label: "Parent",
+    icon: UserCog,
+    desc: "Parent Portal",
+    demo: "parent@campushub.edu",
   },
 ];
 
@@ -96,7 +103,10 @@ export default function Login() {
                 Campus<span className="text-brand-600">Hub</span>
               </span>
             </Link>
-            <Link to="/" className="text-slate-400 hover:text-slate-900 transition-colors flex items-center gap-1 text-sm font-medium">
+            <Link
+              to="/"
+              className="text-slate-400 hover:text-slate-900 transition-colors flex items-center gap-1 text-sm font-medium"
+            >
               <ChevronLeft size={16} /> Back to site
             </Link>
           </div>
@@ -106,8 +116,12 @@ export default function Login() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-3xl font-display font-bold text-slate-900 mb-2">Welcome Back</h1>
-            <p className="text-slate-500 mb-10">Select your portal and enter your credentials.</p>
+            <h1 className="text-3xl font-display font-bold text-slate-900 mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-slate-500 mb-10">
+              Select your portal and enter your credentials.
+            </p>
 
             {/* Role selector */}
             <div className="grid grid-cols-3 gap-3 mb-8">
@@ -126,7 +140,9 @@ export default function Login() {
                   }`}
                 >
                   <Icon size={20} />
-                  <span className="text-xs font-bold uppercase tracking-wider">{label}</span>
+                  <span className="text-xs font-bold uppercase tracking-wider">
+                    {label}
+                  </span>
                 </button>
               ))}
             </div>
@@ -147,7 +163,9 @@ export default function Login() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Institutional Email</label>
+                <label className="block text-sm font-bold text-slate-700 mb-2">
+                  Institutional Email
+                </label>
                 <input
                   type="email"
                   placeholder="name@campushub.edu"
@@ -163,8 +181,15 @@ export default function Login() {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-bold text-slate-700">Password</label>
-                  <button type="button" className="text-xs text-brand-600 font-bold hover:underline">Forgot?</button>
+                  <label className="block text-sm font-bold text-slate-700">
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    className="text-xs text-brand-600 font-bold hover:underline"
+                  >
+                    Forgot?
+                  </button>
                 </div>
                 <div className="relative">
                   <input
@@ -193,7 +218,9 @@ export default function Login() {
                 disabled={login.isPending}
                 className="btn-primary w-full py-4 text-base font-bold shadow-brand-500/20 shadow-xl disabled:opacity-70"
               >
-                {login.isPending ? "Signing you in..." : `Enter ${selected.label} Portal`}
+                {login.isPending
+                  ? "Signing you in..."
+                  : `Enter ${selected.label} Portal`}
                 {!login.isPending && <ArrowRight size={18} className="ml-2" />}
               </button>
             </form>
@@ -204,13 +231,17 @@ export default function Login() {
                 onClick={fillDemo}
                 className="text-sm font-bold text-slate-400 hover:text-brand-600 transition-colors flex items-center justify-center gap-2 mx-auto"
               >
-                Use demo credentials for {selected.label} <ArrowRight size={14} />
+                Use demo credentials for {selected.label}{" "}
+                <ArrowRight size={14} />
               </button>
             </div>
 
             <p className="mt-8 text-center text-slate-500 text-sm">
               New to the platform?{" "}
-              <Link to="/register" className="text-brand-600 font-bold hover:underline">
+              <Link
+                to="/register"
+                className="text-brand-600 font-bold hover:underline"
+              >
                 Create an account
               </Link>
             </p>
@@ -225,8 +256,8 @@ export default function Login() {
           alt="Campus Excellence"
           className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/60 to-slate-950" />
-        
+        <div className="absolute inset-0 bg-linear-to-br from-emerald-900/60 to-slate-950" />
+
         <div className="relative z-10 max-w-lg p-12 text-white">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -235,21 +266,26 @@ export default function Login() {
           >
             <div className="w-16 h-1 bg-brand-500 mb-8" />
             <h2 className="text-4xl font-display font-bold mb-6 leading-tight">
-              Unifying the <span className="text-brand-400 italic">Academic</span> Experience
+              Unifying the{" "}
+              <span className="text-brand-400 italic">Academic</span> Experience
             </h2>
             <p className="text-lg text-slate-300 leading-relaxed">
-              Experience the power of a centralized ecosystem designed to support students, 
-              empower faculty, and streamline administration.
+              Experience the power of a centralized ecosystem designed to
+              support students, empower faculty, and streamline administration.
             </p>
           </motion.div>
         </div>
-        
+
         {/* Decorative elements */}
         <div className="absolute bottom-0 left-0 p-12 w-full flex items-center justify-between opacity-50">
           <div className="flex gap-1">
-            {[1, 2, 3].map(i => <div key={i} className="w-2 h-2 rounded-full bg-white" />)}
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="w-2 h-2 rounded-full bg-white" />
+            ))}
           </div>
-          <p className="text-[10px] uppercase tracking-[0.2em] font-mono text-white">CampusHub Enterprise OS</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] font-mono text-white">
+            CampusHub Enterprise OS
+          </p>
         </div>
       </div>
     </div>

@@ -41,8 +41,8 @@ function FieldLabel({
   icon?: any;
 }) {
   return (
-    <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-[0.2em]">
-      {Icon && <Icon size={12} className="text-slate-300" />}
+    <label className="flex items-center gap-2 text-[10px] font-medium text-zinc-400 mb-2 uppercase tracking-[0.2em]">
+      {Icon && <Icon size={12} className="text-zinc-300" />}
       {children}
     </label>
   );
@@ -79,7 +79,7 @@ function SettingsSection({
         "card-base transition-all duration-500 overflow-hidden",
         active
           ? "border-brand-200 shadow-2xl shadow-brand-500/5 ring-1 ring-brand-100"
-          : "border-slate-100 hover:border-slate-200 shadow-sm",
+          : "border-zinc-100 hover:border-zinc-200 shadow-sm",
       )}
     >
       <button
@@ -87,7 +87,7 @@ function SettingsSection({
         onClick={onClick}
         className={clsx(
           "w-full flex items-center gap-6 p-6 transition-all text-left group",
-          active ? "bg-slate-50/30" : "bg-white hover:bg-slate-50/50",
+          active ? "bg-zinc-50/30" : "bg-white hover:bg-zinc-50/50",
         )}
       >
         <div
@@ -95,7 +95,7 @@ function SettingsSection({
             "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-sm border",
             active
               ? "bg-brand-600 text-white border-brand-500 shadow-brand-200"
-              : "bg-white text-slate-400 border-slate-100 group-hover:border-slate-200 group-hover:text-slate-600",
+              : "bg-white text-zinc-400 border-zinc-100 group-hover:border-zinc-200 group-hover:text-zinc-600",
           )}
         >
           <Icon size={22} />
@@ -103,13 +103,13 @@ function SettingsSection({
         <div className="flex-1 min-w-0">
           <p
             className={clsx(
-              "font-bold text-lg leading-tight tracking-tight",
-              active ? "text-slate-900" : "text-slate-700",
+              "font-medium text-lg leading-tight tracking-tight",
+              active ? "text-zinc-900" : "text-zinc-700",
             )}
           >
             {title}
           </p>
-          <p className="text-sm text-slate-400 font-medium mt-1 truncate">
+          <p className="text-sm text-zinc-400 font-medium mt-1 truncate">
             {subtitle}
           </p>
         </div>
@@ -118,7 +118,7 @@ function SettingsSection({
             "w-8 h-8 rounded-full flex items-center justify-center transition-all",
             active
               ? "bg-brand-50 text-brand-600 rotate-90"
-              : "bg-slate-50 text-slate-300 group-hover:text-slate-500",
+              : "bg-zinc-50 text-zinc-300 group-hover:text-zinc-500",
           )}
         >
           <ChevronRight size={18} />
@@ -131,7 +131,7 @@ function SettingsSection({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="border-t border-slate-100"
+            className="border-t border-zinc-100"
           >
             <div className="p-8 bg-white">{children}</div>
           </motion.div>
@@ -227,10 +227,10 @@ export default function Settings() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-2"
       >
-        <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 leading-tight tracking-tight">
+        <h1 className="text-4xl lg:text-5xl font-display font-medium text-zinc-900 leading-tight tracking-tight">
           System <span className="text-brand-600">Preferences</span>
         </h1>
-        <p className="text-slate-500 font-medium text-lg">
+        <p className="text-zinc-500 font-medium text-lg">
           Configure your personal identity, security layers, and institutional
           defaults.
         </p>
@@ -243,43 +243,43 @@ export default function Settings() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="card-base p-8 bg-white border-slate-100 sticky top-24 shadow-sm"
+            className="card-base p-8 bg-white border-zinc-100 sticky top-24 shadow-sm"
           >
             <div className="flex flex-col items-center text-center">
-              <div className="relative mb-6 shadow-xl shadow-brand-500/10 border-4 border-white ring-1 ring-slate-100 rounded-full w-fit">
+              <div className="relative mb-6 shadow-xl shadow-brand-500/10 border-4 border-white ring-1 ring-zinc-100 rounded-full w-fit">
                 <Avatar name={user?.fullName ?? "Admin"} size="lg" />
                 <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-emerald-500 border-4 border-white flex items-center justify-center text-white shadow-sm">
                   <CheckCircle2 size={16} />
                 </div>
               </div>
-              <h2 className="text-2xl font-display font-bold text-slate-900 leading-tight tracking-tight">
+              <h2 className="text-2xl font-display font-medium text-zinc-900 leading-tight tracking-tight">
                 {user?.fullName}
               </h2>
-              <p className="text-sm text-slate-500 font-medium mt-1">
+              <p className="text-sm text-zinc-500 font-medium mt-1">
                 {user?.email}
               </p>
 
               <div className="mt-6 flex flex-wrap justify-center gap-2">
-                <div className="px-3 py-1 bg-brand-50 text-brand-600 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-brand-100 flex items-center gap-1.5">
+                <div className="px-3 py-1 bg-brand-50 text-brand-600 rounded-lg text-[10px] font-medium uppercase tracking-widest border border-brand-100 flex items-center gap-1.5">
                   <ShieldCheck size={12} /> {user?.role} Access
                 </div>
               </div>
             </div>
 
-            <div className="mt-10 pt-10 border-t border-slate-50 space-y-4">
+            <div className="mt-10 pt-10 border-t border-zinc-50 space-y-4">
               <div className="flex items-center justify-between py-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest">
                   System UID
                 </span>
-                <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-50 px-2 py-0.5 rounded border border-slate-100 tracking-tighter">
+                <span className="font-mono text-[10px] font-medium text-zinc-600 bg-zinc-50 px-2 py-0.5 rounded border border-zinc-100 tracking-tighter">
                   USR-842-990-CLG
                 </span>
               </div>
               <div className="flex items-center justify-between py-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest">
                   Status
                 </span>
-                <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
+                <span className="flex items-center gap-1.5 text-[10px] font-medium text-emerald-600 uppercase tracking-widest">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />{" "}
                   Synchronized
                 </span>
@@ -307,10 +307,8 @@ export default function Settings() {
                   <input
                     type="text"
                     className={clsx(
-                      "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none",
-                      profileForm.formState.errors.fullName
-                        ? "border-rose-200 bg-rose-50/30 text-rose-600"
-                        : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                      "input-field",
+                      profileForm.formState. errors.fullName ? "input-error" : "",
                     )}
                     {...profileForm.register("fullName")}
                   />
@@ -323,10 +321,8 @@ export default function Settings() {
                   <input
                     type="tel"
                     className={clsx(
-                      "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none",
-                      profileForm.formState.errors.phone
-                        ? "border-rose-200 bg-rose-50/30 text-rose-600"
-                        : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                      "input-field",
+                      profileForm.formState. errors.phone ? "input-error" : "",
                     )}
                     {...profileForm.register("phone")}
                   />
@@ -341,10 +337,8 @@ export default function Settings() {
                 <input
                   type="email"
                   className={clsx(
-                    "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none",
-                    profileForm.formState.errors.email
-                      ? "border-rose-200 bg-rose-50/30 text-rose-600"
-                      : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                    "input-field",
+                    profileForm.formState. errors.email ? "input-error" : "",
                   )}
                   {...profileForm.register("email")}
                 />
@@ -353,7 +347,7 @@ export default function Settings() {
                 />
               </div>
 
-              <div className="pt-6 border-t border-slate-50 flex justify-end">
+              <div className="pt-6 border-t border-zinc-50 flex justify-end">
                 <button
                   type="submit"
                   disabled={profileForm.formState.isSubmitting}
@@ -390,17 +384,15 @@ export default function Settings() {
                   <input
                     type={showCurrent ? "text" : "password"}
                     className={clsx(
-                      "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none pr-12",
-                      passwordForm.formState.errors.currentPassword
-                        ? "border-rose-200 bg-rose-50/30 text-rose-600"
-                        : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                      "input-field pr-12",
+                      passwordForm.formState. errors.currentPassword ? "input-error" : "",
                     )}
                     {...passwordForm.register("currentPassword")}
                   />
                   <button
                     type="button"
                     onClick={() => setShowCurrent(!showCurrent)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-300 hover:text-zinc-600 transition-colors"
                   >
                     {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -419,17 +411,15 @@ export default function Settings() {
                     <input
                       type={showNew ? "text" : "password"}
                       className={clsx(
-                        "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none pr-12",
-                        passwordForm.formState.errors.newPassword
-                          ? "border-rose-200 bg-rose-50/30 text-rose-600"
-                          : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                        "input-field pr-12",
+                        passwordForm.formState. errors.newPassword ? "input-error" : "",
                       )}
                       {...passwordForm.register("newPassword")}
                     />
                     <button
                       type="button"
                       onClick={() => setShowNew(!showNew)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-300 hover:text-zinc-600 transition-colors"
                     >
                       {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -444,17 +434,15 @@ export default function Settings() {
                     <input
                       type={showConfirm ? "text" : "password"}
                       className={clsx(
-                        "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none pr-12",
-                        passwordForm.formState.errors.confirmPassword
-                          ? "border-rose-200 bg-rose-50/30 text-rose-600"
-                          : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm",
+                        "input-field pr-12",
+                        passwordForm.formState. errors.confirmPassword ? "input-error" : "",
                       )}
                       {...passwordForm.register("confirmPassword")}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm(!showConfirm)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-300 hover:text-zinc-600 transition-colors"
                     >
                       {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -467,14 +455,14 @@ export default function Settings() {
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3 shadow-inner">
-                <div className="flex items-center gap-3 text-xs font-bold text-slate-500 tracking-tight">
+              <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-100 space-y-3 shadow-inner">
+                <div className="flex items-center gap-3 text-xs font-medium text-zinc-500 tracking-tight">
                   <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
                     <CheckCircle2 size={12} />
                   </div>
                   Must contain a minimum of 8 high-entropy characters.
                 </div>
-                <div className="flex items-center gap-3 text-xs font-bold text-slate-500 tracking-tight">
+                <div className="flex items-center gap-3 text-xs font-medium text-zinc-500 tracking-tight">
                   <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
                     <CheckCircle2 size={12} />
                   </div>
@@ -482,7 +470,7 @@ export default function Settings() {
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-slate-50 flex justify-end">
+              <div className="pt-6 border-t border-zinc-50 flex justify-end">
                 <button
                   type="submit"
                   disabled={passwordForm.formState.isSubmitting}
@@ -511,7 +499,7 @@ export default function Settings() {
                 </FieldLabel>
                 <input
                   type="text"
-                  className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 outline-none transition-all shadow-sm"
+                  className="input-field"
                   {...collegeForm.register("name")}
                 />
               </div>
@@ -521,7 +509,7 @@ export default function Settings() {
                   <FieldLabel icon={Mail}>Global Support Email</FieldLabel>
                   <input
                     type="email"
-                    className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 outline-none transition-all shadow-sm"
+                    className="input-field"
                     {...collegeForm.register("email")}
                   />
                 </div>
@@ -531,7 +519,7 @@ export default function Settings() {
                   </FieldLabel>
                   <input
                     type="tel"
-                    className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 outline-none transition-all shadow-sm"
+                    className="input-field"
                     {...collegeForm.register("phone")}
                   />
                 </div>
@@ -541,7 +529,7 @@ export default function Settings() {
                 <FieldLabel icon={MapPin}>Geographic HQ Address</FieldLabel>
                 <input
                   type="text"
-                  className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 outline-none transition-all shadow-sm"
+                  className="input-field"
                   {...collegeForm.register("address")}
                 />
               </div>
@@ -550,12 +538,12 @@ export default function Settings() {
                 <FieldLabel icon={Globe}>Institutional Web Domain</FieldLabel>
                 <input
                   type="url"
-                  className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 outline-none transition-all shadow-sm"
+                  className="input-field"
                   {...collegeForm.register("website")}
                 />
               </div>
 
-              <div className="pt-6 border-t border-slate-50 flex justify-end">
+              <div className="pt-6 border-t border-zinc-50 flex justify-end">
                 <button
                   type="submit"
                   disabled={collegeForm.formState.isSubmitting}

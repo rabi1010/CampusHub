@@ -1,48 +1,141 @@
 import api from "./axios";
 
-export interface Student {
+// ── Types matching your Java backend response ──────────
+export interface StudentUser {
   id: string;
-  fullName: string;
   email: string;
-  rollNo: string;
-  department: string;
-  batch: string;
+  fullName: string;
   phone: string;
-  address: string;
-  status: "ACTIVE" | "PENDING" | "SUSPENDED";
-  admissionDate: string;
+  role: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface StudentsResponse {
-  data: Student[];
-  total: number;
-  page: number;
+export interface StudentDepartment {
+  id: string;
+  name: string;
+  code: string;
+}
+
+export interface StudentBatch {
+  id: string;
+  name: string;
+}
+
+export interface Student {
+  id: string;
+  user: StudentUser;
+  department: StudentDepartment;
+  batch: StudentBatch;
+  rollNo: string;
+  address: string;
+  admissionDate: string;
+  updatedAt: string;
+
+  // Flat aliases for DataTable columns
+  // These are computed when mapping API response
+  fullName: string;
+  email: string;
+  status: string;
+  phone: string;
+}
+
+export interface SpringPage<T> {
+  content: T[];
+  totalElements: number;
   totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
 }
 
 export interface CreateStudentPayload {
   fullName: string;
   email: string;
-  rollNo: string;
-  department: string; // ← was departmentId
-  batch: string; // ← was batchId
-  phone: string;
-  address: string;
   password: string;
+  rollNo: string;
+  departmentId: string;
+  batchId: string;
+  phone?: string;
+  address?: string;
+}
+
+export interface UpdateStudentPayload {
+  fullName?: string;
+  phone?: string;
+  password?: string;
+  departmentId?: string;
+  batchId?: string;
+  address?: string;
+}
+
+// ── Helper — flatten nested API response for DataTable ──
+// Your DataTable expects flat fields like student.fullName
+// But API returns student.user.fullName
+// This maps nested → flat so existing column definitions work
+export function mapStudent(s: Student): Student {
+  return {
+    ...s,
+    fullName: s.user?.fullName ?? "",
+    email:    s.user?.email    ?? "",
+    status:   s.user?.status   ?? "",
+    phone:    s.user?.phone    ?? "",
+  };
 }
 
 export const studentService = {
-  getAll: (params?: { page?: number; search?: string; status?: string }) =>
-    api.get<StudentsResponse>("/students", { params }).then((r) => r.data),
+
+  // GET /api/students?page=1&size=10&search=...
+  getAll: (params?: {
+    page?: number;
+    size?: number;
+    search?: string;
+    departmentId?: string;
+  }) =>
+    api
+      .get<ApiResponse<SpringPage<Student>>>("/students", {
+        params: { page: params?.page ?? 1, size: params?.size ?? 50, ...params },
+      })
+      .then((r) => r.data.data.content.map(mapStudent)),
 
   getOne: (id: string) =>
-    api.get<Student>(`/students/${id}`).then((r) => r.data),
+    api
+      .get<ApiResponse<Student>>(`/students/${id}`)
+      .then((r) => mapStudent(r.data.data)),
 
   create: (data: CreateStudentPayload) =>
-    api.post<Student>("/students", data).then((r) => r.data),
+    api
+      .post<ApiResponse<Student>>("/students", data)
+      .then((r) => mapStudent(r.data.data)),
 
-  update: (id: string, data: Partial<CreateStudentPayload>) =>
-    api.put<Student>(`/students/${id}`, data).then((r) => r.data),
+  update: (id: string, data: UpdateStudentPayload) =>
+    api
+      .put<ApiResponse<Student>>(`/students/${id}`, data)
+      .then((r) => mapStudent(r.data.data)),
 
-  delete: (id: string) => api.delete(`/students/${id}`).then((r) => r.data),
+  delete: (id: string) =>
+    api
+      .delete<ApiResponse<null>>(`/students/${id}`)
+      .then((r) => r.data),
+
+  uploadImage: (id: string, file: File) => {
+    const form = new FormData();
+    form.append("image", file);
+    return api
+      .post<ApiResponse<null>>(`/students/${id}/image`, form, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((r) => r.data);
+  },
+
+  getImage: (id: string) =>
+    `${api.defaults.baseURL}/students/${id}/image`,
 };

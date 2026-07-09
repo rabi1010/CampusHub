@@ -34,7 +34,7 @@ export default function ParentDashboard() {
             <User size={28} className="text-blue-600" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-gray-900">
+            <h2 className="text-lg font-medium text-gray-900">
               {mockChild.name}
             </h2>
             <p className="text-sm text-gray-500">
@@ -45,7 +45,7 @@ export default function ParentDashboard() {
             </p>
           </div>
           <div className="ml-auto text-right">
-            <div className="text-3xl font-bold text-green-600">
+            <div className="text-3xl font-medium text-green-600">
               {mockStats.attendancePct}%
             </div>
             <div className="text-xs text-gray-400">Overall Attendance</div>
@@ -83,7 +83,7 @@ export default function ParentDashboard() {
 
       {/* Recent absences */}
       <div className="bg-white rounded-2xl border border-gray-100 p-6">
-        <h3 className="font-semibold text-gray-900 mb-4">
+        <h3 className="font-medium text-gray-900 mb-4">
           Recent Absences
         </h3>
         <div className="space-y-3">

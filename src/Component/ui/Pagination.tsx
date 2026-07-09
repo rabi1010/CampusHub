@@ -41,11 +41,11 @@ export default function Pagination({
   const to = Math.min(page * pageSize, totalItems ?? page * pageSize);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-50">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-zinc-50">
       {/* Count */}
       {totalItems !== undefined && (
-        <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">
-          Showing <span className="text-slate-900">{from}–{to}</span> of {totalItems} records
+        <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wider">
+          Showing <span className="text-zinc-900">{from}–{to}</span> of {totalItems} records
         </p>
       )}
 
@@ -54,14 +54,14 @@ export default function Pagination({
         <button
           onClick={() => onPage(page - 1)}
           disabled={page === 1}
-          className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+          className="p-2 rounded-xl text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
         >
           <ChevronLeft size={16} />
         </button>
 
         {getPages().map((p, i) =>
           p === "..." ? (
-            <span key={`e${i}`} className="px-2 text-slate-300 text-sm font-bold">
+            <span key={`e${i}`} className="px-2 text-zinc-300 text-sm font-medium">
               …
             </span>
           ) : (
@@ -69,10 +69,10 @@ export default function Pagination({
               key={p}
               onClick={() => onPage(p as number)}
               className={clsx(
-                "w-9 h-9 rounded-xl text-xs font-bold transition-all",
+                "w-9 h-9 rounded-xl text-xs font-medium transition-all",
                 page === p
                   ? "bg-brand-600 text-white shadow-lg shadow-brand-500/20"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+                  : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
               )}
             >
               {p}
@@ -83,7 +83,7 @@ export default function Pagination({
         <button
           onClick={() => onPage(page + 1)}
           disabled={page === totalPages}
-          className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+          className="p-2 rounded-xl text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
         >
           <ChevronRight size={16} />
         </button>

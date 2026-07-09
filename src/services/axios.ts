@@ -1,4 +1,6 @@
 import axios from "axios";
+import { store } from "../app/store";
+import { clearCredentials } from "../features/auth/authSlice";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8080/api",
@@ -18,12 +20,12 @@ api.interceptors.request.use((config) => {
 });
 
 // ── Response interceptor ────────────────────────────────
-// Handle 401 globally. If token expires, clear auth and redirect to login.
+// Handle 401 and 403 globally. If token expires or is invalid, clear auth and redirect to login.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      store.dispatch(clearCredentials());
       window.location.href = "/login";
     }
     return Promise.reject(error);

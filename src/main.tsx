@@ -26,12 +26,9 @@ createRoot(document.getElementById("root")!).render(
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
-          {" "}
-          {/* ← add this */}
           <App />
           <ReactQueryDevtools initialIsOpen={false} />
-        </ToastProvider>{" "}
-        {/* ← and this */}
+        </ToastProvider>
       </QueryClientProvider>
     </Provider>
   </StrictMode>,

@@ -29,8 +29,8 @@ const QUALIFICATIONS = [
 
 function FieldLabel({ children, icon: Icon }: { children: React.ReactNode; icon: any }) {
   return (
-    <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-[0.2em]">
-      <Icon size={12} className="text-slate-300" />
+    <label className="flex items-center gap-2 text-sm font-medium text-zinc-700 mb-2">
+      <Icon size={12} className="text-zinc-400" />
       {children}
     </label>
   );
@@ -39,7 +39,7 @@ function FieldLabel({ children, icon: Icon }: { children: React.ReactNode; icon:
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p className="text-[11px] text-rose-500 mt-2 flex items-center gap-1.5 font-bold">
+    <p className="text-[11px] text-rose-500 mt-2 flex items-center gap-1.5 font-medium">
       <AlertCircle size={12} />
       {message}
     </p>
@@ -117,8 +117,8 @@ export default function TeacherForm({
           <input
             type="text"
             placeholder="e.g. John Doe"
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-              errors.fullName ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            className={`input-field ${
+              errors.fullName ? "input-error" : ""
             }`}
             {...register("fullName")}
           />
@@ -129,8 +129,8 @@ export default function TeacherForm({
           <input
             type="text"
             placeholder="e.g. EMP001"
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-              errors.employeeId ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            className={`input-field ${
+              errors.employeeId ? "input-error" : ""
             }`}
             {...register("employeeId")}
           />
@@ -144,8 +144,8 @@ export default function TeacherForm({
           <input
             type="email"
             placeholder="e.g. teacher@college.edu"
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-              errors.email ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            className={`input-field ${
+              errors.email ? "input-error" : ""
             }`}
             {...register("email")}
           />
@@ -156,8 +156,8 @@ export default function TeacherForm({
           <input
             type="tel"
             placeholder="e.g. +977 9800000000"
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-              errors.phone ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            className={`input-field ${
+              errors.phone ? "input-error" : ""
             }`}
             {...register("phone")}
           />
@@ -169,8 +169,8 @@ export default function TeacherForm({
         <div className="space-y-1">
           <FieldLabel icon={Layers}>Academic Faculty</FieldLabel>
           <select
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none appearance-none ${
-              errors.department ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            className={`input-field appearance-none ${
+              errors.department ? "input-error" : ""
             }`}
             {...register("department")}
           >
@@ -184,8 +184,8 @@ export default function TeacherForm({
         <div className="space-y-1">
           <FieldLabel icon={GraduationCap}>Highest Qualification</FieldLabel>
           <select
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none appearance-none ${
-              errors.qualification ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+            className={`input-field appearance-none ${
+              errors.qualification ? "input-error" : ""
             }`}
             {...register("qualification")}
           >
@@ -206,15 +206,15 @@ export default function TeacherForm({
           type="password"
           placeholder={isEdit ? "Leave blank to preserve existing" : "Minimum 6 characters"}
           autoComplete="new-password"
-          className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-            errors.password ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
+          className={`input-field ${
+            errors.password ? "input-error" : ""
           }`}
           {...register("password")}
         />
         <FieldError message={errors.password?.message} />
       </div>
 
-      <div className="pt-6 border-t border-slate-50 flex items-center justify-end">
+      <div className="pt-6 border-t border-zinc-50 flex items-center justify-end">
         <button
           type="submit"
           disabled={isLoading}

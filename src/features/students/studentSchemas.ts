@@ -18,9 +18,9 @@ export const studentSchema = z.object({
     .min(1, "Roll number is required")
     .regex(/^[A-Z0-9]+$/, "Roll number must be uppercase letters and numbers"),
 
-  department: z.string().min(1, "Department is required"),
+  departmentId: z.string().min(1, "Department is required"),
 
-  batch: z.string().min(1, "Batch is required"),
+  batchId: z.string().min(1, "Batch is required"),
 
   phone: z
     .string()
@@ -38,7 +38,6 @@ export const studentSchema = z.object({
     .min(6, "Password must be at least 6 characters"),
 });
 
-// Edit schema — password optional when editing
 export const studentEditSchema = studentSchema.omit({ password: true }).extend({
   password: z
     .string()

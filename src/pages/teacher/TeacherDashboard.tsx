@@ -75,13 +75,13 @@ export default function TeacherDashboard() {
         className="flex flex-col md:flex-row md:items-end justify-between gap-6"
       >
         <div>
-          <div className="flex items-center gap-2 mb-2 text-brand-600 font-bold text-xs uppercase tracking-[0.2em]">
+          <div className="flex items-center gap-2 mb-2 text-brand-600 font-medium text-xs uppercase tracking-[0.2em]">
             <Calendar size={14} /> {today}
           </div>
-          <h1 className="text-4xl font-display font-bold text-slate-900 leading-tight">
+          <h1 className="text-4xl font-display font-medium text-zinc-900 leading-tight">
             {greeting}, <span className="text-brand-600">{user?.fullName?.split(' ')[0]}</span>
           </h1>
-          <p className="text-slate-500 font-medium mt-1">Ready for your classes today?</p>
+          <p className="text-zinc-500 font-medium mt-1">Ready for your classes today?</p>
         </div>
         <div className="flex gap-3">
           <Link to="/teacher/attendance" className="btn-primary py-2.5 px-5 text-sm shadow-brand-500/10">
@@ -122,11 +122,11 @@ export default function TeacherDashboard() {
         {/* Today's schedule */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between px-2">
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <h2 className="text-xl font-medium text-zinc-900 flex items-center gap-2">
               Today's Schedule
-              <span className="text-[10px] bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Active</span>
+              <span className="text-[10px] bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full font-medium uppercase tracking-widest">Active</span>
             </h2>
-            <Link to="/teacher/marks" className="text-xs font-bold text-brand-600 hover:underline">
+            <Link to="/teacher/marks" className="text-xs font-medium text-brand-600 hover:underline">
               View Weekly Planner
             </Link>
           </div>
@@ -138,32 +138,32 @@ export default function TeacherDashboard() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="card-base p-6 bg-white border-slate-100 flex flex-col sm:flex-row items-start sm:items-center gap-6 group hover:border-brand-200 transition-all"
+                className="card-base p-6 bg-white border-zinc-100 flex flex-col sm:flex-row items-start sm:items-center gap-6 group hover:border-brand-200 transition-all"
               >
                 {/* Time Indicator */}
-                <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 border border-slate-100 min-w-[100px] group-hover:bg-brand-50 group-hover:border-brand-100 transition-colors">
+                <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-zinc-50 border border-zinc-100 min-w-[100px] group-hover:bg-brand-50 group-hover:border-brand-100 transition-colors">
                   <Clock size={16} className="text-brand-600 mb-1" />
-                  <span className="text-sm font-bold text-slate-900">{cls.time}</span>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">{cls.duration}</span>
+                  <span className="text-sm font-medium text-zinc-900">{cls.time}</span>
+                  <span className="text-[10px] font-medium text-zinc-400 uppercase">{cls.duration}</span>
                 </div>
 
                 {/* Info */}
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 uppercase tracking-widest">{cls.code}</span>
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-500 uppercase tracking-widest">{cls.code}</span>
                     <Badge 
                       label={cls.status === 'ongoing' ? 'Now' : cls.status} 
                       variant={cls.status === 'ongoing' ? 'success' : cls.status === 'upcoming' ? 'warning' : 'default'}
                     />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-600 transition-colors">{cls.course}</h3>
-                  <div className="flex items-center gap-4 text-xs font-medium text-slate-500">
-                    <span className="flex items-center gap-1"><MapPin size={12} className="text-slate-400" /> {cls.room}</span>
-                    <span className="flex items-center gap-1"><Users size={12} className="text-slate-400" /> {cls.students} Students</span>
+                  <h3 className="text-lg font-medium text-zinc-900 group-hover:text-brand-600 transition-colors">{cls.course}</h3>
+                  <div className="flex items-center gap-4 text-xs font-medium text-zinc-500">
+                    <span className="flex items-center gap-1"><MapPin size={12} className="text-zinc-400" /> {cls.room}</span>
+                    <span className="flex items-center gap-1"><Users size={12} className="text-zinc-400" /> {cls.students} Students</span>
                   </div>
                 </div>
 
-                <button className="self-end sm:self-center p-3 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-brand-600 group-hover:text-white transition-all">
+                <button className="self-end sm:self-center p-3 rounded-xl bg-zinc-50 text-zinc-400 group-hover:bg-brand-600 group-hover:text-white transition-all">
                   <ArrowRight size={18} />
                 </button>
               </motion.div>
@@ -174,39 +174,39 @@ export default function TeacherDashboard() {
         {/* Sidebar Widgets */}
         <div className="space-y-8">
           {/* Quick Actions */}
-          <div className="card-base p-6 bg-white border-slate-100 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest">Resource Center</h3>
+          <div className="card-base p-6 bg-white border-zinc-100 shadow-sm">
+            <h3 className="text-sm font-medium text-zinc-900 mb-4 uppercase tracking-widest">Resource Center</h3>
             <div className="grid grid-cols-2 gap-3">
-              <button className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-slate-50 hover:bg-brand-50 hover:text-brand-600 border border-slate-100 transition-all group">
-                <BookOpen size={20} className="text-slate-400 group-hover:text-brand-600" />
-                <span className="text-xs font-bold">Curriculum</span>
+              <button className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-zinc-50 hover:bg-brand-50 hover:text-brand-600 border border-zinc-100 transition-all group">
+                <BookOpen size={20} className="text-zinc-400 group-hover:text-brand-600" />
+                <span className="text-xs font-medium">Curriculum</span>
               </button>
-              <button className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-slate-50 hover:bg-brand-50 hover:text-brand-600 border border-slate-100 transition-all group">
-                <UserCheck size={20} className="text-slate-400 group-hover:text-brand-600" />
-                <span className="text-xs font-bold">Reports</span>
+              <button className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-zinc-50 hover:bg-brand-50 hover:text-brand-600 border border-zinc-100 transition-all group">
+                <UserCheck size={20} className="text-zinc-400 group-hover:text-brand-600" />
+                <span className="text-xs font-medium">Reports</span>
               </button>
             </div>
           </div>
 
           {/* Notices */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 px-2 uppercase tracking-widest">Recent Updates</h3>
+            <h3 className="text-sm font-medium text-zinc-900 px-2 uppercase tracking-widest">Recent Updates</h3>
             <div className="space-y-3">
               {notices.slice(0, 3).map((n) => (
                 <div 
                   key={n.id}
-                  className="p-4 rounded-2xl bg-white border border-slate-100 hover:border-brand-200 transition-all cursor-pointer group"
+                  className="p-4 rounded-2xl bg-white border border-zinc-100 hover:border-brand-200 transition-all cursor-pointer group"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <Badge label="Faculty" variant={n.urgent ? "danger" : "info"} />
-                    <span className="text-[10px] font-bold text-slate-400">{new Date(n.createdAt).toLocaleDateString()}</span>
+                    <span className="text-[10px] font-medium text-zinc-400">{new Date(n.createdAt).toLocaleDateString()}</span>
                   </div>
-                  <h4 className="text-sm font-bold text-slate-800 group-hover:text-brand-600 truncate transition-colors">{n.title}</h4>
+                  <h4 className="text-sm font-medium text-zinc-800 group-hover:text-brand-600 truncate transition-colors">{n.title}</h4>
                 </div>
               ))}
               {notices.length === 0 && (
-                <div className="p-8 text-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                  <p className="text-xs font-bold text-slate-400">No new notices</p>
+                <div className="p-8 text-center bg-zinc-50 rounded-2xl border-2 border-dashed border-zinc-200">
+                  <p className="text-xs font-medium text-zinc-400">No new notices</p>
                 </div>
               )}
             </div>

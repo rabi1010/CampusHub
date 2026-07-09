@@ -46,28 +46,28 @@ export default function Modal({
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/50 backdrop-blur-sm animate-fade-in"
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
       <div
         className={clsx(
-          "w-full bg-white rounded-2xl shadow-2xl border border-slate-100",
+          "w-full bg-white rounded-2xl shadow-2xl border border-zinc-100",
           "flex flex-col max-h-[90vh] animate-fade-up",
           SIZES[size],
         )}
       >
         {/* Header */}
         {title && (
-          <div className="flex items-start justify-between px-6 py-5 border-b border-slate-100 shrink-0">
+          <div className="flex items-start justify-between px-6 py-5 border-b border-zinc-100 shrink-0">
             <div>
-              <h2 className="font-display text-lg font-bold text-slate-900">{title}</h2>
+              <h2 className="font-display text-lg font-medium text-zinc-900">{title}</h2>
               {subtitle && (
-                <p className="text-sm text-slate-500 mt-0.5">{subtitle}</p>
+                <p className="text-sm text-zinc-500 mt-0.5">{subtitle}</p>
               )}
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors ml-4 shrink-0"
+              className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors ml-4 shrink-0"
             >
               <X size={18} />
             </button>

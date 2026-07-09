@@ -8,21 +8,12 @@ import {
   type StudentFormValues,
 } from "./studentSchemas";
 import type { Student } from "../../services/studentService";
-
-const DEPARTMENTS = [
-  "Computer Science",
-  "Information Technology",
-  "Electronics",
-  "Civil Engineering",
-  "Mechanical Engineering",
-];
-
-const BATCHES = ["2021-2024", "2022-2025", "2023-2026", "2024-2027"];
+import { useDepartments, useBatches } from "../academics/useAcademics";
 
 function FieldLabel({ children, icon: Icon }: { children: React.ReactNode; icon: any }) {
   return (
-    <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-[0.2em]">
-      <Icon size={12} className="text-slate-300" />
+    <label className="flex items-center gap-2 text-sm font-medium text-zinc-700 mb-2">
+      <Icon size={16} className="text-zinc-400" />
       {children}
     </label>
   );
@@ -31,7 +22,7 @@ function FieldLabel({ children, icon: Icon }: { children: React.ReactNode; icon:
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p className="text-[11px] text-rose-500 mt-2 flex items-center gap-1.5 font-bold">
+    <p className="text-[11px] text-rose-500 mt-2 flex items-center gap-1.5 font-medium">
       <AlertCircle size={12} />
       {message}
     </p>
@@ -51,6 +42,10 @@ export default function StudentForm({
 }: StudentFormProps) {
   const isEdit = !!student;
 
+  // Fetch real departments and batches from backend
+  const { data: departments = [], isLoading: deptLoading } = useDepartments();
+  const { data: batches = [],     isLoading: batchLoading } = useBatches();
+
   const {
     register,
     handleSubmit,
@@ -62,38 +57,38 @@ export default function StudentForm({
     ) as Resolver<StudentFormValues>,
     defaultValues: isEdit
       ? {
-          fullName: student.fullName,
-          email: student.email,
-          rollNo: student.rollNo,
-          department: student.department,
-          batch: student.batch,
-          phone: student.phone,
-          address: student.address,
-          password: "",
+          fullName:     student.fullName,
+          email:        student.email,
+          rollNo:       student.rollNo,
+          departmentId: student.department?.id ?? "",
+          batchId:      student.batch?.id ?? "",
+          phone:        student.phone,
+          address:      student.address,
+          password:     "",
         }
       : {
-          fullName: "",
-          email: "",
-          rollNo: "",
-          department: "",
-          batch: "",
-          phone: "",
-          address: "",
-          password: "",
+          fullName:     "",
+          email:        "",
+          rollNo:       "",
+          departmentId: "",
+          batchId:      "",
+          phone:        "",
+          address:      "",
+          password:     "",
         },
   });
 
   useEffect(() => {
     if (student) {
       reset({
-        fullName: student.fullName,
-        email: student.email,
-        rollNo: student.rollNo,
-        department: student.department,
-        batch: student.batch,
-        phone: student.phone,
-        address: student.address,
-        password: "",
+        fullName:     student.fullName,
+        email:        student.email,
+        rollNo:       student.rollNo,
+        departmentId: student.department?.id ?? "",
+        batchId:      student.batch?.id ?? "",
+        phone:        student.phone,
+        address:      student.address,
+        password:     "",
       });
     } else {
       reset();
@@ -112,9 +107,7 @@ export default function StudentForm({
           <input
             type="text"
             placeholder="e.g. Aarav Sharma"
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-              errors.fullName ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
-            }`}
+            className={`input-field ${errors.fullName ? "input-error" : ""}`}
             {...register("fullName")}
           />
           <FieldError message={errors.fullName?.message} />
@@ -124,9 +117,7 @@ export default function StudentForm({
           <input
             type="text"
             placeholder="e.g. BCA001"
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-              errors.rollNo ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
-            }`}
+            className={`input-field ${errors.rollNo ? "input-error" : ""}`}
             {...register("rollNo")}
           />
           <FieldError message={errors.rollNo?.message} />
@@ -139,9 +130,7 @@ export default function StudentForm({
           <input
             type="email"
             placeholder="e.g. student@college.edu"
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-              errors.email ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
-            }`}
+            className={`input-field ${errors.email ? "input-error" : ""}`}
             {...register("email")}
           />
           <FieldError message={errors.email?.message} />
@@ -151,9 +140,7 @@ export default function StudentForm({
           <input
             type="tel"
             placeholder="e.g. +977 9800000000"
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-              errors.phone ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
-            }`}
+            className={`input-field ${errors.phone ? "input-error" : ""}`}
             {...register("phone")}
           />
           <FieldError message={errors.phone?.message} />
@@ -164,32 +151,36 @@ export default function StudentForm({
         <div className="space-y-1">
           <FieldLabel icon={Layers}>Academic Faculty</FieldLabel>
           <select
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none appearance-none ${
-              errors.department ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
-            }`}
-            {...register("department")}
+            disabled={deptLoading}
+            className={`input-field appearance-none ${errors.departmentId ? "input-error" : ""}`}
+            {...register("departmentId")}
           >
-            <option value="">Select department</option>
-            {DEPARTMENTS.map((d) => (
-              <option key={d} value={d}>{d}</option>
+            <option value="">
+              {deptLoading ? "Loading departments..." : "Select department"}
+            </option>
+            {departments.map((d) => (
+              <option key={d.id} value={d.id}>{d.name}</option>
             ))}
           </select>
-          <FieldError message={errors.department?.message} />
+          <FieldError message={errors.departmentId?.message} />
         </div>
         <div className="space-y-1">
           <FieldLabel icon={GraduationCap}>Enrollment Batch</FieldLabel>
           <select
-            className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none appearance-none ${
-              errors.batch ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
-            }`}
-            {...register("batch")}
+            disabled={batchLoading}
+            className={`input-field appearance-none ${errors.batchId ? "input-error" : ""}`}
+            {...register("batchId")}
           >
-            <option value="">Select batch</option>
-            {BATCHES.map((b) => (
-              <option key={b} value={b}>{b}</option>
+            <option value="">
+              {batchLoading ? "Loading batches..." : "Select batch"}
+            </option>
+            {batches.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name} — {b.department.name}
+              </option>
             ))}
           </select>
-          <FieldError message={errors.batch?.message} />
+          <FieldError message={errors.batchId?.message} />
         </div>
       </div>
 
@@ -198,9 +189,7 @@ export default function StudentForm({
         <input
           type="text"
           placeholder="e.g. Kathmandu, Nepal"
-          className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-            errors.address ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
-          }`}
+          className={`input-field ${errors.address ? "input-error" : ""}`}
           {...register("address")}
         />
         <FieldError message={errors.address?.message} />
@@ -214,15 +203,13 @@ export default function StudentForm({
           type="password"
           placeholder={isEdit ? "Leave blank to preserve existing" : "Minimum 6 characters"}
           autoComplete="new-password"
-          className={`w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none ${
-            errors.password ? "border-rose-200 bg-rose-50/30" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900 shadow-sm"
-          }`}
+          className={`input-field ${errors.password ? "input-error" : ""}`}
           {...register("password")}
         />
         <FieldError message={errors.password?.message} />
       </div>
 
-      <div className="pt-6 border-t border-slate-50 flex items-center justify-end">
+      <div className="pt-6 border-t border-zinc-50 flex items-center justify-end">
         <button
           type="submit"
           disabled={isLoading}

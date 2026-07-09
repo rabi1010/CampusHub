@@ -37,14 +37,14 @@ const COLUMNS: Column<Notice>[] = [
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <p className="text-sm font-bold text-slate-900 truncate">{row.title}</p>
+            <p className="text-sm font-medium text-zinc-900 truncate">{row.title}</p>
             {row.urgent && (
-              <span className="text-[9px] font-bold bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
+              <span className="text-[9px] font-medium bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
                 Urgent
               </span>
             )}
           </div>
-          <p className="text-xs text-slate-400 font-medium truncate max-w-[200px]">
+          <p className="text-xs text-zinc-400 font-medium truncate max-w-[200px]">
             {row.content}
           </p>
         </div>
@@ -78,8 +78,8 @@ const COLUMNS: Column<Notice>[] = [
     label: "Publisher",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-2 text-slate-600 font-medium text-sm">
-        <User size={14} className="text-slate-400" />
+      <div className="flex items-center gap-2 text-zinc-600 font-medium text-sm">
+        <User size={14} className="text-zinc-400" />
         {row.author}
       </div>
     ),
@@ -89,7 +89,7 @@ const COLUMNS: Column<Notice>[] = [
     label: "Publication Date",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider">
+      <div className="flex items-center gap-2 text-zinc-400 text-xs font-medium uppercase tracking-wider">
         <Calendar size={12} />
         {new Date(row.createdAt).toLocaleDateString("en-US", {
           month: "short",
@@ -155,7 +155,7 @@ export default function Notices() {
         />
       </motion.div>
 
-      <div className="card-base bg-white border-slate-100 overflow-hidden">
+      <div className="card-base bg-white border-zinc-100 overflow-hidden">
         <DataTable
           data={notices}
           columns={COLUMNS}
@@ -170,14 +170,14 @@ export default function Notices() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setEditNotice(row)}
-                className="p-2 rounded-xl text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100"
+                className="p-2 rounded-xl text-zinc-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100"
                 title="Edit Announcement"
               >
                 <Pencil size={16} />
               </button>
               <button
                 onClick={() => setDeleteTarget(row)}
-                className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
+                className="p-2 rounded-xl text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
                 title="Delete Announcement"
               >
                 <Trash2 size={16} />

@@ -25,10 +25,10 @@ const COLUMNS: Column<Student>[] = [
     sortable: true,
     render: (row) => (
       <div className="flex items-center gap-4 py-1">
-        <Avatar name={row.fullName} size="md" className="border-2 border-white shadow-sm ring-1 ring-slate-100" />
+        <Avatar name={row.fullName} size="md" className="border-2 border-white shadow-sm ring-1 ring-zinc-100" />
         <div>
-          <p className="text-sm font-bold text-slate-900 leading-tight">{row.fullName}</p>
-          <p className="text-[11px] font-medium text-slate-400">{row.email}</p>
+          <p className="text-sm font-medium text-zinc-900 leading-tight">{row.fullName}</p>
+          <p className="text-[11px] font-medium text-zinc-400">{row.email}</p>
         </div>
       </div>
     ),
@@ -38,7 +38,7 @@ const COLUMNS: Column<Student>[] = [
     label: "Roll Number",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-2 font-mono text-[11px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
+      <div className="flex items-center gap-2 font-mono text-[11px] font-medium text-zinc-500 bg-zinc-50 px-2.5 py-1 rounded-lg border border-zinc-100">
         <Hash size={12} className="text-brand-500" />
         {row.rollNo}
       </div>
@@ -49,8 +49,8 @@ const COLUMNS: Column<Student>[] = [
     label: "Academic Year",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-        <Layers size={14} className="text-slate-300" />
+      <div className="flex items-center gap-2 text-xs font-medium text-zinc-400 uppercase tracking-widest">
+        <Layers size={14} className="text-zinc-300" />
         Batch {row.batch}
       </div>
     ),
@@ -59,8 +59,8 @@ const COLUMNS: Column<Student>[] = [
     key: "phone",
     label: "Contact",
     render: (row) => (
-      <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
-        <Phone size={14} className="text-slate-400" />
+      <div className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+        <Phone size={14} className="text-zinc-400" />
         {row.phone}
       </div>
     ),
@@ -108,15 +108,15 @@ export default function StudentsList() {
             key={course.id}
             onClick={() => setSelectedCourse(course.id)}
             className={clsx(
-              "flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all border",
+              "flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all border",
               selectedCourse === course.id
                 ? "bg-brand-600 border-brand-600 text-white shadow-lg shadow-brand-500/20"
-                : "bg-white border-slate-100 text-slate-500 hover:border-slate-200 hover:bg-slate-50"
+                : "bg-white border-zinc-100 text-zinc-500 hover:border-zinc-200 hover:bg-zinc-50"
             )}
           >
             <BookOpen size={16} />
             {course.name}
-            <span className={clsx("text-[10px] ml-1 px-1.5 py-0.5 rounded-md font-mono", selectedCourse === course.id ? "bg-white/20 text-white" : "bg-slate-100 text-slate-400")}>
+            <span className={clsx("text-[10px] ml-1 px-1.5 py-0.5 rounded-md font-mono", selectedCourse === course.id ? "bg-white/20 text-white" : "bg-zinc-100 text-zinc-400")}>
               {course.code}
             </span>
           </button>
@@ -127,24 +127,24 @@ export default function StudentsList() {
       <motion.div 
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
-        className="flex items-center gap-4 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm"
+        className="flex items-center gap-4 p-5 bg-white rounded-2xl border border-zinc-100 shadow-sm"
       >
         <div className="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
           <GraduationCap size={24} />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Active Enrollment</p>
-          <p className="text-sm font-bold text-slate-900">
+          <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest mb-0.5">Active Enrollment</p>
+          <p className="text-sm font-medium text-zinc-900">
             Showing roster for <span className="text-brand-600">{selected.name}</span>
           </p>
         </div>
-        <div className="ml-auto flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
-          <Users size={16} className="text-slate-400" />
-          <span className="font-mono text-sm font-bold text-slate-600">{students.length} Total</span>
+        <div className="ml-auto flex items-center gap-2 px-4 py-2 bg-zinc-50 rounded-xl border border-zinc-100">
+          <Users size={16} className="text-zinc-400" />
+          <span className="font-mono text-sm font-medium text-zinc-600">{students.length} Total</span>
         </div>
       </motion.div>
 
-      <div className="card-base bg-white border-slate-100 overflow-hidden shadow-sm">
+      <div className="card-base bg-white border-zinc-100 overflow-hidden shadow-sm">
         <DataTable
           data={students}
           columns={COLUMNS}

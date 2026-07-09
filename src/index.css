@@ -15,17 +15,17 @@
     --brand-600: #059669;
     --brand-700: #047857;
 
-    /* --- Base Slate/Neutral Palette --- */
-    --slate-50: #f8fafc;
-    --slate-100: #f1f5f9;
-    --slate-200: #e2e8f0;
-    --slate-300: #cbd5e1;
-    --slate-400: #94a3b8;
-    --slate-500: #64748b;
-    --slate-600: #475569;
-    --slate-700: #334155;
-    --slate-800: #1e293b;
-    --slate-900: #0f172a;
+    /* --- Base Zinc/Neutral Palette --- */
+    --zinc-50: #fafafa;
+    --zinc-100: #f4f4f5;
+    --zinc-200: #e4e4e7;
+    --zinc-300: #d4d4d8;
+    --zinc-400: #a1a1aa;
+    --zinc-500: #71717a;
+    --zinc-600: #52525b;
+    --zinc-700: #3f3f46;
+    --zinc-800: #27272a;
+    --zinc-900: #18181b;
 
     /* --- Typography Families --- */
     --font-display-family: "Plus Jakarta Sans", system-ui, sans-serif;
@@ -78,16 +78,16 @@
     --color-brand-600: #059669;
     --color-brand-700: #047857;
 
-    --color-slate-50: #f8fafc;
-    --color-slate-100: #f1f5f9;
-    --color-slate-200: #e2e8f0;
-    --color-slate-300: #cbd5e1;
-    --color-slate-400: #94a3b8;
-    --color-slate-500: #64748b;
-    --color-slate-600: #475569;
-    --color-slate-700: #334155;
-    --color-slate-800: #1e293b;
-    --color-slate-900: #0f172a;
+    --color-zinc-50: #fafafa;
+    --color-zinc-100: #f4f4f5;
+    --color-zinc-200: #e4e4e7;
+    --color-zinc-300: #d4d4d8;
+    --color-zinc-400: #a1a1aa;
+    --color-zinc-500: #71717a;
+    --color-zinc-600: #52525b;
+    --color-zinc-700: #3f3f46;
+    --color-zinc-800: #27272a;
+    --color-zinc-900: #18181b;
 
     /* Fonts */
     --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
@@ -169,7 +169,7 @@
   }
 
   .card-base {
-    @apply bg-white border border-slate-100 rounded-2xl shadow-card 
+    @apply bg-white border border-zinc-100 rounded-2xl shadow-card 
            transition-all duration-300 hover:shadow-card-lg;
   }
 
@@ -181,20 +181,20 @@
 
   .btn-secondary {
     @apply inline-flex items-center gap-2 px-6 py-2.5 rounded-xl
-           bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 
+           bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 
            font-medium text-sm transition-all duration-200 active:scale-[0.98];
   }
 
   .btn-ghost {
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm
-           text-slate-500 hover:text-slate-900 hover:bg-slate-100/50
+           text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100/50
            transition-all duration-150;
   }
 
   .input-field {
     @apply w-full px-4 py-2.5 rounded-xl text-sm
-           bg-white border border-slate-200
-           text-slate-900 placeholder-slate-400
+           bg-white border border-zinc-200
+           text-zinc-900 placeholder-zinc-400
            focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500
            transition-all duration-200;
   }
@@ -219,12 +219,12 @@
   .badge-brand {
     @apply bg-brand-50 text-brand-700 border border-brand-100;
   }
-  .badge-slate {
-    @apply bg-slate-100 text-slate-700 border border-slate-200;
+  .badge-zinc {
+    @apply bg-zinc-100 text-zinc-700 border border-zinc-200;
   }
 
   .glass-nav {
-    @apply sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200;
+    @apply sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-zinc-200;
   }
 
   .sidebar-item {
@@ -237,7 +237,7 @@
   }
 
   .sidebar-item-inactive {
-    @apply text-slate-500 hover:bg-slate-50 hover:text-slate-900;
+    @apply text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900;
   }
 
   /* Smooth Underline Utility */
@@ -262,5 +262,5 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-200 rounded-full hover:bg-slate-300;
+  @apply bg-zinc-200 rounded-full hover:bg-zinc-300;
 }

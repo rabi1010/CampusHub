@@ -83,7 +83,7 @@ function calculateGPA(courses: typeof MY_ENROLLED_COURSES): string {
 
 function ProgressBar({ value, colorClass }: { value: number; colorClass: string }) {
   return (
-    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-50">
+    <div className="w-full h-2 bg-zinc-100 rounded-full overflow-hidden border border-zinc-50">
       <motion.div
         initial={{ width: 0 }}
         animate={{ width: `${Math.min(value, 100)}%` }}
@@ -127,13 +127,13 @@ export default function StudentDashboard() {
         className="flex flex-col md:flex-row md:items-center justify-between gap-8"
       >
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-brand-600 font-bold text-[10px] uppercase tracking-[0.25em]">
+          <div className="flex items-center gap-2 text-brand-600 font-medium text-[10px] uppercase tracking-[0.25em]">
             <Calendar size={14} /> {today}
           </div>
-          <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 leading-tight tracking-tight">
+          <h1 className="text-4xl lg:text-5xl font-display font-medium text-zinc-900 leading-tight tracking-tight">
             {greeting}, <span className="text-brand-600">{user?.fullName?.split(' ')[0]}</span>
           </h1>
-          <p className="text-slate-500 font-medium text-lg">Your academic summary is synchronized and up-to-date.</p>
+          <p className="text-zinc-500 font-medium text-lg">Your academic summary is synchronized and up-to-date.</p>
         </div>
         <div className="flex items-center gap-3">
           <Link to="/student/courses" className="btn-primary py-3.5 px-8 text-sm shadow-xl shadow-brand-500/15">
@@ -178,13 +178,13 @@ export default function StudentDashboard() {
         {/* Course Performance Section */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between px-2">
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-3">
+            <h2 className="text-xl font-medium text-zinc-900 flex items-center gap-3">
               Course Performance
-              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-600 text-[10px] rounded-full font-bold uppercase tracking-widest border border-emerald-100">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-600 text-[10px] rounded-full font-medium uppercase tracking-widest border border-emerald-100">
                 <CheckCircle2 size={12} /> Live Status
               </div>
             </h2>
-            <Link to="/student/courses" className="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 transition-all">
+            <Link to="/student/courses" className="text-xs font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1 transition-all">
               Manage Enrollment <ChevronRight size={14} />
             </Link>
           </div>
@@ -196,31 +196,31 @@ export default function StudentDashboard() {
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.1 }}
-                className="card-base p-6 bg-white border-slate-100 hover:border-brand-200 transition-all group hover:shadow-lg"
+                className="card-base p-6 bg-white border-zinc-100 hover:border-brand-200 transition-all group hover:shadow-lg"
               >
                 <div className="flex justify-between items-start mb-6">
                   <div className="space-y-1.5">
-                    <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                       <Hash size={12} className="text-slate-300" /> {course.code}
+                    <div className="flex items-center gap-2 text-[10px] font-medium text-zinc-400 uppercase tracking-widest">
+                       <Hash size={12} className="text-zinc-300" /> {course.code}
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-600 transition-colors leading-tight">{course.name}</h3>
-                    <p className="text-xs text-slate-500 font-medium">{course.teacher}</p>
+                    <h3 className="text-lg font-medium text-zinc-900 group-hover:text-brand-600 transition-colors leading-tight">{course.name}</h3>
+                    <p className="text-xs text-zinc-500 font-medium">{course.teacher}</p>
                   </div>
-                  <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 font-display font-bold text-lg shadow-sm group-hover:bg-brand-50 group-hover:border-brand-100 group-hover:text-brand-600 transition-all">
+                  <div className="w-12 h-12 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-900 font-display font-medium text-lg shadow-sm group-hover:bg-brand-50 group-hover:border-brand-100 group-hover:text-brand-600 transition-all">
                     {course.grade}
                   </div>
                 </div>
 
                 <div className="space-y-5">
                   <div>
-                    <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                    <div className="flex justify-between text-[10px] font-medium text-zinc-400 uppercase tracking-widest mb-2">
                       <span>Curriculum Progress</span>
-                      <span className="text-slate-600">{course.progress}%</span>
+                      <span className="text-zinc-600">{course.progress}%</span>
                     </div>
                     <ProgressBar value={course.progress} colorClass={course.progress > 70 ? "bg-emerald-500" : "bg-amber-500"} />
                   </div>
                   <div>
-                    <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                    <div className="flex justify-between text-[10px] font-medium text-zinc-400 uppercase tracking-widest mb-2">
                       <span>Session Attendance</span>
                       <span className={course.attendance >= 75 ? "text-emerald-600" : "text-rose-600"}>{course.attendance}%</span>
                     </div>
@@ -235,30 +235,30 @@ export default function StudentDashboard() {
         {/* Sidebar Insights */}
         <div className="space-y-8">
           {/* Elite Achievement Card */}
-          <div className="card-base p-8 bg-slate-900 text-white relative overflow-hidden shadow-2xl shadow-slate-200">
+          <div className="card-base p-8 bg-zinc-900 text-white relative overflow-hidden shadow-2xl shadow-zinc-200">
             <div className="absolute top-0 right-0 w-48 h-48 bg-brand-500/20 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/10 blur-[80px] rounded-full translate-y-1/2 -translate-x-1/2" />
             
             <div className="relative z-10">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-6">Academic Excellence</p>
+              <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.3em] mb-6">Academic Excellence</p>
               <div className="flex items-center gap-5 mb-8">
                 <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center text-amber-400 border border-white/5 shadow-inner">
                   <Award size={40} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <p className="text-4xl font-display font-bold text-white tracking-tight">{gpa}</p>
-                  <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Global Score Index</p>
+                  <p className="text-4xl font-display font-medium text-white tracking-tight">{gpa}</p>
+                  <p className="text-xs text-zinc-400 font-medium uppercase tracking-wider mt-1">Global Score Index</p>
                 </div>
               </div>
               <div className="pt-6 border-t border-white/10">
-                <p className="text-sm font-medium text-slate-300 leading-relaxed italic opacity-80">"Education is the most powerful weapon which you can use to change the world."</p>
+                <p className="text-sm font-medium text-zinc-300 leading-relaxed italic opacity-80">"Education is the most powerful weapon which you can use to change the world."</p>
               </div>
             </div>
           </div>
 
           {/* Actionable Deadlines */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 px-2 uppercase tracking-widest flex items-center gap-2">
+            <h3 className="text-sm font-medium text-zinc-900 px-2 uppercase tracking-widest flex items-center gap-2">
                Upcoming Deadlines
                <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
             </h3>
@@ -266,7 +266,7 @@ export default function StudentDashboard() {
               {UPCOMING_EVENTS.map((event) => (
                 <div 
                   key={event.id}
-                  className="p-5 rounded-2xl bg-white border border-slate-100 hover:border-brand-200 transition-all cursor-pointer group flex items-center gap-5 hover:shadow-md"
+                  className="p-5 rounded-2xl bg-white border border-zinc-100 hover:border-brand-200 transition-all cursor-pointer group flex items-center gap-5 hover:shadow-md"
                 >
                   <div className={clsx(
                     "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm border",
@@ -276,10 +276,10 @@ export default function StudentDashboard() {
                     {event.type === 'exam' ? <TrendingUp size={22} /> : event.type === 'assignment' ? <Clock size={22} /> : <Calendar size={22} />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-bold text-slate-900 truncate group-hover:text-brand-600 transition-colors">{event.title}</h4>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{event.subject} · {event.date}</p>
+                    <h4 className="text-sm font-medium text-zinc-900 truncate group-hover:text-brand-600 transition-colors">{event.title}</h4>
+                    <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest mt-1">{event.subject} · {event.date}</p>
                   </div>
-                  <ChevronRight size={16} className="text-slate-300 group-hover:text-brand-400 transition-colors" />
+                  <ChevronRight size={16} className="text-zinc-300 group-hover:text-brand-400 transition-colors" />
                 </div>
               ))}
             </div>
@@ -287,20 +287,20 @@ export default function StudentDashboard() {
           
           {/* Intelligence Bulletins */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 px-2 uppercase tracking-widest">Recent Bulletins</h3>
+            <h3 className="text-sm font-medium text-zinc-900 px-2 uppercase tracking-widest">Recent Bulletins</h3>
             <div className="space-y-3">
               {notices.slice(0, 2).map((n) => (
-                <div key={n.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-all group cursor-pointer">
+                <div key={n.id} className="p-5 rounded-2xl bg-zinc-50 border border-zinc-100 hover:border-zinc-200 transition-all group cursor-pointer">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                    <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
                       <Calendar size={10} /> {new Date(n.createdAt).toLocaleDateString()}
                     </span>
-                    {n.urgent && <span className="text-[9px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-100">URGENT</span>}
+                    {n.urgent && <span className="text-[9px] font-medium text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-100">URGENT</span>}
                   </div>
-                  <h4 className="text-sm font-bold text-slate-800 truncate group-hover:text-brand-600 transition-colors">{n.title}</h4>
+                  <h4 className="text-sm font-medium text-zinc-800 truncate group-hover:text-brand-600 transition-colors">{n.title}</h4>
                 </div>
               ))}
-              <Link to="/student/notices" className="block text-center py-4 rounded-2xl border-2 border-dashed border-slate-200 text-slate-400 text-[11px] font-bold uppercase tracking-widest hover:border-brand-300 hover:text-brand-600 hover:bg-brand-50 transition-all">
+              <Link to="/student/notices" className="block text-center py-4 rounded-2xl border-2 border-dashed border-zinc-200 text-zinc-400 text-[11px] font-medium uppercase tracking-widest hover:border-brand-300 hover:text-brand-600 hover:bg-brand-50 transition-all">
                 Open Notice Board
               </Link>
             </div>

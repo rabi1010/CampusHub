@@ -3,7 +3,7 @@ import clsx from "clsx";
 interface AvatarProps {
   name: string;
   size?: "sm" | "md" | "lg" | "xl";
-  color?: "brand" | "slate" | "indigo";
+  color?: "brand" | "zinc" | "indigo";
   className?: string;
 }
 
@@ -16,14 +16,14 @@ const SIZES = {
 
 const COLORS = {
   brand: "bg-brand-50 border-brand-100 text-brand-600",
-  slate: "bg-slate-50 border-slate-100 text-slate-500",
+  zinc: "bg-zinc-50 border-zinc-100 text-zinc-500",
   indigo: "bg-indigo-50 border-indigo-100 text-indigo-600",
 };
 
 // Pick a consistent color based on the name
-function getColor(name: string): "brand" | "slate" | "indigo" {
+function getColor(name: string): "brand" | "zinc" | "indigo" {
   const i = name.charCodeAt(0) % 3;
-  return (["brand", "slate", "indigo"] as const)[i];
+  return (["brand", "zinc", "indigo"] as const)[i];
 }
 
 function getInitials(name: string): string {
@@ -46,7 +46,7 @@ export default function Avatar({
   return (
     <div
       className={clsx(
-        "rounded-2xl border flex items-center justify-center font-bold shrink-0 shadow-sm",
+        "rounded-2xl border flex items-center justify-center font-medium shrink-0 shadow-sm",
         SIZES[size],
         COLORS[c],
         className

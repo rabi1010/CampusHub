@@ -16,7 +16,7 @@ export default function ParentProfile() {
             <User size={28} className="text-blue-600" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-gray-900">
+            <h2 className="text-lg font-medium text-gray-900">
               Ram Sharma
             </h2>
             <p className="text-sm text-gray-500">
@@ -42,7 +42,7 @@ export default function ParentProfile() {
 
       {/* Linked children */}
       <div className="bg-white rounded-2xl border border-gray-100 p-6">
-        <h3 className="font-semibold text-gray-900 mb-4">
+        <h3 className="font-medium text-gray-900 mb-4">
           My Children
         </h3>
         <div className="space-y-3">

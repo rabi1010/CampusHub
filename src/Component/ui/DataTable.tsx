@@ -76,7 +76,7 @@ export default function DataTable<T extends { id: string }>({
 
   const SortIcon = ({ col }: { col: Column<T> }) => {
     if (!col.sortable) return null;
-    if (sortKey !== col.key) return <ChevronsUpDown size={13} className="text-slate-300" />;
+    if (sortKey !== col.key) return <ChevronsUpDown size={13} className="text-zinc-300" />;
     return sortDir === "asc"
       ? <ChevronUp size={13} className="text-brand-500" />
       : <ChevronDown size={13} className="text-brand-500" />;
@@ -86,7 +86,7 @@ export default function DataTable<T extends { id: string }>({
     <div className="rounded-2xl overflow-hidden">
       {/* Toolbar */}
       {(searchable || toolbar) && (
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 border-b border-zinc-100 bg-zinc-50/50">
           {searchable && (
             <SearchInput
               value={search}
@@ -109,16 +109,16 @@ export default function DataTable<T extends { id: string }>({
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50">
+              <tr className="border-b border-zinc-100 bg-zinc-50/50">
                 {columns.map((col) => (
                   <th
                     key={col.key}
                     style={{ width: col.width }}
                     onClick={() => col.sortable && handleSort(col.key)}
                     className={clsx(
-                      "px-4 py-3.5 text-left text-[10px] font-bold",
-                      "text-slate-400 uppercase tracking-widest",
-                      col.sortable && "cursor-pointer hover:text-slate-600 select-none",
+                      "px-4 py-3.5 text-left text-[10px] font-medium",
+                      "text-zinc-400 uppercase tracking-widest",
+                      col.sortable && "cursor-pointer hover:text-zinc-600 select-none",
                     )}
                   >
                     <div className="flex items-center gap-1.5">
@@ -128,17 +128,17 @@ export default function DataTable<T extends { id: string }>({
                   </th>
                 ))}
                 {actions && (
-                  <th className="px-4 py-3.5 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest w-24">
+                  <th className="px-4 py-3.5 text-right text-[10px] font-medium text-zinc-400 uppercase tracking-widest w-24">
                     Actions
                   </th>
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-zinc-50">
               {paginated.map((row) => (
-                <tr key={row.id} className="hover:bg-slate-50/50 transition-colors group">
+                <tr key={row.id} className="hover:bg-zinc-50/50 transition-colors group">
                   {columns.map((col) => (
-                    <td key={col.key} className="px-4 py-3.5 text-sm text-slate-700">
+                    <td key={col.key} className="px-4 py-3.5 text-sm text-zinc-700">
                       {col.render
                         ? col.render(row)
                         : String((row as Record<string, unknown>)[col.key] ?? "—")}
@@ -159,7 +159,7 @@ export default function DataTable<T extends { id: string }>({
       )}
 
       {!loading && paginated.length > 0 && (
-        <div className="px-4 pb-4 pt-2 border-t border-slate-50">
+        <div className="px-4 pb-4 pt-2 border-t border-zinc-50">
           <Pagination
             page={page}
             totalPages={totalPages}

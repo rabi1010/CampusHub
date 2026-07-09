@@ -37,7 +37,7 @@ const FEATURES = [
     icon: Users,
     title: "Member Directory",
     desc: "Comprehensive management of student and staff records with advanced filtering.",
-    color: "slate",
+    color: "zinc",
   },
   {
     icon: BookOpen,
@@ -49,7 +49,7 @@ const FEATURES = [
     icon: Bell,
     title: "Smart Notifications",
     desc: "Keep the campus informed with targeted announcements and urgent alerts.",
-    color: "slate",
+    color: "zinc",
   },
   {
     icon: BarChart3,
@@ -61,7 +61,7 @@ const FEATURES = [
     icon: Shield,
     title: "Enterprise Security",
     desc: "Bank-grade JWT authentication and granular role-based access control.",
-    color: "slate",
+    color: "zinc",
   },
 ];
 
@@ -104,7 +104,7 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-zinc-50 min-h-screen">
       {/* ── 1. HERO SECTION ──────────────────────────────── */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         {/* Abstract background elements */}
@@ -120,15 +120,15 @@ export default function Landing() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-xs font-semibold mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-xs font-medium mb-6">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
                 Empowering 100+ Institutions
               </div>
-              <h1 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 leading-[1.1] mb-6">
+              <h1 className="text-5xl lg:text-7xl font-display font-medium text-zinc-900 leading-[1.1] mb-6">
                 The Modern OS for Your <br />
                 <span className="text-brand-600">Smart Campus</span>
               </h1>
-              <p className="text-lg text-slate-600 leading-relaxed mb-10 max-w-lg">
+              <p className="text-lg text-zinc-600 leading-relaxed mb-10 max-w-lg">
                 Streamline academic operations, enhance student engagement, and
                 unify campus management with our all-in-one digital ecosystem.
               </p>
@@ -142,10 +142,10 @@ export default function Landing() {
                 </Link>
               </div>
               
-              <div className="mt-10 flex items-center gap-4 text-sm text-slate-500">
+              <div className="mt-10 flex items-center gap-4 text-sm text-zinc-500">
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-200" />
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-zinc-200" />
                   ))}
                 </div>
                 <p>Trusted by 10k+ users worldwide</p>
@@ -158,31 +158,31 @@ export default function Landing() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200 aspect-[4/3]">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-zinc-200 aspect-[4/3]">
                 <img
                   src="https://plus.unsplash.com/premium_photo-1682126255537-d3d08524f263?w=1000&auto=format&fit=crop&q=85"
                   alt="Modern Campus Life"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/40 to-transparent pointer-events-none" />
               </div>
               
               {/* Floating card */}
               <motion.div 
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 max-w-[240px]"
+                className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-zinc-100 max-w-[240px]"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                     <CheckCircle2 size={20} />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500 font-medium">Attendance Rate</p>
-                    <p className="text-lg font-bold text-slate-900">98.4%</p>
+                    <p className="text-xs text-zinc-500 font-medium">Attendance Rate</p>
+                    <p className="text-lg font-medium text-zinc-900">98.4%</p>
                   </div>
                 </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div className="w-full bg-zinc-100 h-1.5 rounded-full overflow-hidden">
                   <div className="bg-green-500 h-full w-[98%]" />
                 </div>
               </motion.div>
@@ -192,13 +192,13 @@ export default function Landing() {
       </section>
 
       {/* ── 2. STATS SECTION ─────────────────────────────── */}
-      <section className="py-12 bg-white border-y border-slate-100">
+      <section className="py-12 bg-white border-y border-zinc-100">
         <div className="section-container">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {STATS.map((stat, i) => (
               <div key={i} className="text-center">
-                <p className="text-3xl lg:text-4xl font-bold text-brand-600 mb-1">{stat.value}</p>
-                <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">{stat.label}</p>
+                <p className="text-3xl lg:text-4xl font-medium text-brand-600 mb-1">{stat.value}</p>
+                <p className="text-sm font-medium text-zinc-500 uppercase tracking-wider">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -209,11 +209,11 @@ export default function Landing() {
       <section id="features" className="py-24">
         <div className="section-container">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
+            <h2 className="text-4xl lg:text-5xl font-medium text-zinc-900 mb-6">
               Everything you need to <br />
               <span className="text-brand-600">run a modern campus</span>
             </h2>
-            <p className="text-lg text-slate-600">
+            <p className="text-lg text-zinc-600">
               A comprehensive suite of tools designed to simplify administration 
               and empower every member of your academic community.
             </p>
@@ -227,15 +227,15 @@ export default function Landing() {
                 className="card-base p-8 group"
               >
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-colors ${
-                  feature.color === 'brand' ? 'bg-brand-50 text-brand-600 group-hover:bg-brand-600 group-hover:text-white' : 'bg-slate-100 text-slate-600 group-hover:bg-slate-900 group-hover:text-white'
+                  feature.color === 'brand' ? 'bg-brand-50 text-brand-600 group-hover:bg-brand-600 group-hover:text-white' : 'bg-zinc-100 text-zinc-600 group-hover:bg-zinc-900 group-hover:text-white'
                 }`}>
                   <feature.icon size={24} />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
-                <p className="text-slate-600 leading-relaxed text-sm mb-6">
+                <h3 className="text-xl font-medium text-zinc-900 mb-3">{feature.title}</h3>
+                <p className="text-zinc-600 leading-relaxed text-sm mb-6">
                   {feature.desc}
                 </p>
-                <Link to="/about" className="inline-flex items-center gap-2 text-brand-600 font-semibold text-sm hover:underline">
+                <Link to="/about" className="inline-flex items-center gap-2 text-brand-600 font-medium text-sm hover:underline">
                   Learn more <ChevronRight size={14} />
                 </Link>
               </motion.div>
@@ -245,15 +245,15 @@ export default function Landing() {
       </section>
 
       {/* ── 4. CAMPUS LIFE SLIDER ────────────────────────── */}
-      <section className="py-24 bg-slate-900 text-white overflow-hidden relative">
+      <section className="py-24 bg-zinc-900 text-white overflow-hidden relative">
         <div className="section-container">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+              <h2 className="text-4xl lg:text-5xl font-medium mb-6">
                 Experience Excellence <br />
                 <span className="text-brand-400">In Every Corner</span>
               </h2>
-              <p className="text-slate-400 text-lg mb-10">
+              <p className="text-zinc-400 text-lg mb-10">
                 Beyond technology, we provide an environment that inspires 
                 growth, creativity, and lifelong learning.
               </p>
@@ -269,10 +269,10 @@ export default function Landing() {
                         : 'border-transparent hover:bg-white/5'
                     }`}
                   >
-                    <h4 className={`font-bold mb-1 ${currentSlide === i ? 'text-white' : 'text-slate-400'}`}>
+                    <h4 className={`font-medium mb-1 ${currentSlide === i ? 'text-white' : 'text-zinc-400'}`}>
                       {img.title}
                     </h4>
-                    <p className="text-sm text-slate-500">{img.desc}</p>
+                    <p className="text-sm text-zinc-500">{img.desc}</p>
                   </button>
                 ))}
               </div>
@@ -320,7 +320,7 @@ export default function Landing() {
               </motion.div>
               
               <div>
-                <p className="text-xl font-bold">{TESTIMONIALS[currentSlide % TESTIMONIALS.length].author}</p>
+                <p className="text-xl font-medium">{TESTIMONIALS[currentSlide % TESTIMONIALS.length].author}</p>
                 <p className="text-brand-200 text-sm">{TESTIMONIALS[currentSlide % TESTIMONIALS.length].role}</p>
               </div>
             </div>
@@ -333,10 +333,10 @@ export default function Landing() {
         <div className="section-container">
           <div className="card-base p-12 lg:p-20 text-center relative overflow-hidden">
             <div className="absolute top-[-50%] right-[-10%] w-[400px] h-[400px] bg-brand-50 rounded-full blur-[100px] -z-10" />
-            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
+            <h2 className="text-4xl lg:text-5xl font-medium text-zinc-900 mb-6">
               Ready to modernize <br /> your campus?
             </h2>
-            <p className="text-lg text-slate-600 mb-10 max-w-lg mx-auto">
+            <p className="text-lg text-zinc-600 mb-10 max-w-lg mx-auto">
               Join leading institutions in providing a world-class digital 
               experience for students and faculty alike.
             </p>

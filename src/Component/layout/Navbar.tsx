@@ -1,3 +1,4 @@
+import logo from "@/assets/logo/logo.svg";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, GraduationCap } from "lucide-react";
@@ -32,16 +33,7 @@ export default function Navbar() {
       <nav className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 group active:scale-95 transition-all">
-          <div
-            className="w-9 h-9 rounded-lg bg-brand-600 shadow-lg shadow-brand-500/20
-                          flex items-center justify-center
-                          group-hover:rotate-6 transition-all duration-300"
-          >
-            <GraduationCap size={18} className="text-white" />
-          </div>
-          <span className="font-display text-xl font-bold text-slate-900">
-            Campus<span className="text-brand-600">Hub</span>
-          </span>
+          <img src={logo} alt="CampusHub" className="h-9 w-auto" />
         </Link>
 
         {/* Desktop nav links */}
@@ -50,7 +42,7 @@ export default function Navbar() {
             <li key={label}>
               <Link
                 to={to}
-                className={`px-4 py-2 text-sm font-medium transition-all duration-300 group ${pathname === to ? "text-brand-600" : "text-slate-600 hover:text-slate-900"
+                className={`px-4 py-2 text-sm font-medium transition-all duration-300 group ${pathname === to ? "text-brand-600" : "text-zinc-600 hover:text-zinc-900"
                   }`}
               >
                 <span className="link-underline">{label}</span>
@@ -61,10 +53,10 @@ export default function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-4">
-          <Link to="/login" className="text-sm font-bold text-slate-600 hover:text-brand-600 transition-colors link-underline">
+          <Link to="/login" className="text-sm font-medium text-zinc-600 hover:text-brand-600 transition-colors link-underline">
             Sign in
           </Link>
-          <Link to="/login" className="px-6 py-2.5 bg-brand-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-700 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300">
+          <Link to="/login" className="px-6 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-700 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300">
             Get started
           </Link>
         </div>
@@ -72,7 +64,7 @@ export default function Navbar() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden p-2.5 rounded-xl bg-slate-50 text-slate-500 hover:text-brand-600 hover:bg-brand-50 transition-all border border-slate-100"
+          className="md:hidden p-2.5 rounded-xl bg-zinc-50 text-zinc-500 hover:text-brand-600 hover:bg-brand-50 transition-all border border-zinc-100"
           aria-label="Toggle menu"
         >
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -82,7 +74,7 @@ export default function Navbar() {
       {/* Mobile dropdown menu */}
       {menuOpen && (
         <div
-          className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-slate-100
+          className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-zinc-100
                         px-6 py-6 flex flex-col gap-2 shadow-2xl animate-in slide-in-from-top-4 duration-300"
         >
           {NAV_LINKS.map(({ label, to }) => (
@@ -91,14 +83,14 @@ export default function Navbar() {
               to={to}
               className={clsx(
                 "py-3 px-4 rounded-xl text-sm font-medium transition-all group",
-                pathname === to ? "bg-brand-50 text-brand-600" : "text-slate-600 hover:bg-slate-50 hover:text-brand-600"
+                pathname === to ? "bg-brand-50 text-brand-600" : "text-zinc-600 hover:bg-zinc-50 hover:text-brand-600"
               )}
             >
               <span className="link-underline">{label}</span>
             </Link>
           ))}
-          <div className="h-px bg-slate-100 my-2" />
-          <Link to="/login" className="flex items-center justify-center py-4 bg-brand-600 text-white font-bold rounded-2xl shadow-lg shadow-brand-500/10 active:scale-[0.98] transition-all">
+          <div className="h-px bg-zinc-100 my-2" />
+          <Link to="/login" className="flex items-center justify-center py-4 bg-brand-600 text-white font-medium rounded-2xl shadow-lg shadow-brand-500/10 active:scale-[0.98] transition-all">
             Sign in to CampusHub
           </Link>
         </div>

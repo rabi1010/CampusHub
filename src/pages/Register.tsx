@@ -1,3 +1,4 @@
+import logo from "@/assets/logo/logo.svg";
 import { useState } from "react"
 import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -94,16 +95,11 @@ export default function Register() {
           {/* Logo & Back */}
           <div className="flex items-center justify-between mb-12">
             <Link to="/" className="inline-flex items-center gap-2 group">
-              <div className="w-9 h-9 rounded-lg bg-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
-                <GraduationCap size={20} />
-              </div>
-              <span className="font-display text-xl font-bold text-slate-900">
-                Campus<span className="text-brand-600">Hub</span>
-              </span>
+              <img src={logo} alt="CampusHub" className="h-10 w-auto" />
             </Link>
             <Link
               to="/login"
-              className="text-slate-400 hover:text-slate-900 transition-colors flex items-center gap-1 text-sm font-medium"
+              className="text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-1 text-sm font-medium"
             >
               <ChevronLeft size={16} /> Back to login
             </Link>
@@ -119,10 +115,10 @@ export default function Register() {
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <h1 className="text-3xl font-display font-bold text-slate-900 mb-2">
+                  <h1 className="text-3xl font-display font-medium text-zinc-900 mb-2">
                     Join CampusHub
                   </h1>
-                  <p className="text-slate-500 mb-8">
+                  <p className="text-zinc-500 mb-8">
                     Choose your role to begin registration.
                   </p>
 
@@ -136,35 +132,35 @@ export default function Register() {
                         className={`w-full flex items-center gap-4 p-5 rounded-2xl border-2 text-left transition-all duration-200 ${
                           selectedRole === role.id
                             ? "border-brand-500 bg-brand-50 shadow-sm"
-                            : "border-slate-100 hover:border-slate-200 bg-slate-50"
+                            : "border-zinc-100 hover:border-zinc-200 bg-zinc-50"
                         }`}
                       >
                         <div
                           className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                             selectedRole === role.id
                               ? "bg-brand-600 text-white"
-                              : "bg-white text-slate-400"
+                              : "bg-white text-zinc-400"
                           }`}
                         >
                           <role.icon size={24} />
                         </div>
                         <div className="flex-1">
                           <p
-                            className={`font-bold ${
+                            className={`font-medium ${
                               selectedRole === role.id
-                                ? "text-slate-900"
-                                : "text-slate-600"
+                                ? "text-zinc-900"
+                                : "text-zinc-600"
                             }`}
                           >
                             {role.label}
                           </p>
-                          <p className="text-xs text-slate-400">{role.desc}</p>
+                          <p className="text-xs text-zinc-400">{role.desc}</p>
                         </div>
                         <div
                           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                             selectedRole === role.id
                               ? "border-brand-500 bg-brand-500"
-                              : "border-slate-200"
+                              : "border-zinc-200"
                           }`}
                         >
                           {selectedRole === role.id && (
@@ -178,7 +174,7 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={nextStep}
-                    className="btn-primary w-full py-4 text-base font-bold shadow-brand-500/20 shadow-xl"
+                    className="btn-primary w-full py-4 text-base font-medium shadow-brand-500/20 shadow-xl"
                   >
                     Continue Registration <ArrowRight size={18} className="ml-2" />
                   </button>
@@ -195,15 +191,15 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={prevStep}
-                    className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-brand-600 mb-2"
+                    className="inline-flex items-center gap-2 text-xs font-medium text-zinc-400 hover:text-brand-600 mb-2"
                   >
                     <ArrowLeft size={14} /> Change Role
                   </button>
 
-                  <h1 className="text-3xl font-display font-bold text-slate-900 mb-2">
+                  <h1 className="text-3xl font-display font-medium text-zinc-900 mb-2">
                     Create Account
                   </h1>
-                  <p className="text-slate-500 mb-6 uppercase text-[10px] font-mono tracking-widest bg-brand-50 px-2 py-1 inline-block rounded">
+                  <p className="text-zinc-500 mb-6 uppercase text-[10px] font-mono tracking-widest bg-brand-50 px-2 py-1 inline-block rounded">
                     Registering as {selectedRole.toLowerCase()}
                   </p>
 
@@ -216,7 +212,7 @@ export default function Register() {
 
                   {/* Full Name */}
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-zinc-700 mb-2">
                       Full Name
                     </label>
                     <input
@@ -226,7 +222,7 @@ export default function Register() {
                       {...field("fullName")}
                     />
                     {errors.fullName && (
-                      <p className="text-xs text-rose-500 mt-1.5 font-bold flex items-center gap-1">
+                      <p className="text-xs text-rose-500 mt-1.5 font-medium flex items-center gap-1">
                         <AlertCircle size={12} /> {errors.fullName.message}
                       </p>
                     )}
@@ -235,7 +231,7 @@ export default function Register() {
                   <div className="grid grid-cols-2 gap-4">
                     {/* Email */}
                     <div className="col-span-1">
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-sm font-medium text-zinc-700 mb-2">
                         Email
                       </label>
                       <input
@@ -245,7 +241,7 @@ export default function Register() {
                         {...field("email")}
                       />
                       {errors.email && (
-                        <p className="text-xs text-rose-500 mt-1.5 font-bold flex items-center gap-1">
+                        <p className="text-xs text-rose-500 mt-1.5 font-medium flex items-center gap-1">
                           <AlertCircle size={12} /> {errors.email.message}
                         </p>
                       )}
@@ -253,7 +249,7 @@ export default function Register() {
 
                     {/* Phone */}
                     <div className="col-span-1">
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-sm font-medium text-zinc-700 mb-2">
                         Phone (optional)
                       </label>
                       <input
@@ -267,7 +263,7 @@ export default function Register() {
 
                   {/* Password */}
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-zinc-700 mb-2">
                       Password
                     </label>
                     <div className="relative">
@@ -282,13 +278,13 @@ export default function Register() {
                       <button
                         type="button"
                         onClick={() => setShowPass(!showPass)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
                       >
                         {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
                     {errors.password && (
-                      <p className="text-xs text-rose-500 mt-1.5 font-bold flex items-center gap-1">
+                      <p className="text-xs text-rose-500 mt-1.5 font-medium flex items-center gap-1">
                         <AlertCircle size={12} /> {errors.password.message}
                       </p>
                     )}
@@ -297,10 +293,10 @@ export default function Register() {
                   {/* Parent — child roll numbers */}
                   {selectedRole === "PARENT" && (
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-sm font-medium text-zinc-700 mb-2">
                         Child's Roll Number(s)
                       </label>
-                      <p className="text-xs text-slate-400 mb-3">
+                      <p className="text-xs text-zinc-400 mb-3">
                         Add the roll number of each child enrolled in the college
                       </p>
                       <div className="space-y-2">
@@ -330,13 +326,13 @@ export default function Register() {
                       <button
                         type="button"
                         onClick={() => append("")}
-                        className="mt-3 inline-flex items-center gap-2 text-sm text-brand-600 hover:text-brand-700 font-bold"
+                        className="mt-3 inline-flex items-center gap-2 text-sm text-brand-600 hover:text-brand-700 font-medium"
                       >
                         <Plus size={16} />
                         Add another child
                       </button>
                       {errors.childRollNumbers && (
-                        <p className="text-xs text-rose-500 mt-2 font-bold flex items-center gap-1">
+                        <p className="text-xs text-rose-500 mt-2 font-medium flex items-center gap-1">
                           <AlertCircle size={12} />{" "}
                           {errors.childRollNumbers.message}
                         </p>
@@ -348,7 +344,7 @@ export default function Register() {
                   <button
                     type="submit"
                     disabled={isPending}
-                    className="btn-primary w-full py-4 text-base font-bold shadow-brand-500/20 shadow-xl disabled:opacity-70 mt-6"
+                    className="btn-primary w-full py-4 text-base font-medium shadow-brand-500/20 shadow-xl disabled:opacity-70 mt-6"
                   >
                     {isPending ? "Creating account..." : "Create Account"}
                     {!isPending && <CheckCircle2 size={18} className="ml-2" />}
@@ -358,11 +354,11 @@ export default function Register() {
             </AnimatePresence>
           </form>
 
-          <p className="mt-8 text-center text-slate-500 text-sm">
+          <p className="mt-8 text-center text-zinc-500 text-sm">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-brand-600 font-bold hover:underline"
+              className="text-brand-600 font-medium hover:underline"
             >
               Sign in here
             </Link>
@@ -371,13 +367,13 @@ export default function Register() {
       </div>
 
       {/* ── RIGHT SIDE: IMAGE ────────────────────────────── */}
-      <div className="hidden lg:flex flex-1 bg-slate-900 relative items-center justify-center overflow-hidden">
+      <div className="hidden lg:flex flex-1 bg-zinc-900 relative items-center justify-center overflow-hidden">
         <img
           src="/modern_college_campus_building_1778485561678.png"
           alt="Campus Building"
           className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-900/40 to-slate-900/90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-900/40 to-zinc-900/90" />
 
         <div className="relative z-10 max-w-lg p-12 text-white text-center">
           <motion.div
@@ -385,10 +381,10 @@ export default function Register() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="text-4xl font-display font-bold mb-6">
+            <h2 className="text-4xl font-display font-medium mb-6">
               Welcome to CampusHub
             </h2>
-            <p className="text-lg text-slate-300">
+            <p className="text-lg text-zinc-300">
               Join our digital-first academic community. Secure, fast, and
               designed to support every step of your educational journey.
             </p>

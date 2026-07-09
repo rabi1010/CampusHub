@@ -37,7 +37,7 @@ export default function ParentNotices() {
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-medium text-gray-900">
                     {notice.title}
                   </h3>
                   {notice.urgent && (

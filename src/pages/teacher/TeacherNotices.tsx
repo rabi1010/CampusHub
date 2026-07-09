@@ -69,7 +69,7 @@ export default function TeacherNotices() {
                 transition={{ delay: index * 0.05 }}
                 key={notice.id}
                 className={clsx(
-                  "card-base p-6 bg-white border-slate-100 transition-all hover:shadow-md hover:border-brand-100 group",
+                  "card-base p-6 bg-white border-zinc-100 transition-all hover:shadow-md hover:border-brand-100 group",
                   notice.urgent && "border-rose-100 bg-rose-50/30"
                 )}
               >
@@ -87,11 +87,11 @@ export default function TeacherNotices() {
                     </div>
                     <div className="min-w-0 space-y-2">
                       <div className="flex items-center gap-3 flex-wrap">
-                        <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                        <h3 className="text-lg font-medium text-zinc-900 group-hover:text-brand-600 transition-colors">
                           {notice.title}
                         </h3>
                         {notice.urgent && (
-                          <span className="text-[10px] font-bold bg-rose-600 text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
+                          <span className="text-[10px] font-medium bg-rose-600 text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
                             Urgent
                           </span>
                         )}
@@ -113,18 +113,18 @@ export default function TeacherNotices() {
                         />
                       </div>
                       
-                      <p className="text-sm text-slate-600 leading-relaxed max-w-3xl">
+                      <p className="text-sm text-zinc-600 leading-relaxed max-w-3xl">
                         {notice.content}
                       </p>
 
-                      <div className="flex items-center gap-4 pt-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                      <div className="flex items-center gap-4 pt-2 text-[11px] font-medium text-zinc-400 uppercase tracking-widest">
                         <div className="flex items-center gap-1.5">
-                          <User size={14} className="text-slate-300" />
+                          <User size={14} className="text-zinc-300" />
                           {notice.author}
                         </div>
-                        <div className="w-1 h-1 rounded-full bg-slate-200" />
+                        <div className="w-1 h-1 rounded-full bg-zinc-200" />
                         <div className="flex items-center gap-1.5">
-                          <Calendar size={14} className="text-slate-300" />
+                          <Calendar size={14} className="text-zinc-300" />
                           {new Date(notice.createdAt).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -136,7 +136,7 @@ export default function TeacherNotices() {
                   </div>
                   
                   <div className="flex items-center gap-2 self-end sm:self-auto">
-                     <button className="flex items-center gap-2 text-xs font-bold text-brand-600 px-4 py-2 rounded-xl hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100">
+                     <button className="flex items-center gap-2 text-xs font-medium text-brand-600 px-4 py-2 rounded-xl hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100">
                         View Details <ArrowRight size={14} />
                      </button>
                   </div>

@@ -30,8 +30,8 @@ const COLUMNS: Column<Course>[] = [
           <BookOpen size={18} />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-bold text-slate-900 leading-tight truncate">{row.name}</p>
-          <p className="text-[11px] font-medium text-slate-400 mt-0.5 truncate max-w-[200px]">
+          <p className="text-sm font-medium text-zinc-900 leading-tight truncate">{row.name}</p>
+          <p className="text-[11px] font-medium text-zinc-400 mt-0.5 truncate max-w-[200px]">
             {row.description}
           </p>
         </div>
@@ -43,7 +43,7 @@ const COLUMNS: Column<Course>[] = [
     label: "Course Code",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-2 font-mono text-[11px] font-bold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-100">
+      <div className="flex items-center gap-2 font-mono text-[11px] font-medium text-brand-600 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-100">
         <Hash size={12} />
         {row.code}
       </div>
@@ -54,8 +54,8 @@ const COLUMNS: Column<Course>[] = [
     label: "Department",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
-        <Layers size={14} className="text-slate-400" />
+      <div className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+        <Layers size={14} className="text-zinc-400" />
         {row.department}
       </div>
     ),
@@ -64,7 +64,7 @@ const COLUMNS: Column<Course>[] = [
     key: "semester",
     label: "Level",
     render: (row) => (
-      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+      <span className="text-xs font-medium text-zinc-400 uppercase tracking-widest">
         Semester {row.semester}
       </span>
     ),
@@ -73,7 +73,7 @@ const COLUMNS: Column<Course>[] = [
     key: "credits",
     label: "Units",
     render: (row) => (
-      <div className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-bold text-[10px] inline-block border border-slate-200">
+      <div className="px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 font-medium text-[10px] inline-block border border-zinc-200">
         {row.credits} CREDITS
       </div>
     ),
@@ -82,8 +82,8 @@ const COLUMNS: Column<Course>[] = [
     key: "enrolledCount",
     label: "Enrollment",
     render: (row) => (
-      <div className="flex items-center gap-1.5 text-slate-500 font-bold text-xs">
-        <Users size={12} className="text-slate-400" />
+      <div className="flex items-center gap-1.5 text-zinc-500 font-medium text-xs">
+        <Users size={12} className="text-zinc-400" />
         {row.enrolledCount}
       </div>
     ),
@@ -152,7 +152,7 @@ export default function Courses() {
         />
       </motion.div>
 
-      <div className="card-base bg-white border-slate-100 overflow-hidden">
+      <div className="card-base bg-white border-zinc-100 overflow-hidden">
         <DataTable
           data={courses}
           columns={COLUMNS}
@@ -167,14 +167,14 @@ export default function Courses() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setEditCourse(row)}
-                className="p-2 rounded-xl text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100"
+                className="p-2 rounded-xl text-zinc-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100"
                 title="Edit Course"
               >
                 <Pencil size={16} />
               </button>
               <button
                 onClick={() => setDeleteTarget(row)}
-                className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
+                className="p-2 rounded-xl text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
                 title="Delete Course"
               >
                 <Trash2 size={16} />

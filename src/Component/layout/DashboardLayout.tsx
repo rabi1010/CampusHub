@@ -29,11 +29,11 @@ export default function DashboardLayout() {
   if (!user) return null;
 
   return (
-    <div className="flex h-screen bg-[var(--bg-main)] overflow-hidden font-sans antialiased text-slate-900">
+    <div className="flex h-screen bg-[var(--bg-main)] overflow-hidden font-sans antialiased text-zinc-900">
       {/* ── Mobile sidebar overlay ───────────────────── */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[40] lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm z-[40] lg:hidden transition-opacity duration-300"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -68,15 +68,15 @@ export default function DashboardLayout() {
         <Topbar onMobileMenuToggle={() => setMobileOpen((o) => !o)} />
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+        <main className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-200 scrollbar-track-transparent">
           <div className="p-4 md:p-8 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-700">
             <Outlet />
           </div>
           
           {/* Subtle footer in dashboard */}
-          <footer className="p-6 text-center text-slate-400 text-xs font-medium border-t border-slate-100 bg-white/50 backdrop-blur-sm mt-12 transition-colors hover:text-slate-600">
+          <footer className="p-6 text-center text-zinc-400 text-xs font-medium border-t border-zinc-100 bg-white/50 backdrop-blur-sm mt-12 transition-colors hover:text-zinc-600">
             <p className="cursor-default">
-              © 2024 <span className="text-brand-500 font-bold hover:text-brand-600 cursor-pointer transition-colors link-underline">CampusHub Enterprise</span>. All rights reserved.
+              © 2024 <span className="text-brand-500 font-medium hover:text-brand-600 cursor-pointer transition-colors link-underline">CampusHub Enterprise</span>. All rights reserved.
             </p>
           </footer>
         </main>

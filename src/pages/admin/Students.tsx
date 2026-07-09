@@ -28,10 +28,10 @@ const COLUMNS: Column<Student>[] = [
     sortable: true,
     render: (row) => (
       <div className="flex items-center gap-4 py-1">
-        <Avatar name={row.fullName} size="md" className="shadow-sm border-2 border-white ring-1 ring-slate-100" />
+        <Avatar name={row.fullName} size="md" className="shadow-sm border-2 border-white ring-1 ring-zinc-100" />
         <div>
-          <p className="text-sm font-bold text-slate-900 leading-tight">{row.fullName}</p>
-          <p className="text-[11px] font-medium text-slate-400">{row.email}</p>
+          <p className="text-sm font-medium text-zinc-900 leading-tight">{row.fullName}</p>
+          <p className="text-[11px] font-medium text-zinc-400">{row.email}</p>
         </div>
       </div>
     ),
@@ -41,33 +41,33 @@ const COLUMNS: Column<Student>[] = [
     label: "Roll Number",
     sortable: true,
     render: (row) => (
-      <div className="flex items-center gap-2 font-mono text-[11px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
+      <div className="flex items-center gap-2 font-mono text-[11px] font-medium text-zinc-500 bg-zinc-50 px-2.5 py-1 rounded-lg border border-zinc-100">
         <Hash size={12} className="text-brand-500" />
         {row.rollNo}
       </div>
     ),
   },
-  {
-    key: "department",
-    label: "Department",
-    sortable: true,
-    render: (row) => (
-      <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
-        <Layers size={14} className="text-slate-300" />
-        {row.department}
-      </div>
-    ),
-  },
-  {
-    key: "batch",
-    label: "Academic Year",
-    sortable: true,
-    render: (row) => (
-      <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50/50 px-2 py-0.5 rounded border border-slate-50">
-        Batch {row.batch}
-      </div>
-    ),
-  },
+{
+  key: "department",
+  label: "Department",
+  sortable: true,
+  render: (row) => (
+    <div className="flex items-center gap-2 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+      <Layers size={14} className="text-zinc-300" />
+      {row.department?.name ?? "—"}
+    </div>
+  ),
+},
+{
+  key: "batch",
+  label: "Academic Year",
+  sortable: true,
+  render: (row) => (
+    <div className="flex items-center gap-2 text-[11px] font-medium text-zinc-400 uppercase tracking-widest bg-zinc-50/50 px-2 py-0.5 rounded border border-zinc-50">
+      Batch {row.batch?.name ?? "—"}
+    </div>
+  ),
+},
   {
     key: "status",
     label: "Current Status",
@@ -138,15 +138,15 @@ export default function Students() {
         />
       </motion.div>
 
-      <div className="card-base bg-white border-slate-100 overflow-hidden shadow-sm">
-        <div className="p-5 border-b border-slate-50 bg-slate-50/30 flex flex-col sm:flex-row justify-between gap-6">
+      <div className="card-base bg-white border-zinc-100 overflow-hidden shadow-sm">
+        <div className="p-5 border-b border-zinc-50 bg-zinc-50/30 flex flex-col sm:flex-row justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400">
+            <div className="w-10 h-10 rounded-xl bg-white border border-zinc-100 flex items-center justify-center text-zinc-400">
               <Filter size={18} />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-0.5">Filter Analytics</p>
-              <p className="text-xs font-bold text-slate-600">Showing all records from the current semester.</p>
+              <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.2em] mb-0.5">Filter Analytics</p>
+              <p className="text-xs font-medium text-zinc-600">Showing all records from the current semester.</p>
             </div>
           </div>
         </div>
@@ -156,7 +156,7 @@ export default function Students() {
           columns={COLUMNS}
           loading={isLoading}
           searchable
-          searchKeys={["fullName", "email", "rollNo", "department"]}
+         searchKeys={["fullName", "email", "rollNo"]}
           searchPlaceholder="Filter registry by name, roll no, or curriculum department..."
           pageSize={10}
           emptyTitle="Registry is Empty"
@@ -165,14 +165,14 @@ export default function Students() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setEditStudent(row)}
-                className="p-2.5 rounded-xl text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100"
+                className="p-2.5 rounded-xl text-zinc-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100"
                 title="Modify Record"
               >
                 <Pencil size={16} />
               </button>
               <button
                 onClick={() => setDeleteTarget(row)}
-                className="p-2.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
+                className="p-2.5 rounded-xl text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
                 title="Purge Record"
               >
                 <Trash2 size={16} />

@@ -45,7 +45,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-zinc-50 min-h-screen">
       <section className="relative pt-32 pb-24 overflow-hidden">
         <div
           className="orb w-[600px] h-[600px] bg-brand-200
@@ -53,16 +53,16 @@ export default function Contact() {
         />
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <span className="inline-block px-3 py-1 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Get in touch</span>
+          <span className="inline-block px-3 py-1 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-[10px] font-medium uppercase tracking-[0.2em] mb-4">Get in touch</span>
           <h1
-            className="font-display text-5xl md:text-7xl text-slate-900
-                         mb-6 leading-[1.1] font-bold tracking-tight"
+            className="font-display text-5xl md:text-7xl text-zinc-900
+                         mb-6 leading-[1.1] font-medium tracking-tight"
           >
             We'd love to
             <br />
             <span className="text-brand-600 italic">hear from you</span>
           </h1>
-          <p className="text-slate-600 max-w-md leading-relaxed mb-12 font-medium text-lg">
+          <p className="text-zinc-600 max-w-md leading-relaxed mb-12 font-medium text-lg">
             Reach out for support, feature requests, or any enquiries.
           </p>
 
@@ -72,7 +72,7 @@ export default function Contact() {
               {CONTACT_INFO.map(({ icon: Icon, label, value }) => (
                 <div
                   key={label}
-                  className="bg-white border border-slate-100 rounded-2xl p-6 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-white border border-zinc-100 rounded-2xl p-6 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div
                     className="w-10 h-10 rounded-xl bg-brand-50
@@ -83,12 +83,12 @@ export default function Contact() {
                   </div>
                   <div>
                     <p
-                      className="text-[10px] font-bold text-slate-400
+                      className="text-[10px] font-medium text-zinc-400
                                   uppercase tracking-widest mb-1"
                     >
                       {label}
                     </p>
-                    <p className="text-sm font-bold text-slate-900">{value}</p>
+                    <p className="text-sm font-medium text-zinc-900">{value}</p>
                   </div>
                 </div>
               ))}
@@ -96,7 +96,7 @@ export default function Contact() {
 
             {/* Form */}
             <div className="lg:col-span-3">
-              <div className="bg-white border border-slate-100 shadow-xl shadow-slate-200/50 rounded-3xl p-8 lg:p-10">
+              <div className="bg-white border border-zinc-100 shadow-xl shadow-zinc-200/50 rounded-3xl p-8 lg:p-10">
                 {/* Success state */}
                 {sendMessage.isSuccess ? (
                   <div
@@ -110,15 +110,15 @@ export default function Contact() {
                     >
                       <CheckCircle2 size={28} className="text-green-500" />
                     </div>
-                    <h3 className="font-display text-2xl text-slate-900 font-bold">
+                    <h3 className="font-display text-2xl text-zinc-900 font-medium">
                       Message sent!
                     </h3>
-                    <p className="text-sm text-slate-500 font-medium">
+                    <p className="text-sm text-zinc-500 font-medium">
                       We'll get back to you within 24 hours.
                     </p>
                     <button
                       onClick={() => sendMessage.reset()}
-                      className="text-brand-600 font-bold text-sm mt-4 hover:underline"
+                      className="text-brand-600 font-medium text-sm mt-4 hover:underline"
                     >
                       Send another message
                     </button>
@@ -146,7 +146,7 @@ export default function Contact() {
                       {/* Name */}
                       <div className="space-y-2">
                         <label
-                          className="block text-[10px] font-bold text-slate-500
+                          className="block text-[10px] font-medium text-zinc-500
                                           uppercase tracking-widest"
                         >
                           Full name
@@ -154,7 +154,7 @@ export default function Contact() {
                         <input
                           type="text"
                           placeholder="Aarav Sharma"
-                          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none"
+                          className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-100 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none"
                           {...register("name")}
                         />
                         {errors.name && (
@@ -167,7 +167,7 @@ export default function Contact() {
                       {/* Email */}
                       <div className="space-y-2">
                         <label
-                          className="block text-[10px] font-bold text-slate-500
+                          className="block text-[10px] font-medium text-zinc-500
                                           uppercase tracking-widest"
                         >
                           Email address
@@ -175,7 +175,7 @@ export default function Contact() {
                         <input
                           type="email"
                           placeholder="you@college.edu"
-                          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none"
+                          className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-100 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none"
                           {...register("email")}
                         />
                         {errors.email && (
@@ -189,7 +189,7 @@ export default function Contact() {
                     {/* Subject */}
                     <div className="space-y-2">
                       <label
-                        className="block text-[10px] font-bold text-slate-500
+                        className="block text-[10px] font-medium text-zinc-500
                                         uppercase tracking-widest"
                       >
                         Subject
@@ -197,7 +197,7 @@ export default function Contact() {
                       <input
                         type="text"
                         placeholder="How can we help?"
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none"
+                        className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-100 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none"
                         {...register("subject")}
                       />
                       {errors.subject && (
@@ -210,7 +210,7 @@ export default function Contact() {
                     {/* Message */}
                     <div className="space-y-2">
                       <label
-                        className="block text-[10px] font-bold text-slate-500
+                        className="block text-[10px] font-medium text-zinc-500
                                         uppercase tracking-widest"
                       >
                         Message
@@ -218,7 +218,7 @@ export default function Contact() {
                       <textarea
                         rows={5}
                         placeholder="Tell us more..."
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none resize-none"
+                        className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-100 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none resize-none"
                         {...register("message")}
                       />
                       {errors.message && (
@@ -231,7 +231,7 @@ export default function Contact() {
                     <button
                       type="submit"
                       disabled={sendMessage.isPending}
-                      className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-brand-600 text-white font-bold rounded-2xl shadow-lg shadow-brand-500/25 hover:bg-brand-700 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+                      className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-brand-600 text-white font-medium rounded-2xl shadow-lg shadow-brand-500/25 hover:bg-brand-700 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
                     >
                       {sendMessage.isPending ? (
                         <>

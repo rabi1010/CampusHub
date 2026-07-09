@@ -39,8 +39,8 @@ type ProfileValues = z.infer<typeof profileSchema>;
 
 function FieldLabel({ children, icon: Icon }: { children: React.ReactNode; icon?: any }) {
   return (
-    <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-      {Icon && <Icon size={12} className="text-slate-300" />}
+    <label className="flex items-center gap-2 text-[10px] font-medium text-zinc-400 uppercase tracking-widest mb-2">
+      {Icon && <Icon size={12} className="text-zinc-300" />}
       {children}
     </label>
   );
@@ -58,12 +58,12 @@ function FieldError({ message }: { message?: string }) {
 
 function InfoRow({ label, value, icon: Icon }: { label: string; value: string; icon?: any }) {
   return (
-    <div className="flex items-center justify-between py-4 border-b border-slate-50 last:border-0 group">
+    <div className="flex items-center justify-between py-4 border-b border-zinc-50 last:border-0 group">
       <div className="flex items-center gap-3">
-        {Icon && <Icon size={14} className="text-slate-300 group-hover:text-brand-400 transition-colors" />}
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label}</span>
+        {Icon && <Icon size={14} className="text-zinc-300 group-hover:text-brand-400 transition-colors" />}
+        <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider">{label}</span>
       </div>
-      <span className="text-sm text-slate-700 font-bold">{value}</span>
+      <span className="text-sm text-zinc-700 font-medium">{value}</span>
     </div>
   );
 }
@@ -103,10 +103,10 @@ export default function Profile() {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
-        className="card-base p-8 bg-white border-slate-100 flex flex-col md:flex-row items-center gap-8 shadow-sm"
+        className="card-base p-8 bg-white border-zinc-100 flex flex-col md:flex-row items-center gap-8 shadow-sm"
       >
         <div className="relative">
-          <Avatar name={user?.fullName ?? "Student"} size="xl" className="border-4 border-slate-50 shadow-md ring-1 ring-slate-100" />
+          <Avatar name={user?.fullName ?? "Student"} size="xl" className="border-4 border-zinc-50 shadow-md ring-1 ring-zinc-100" />
           <div className="absolute -bottom-2 -right-2 bg-emerald-500 border-4 border-white w-8 h-8 rounded-full flex items-center justify-center text-white shadow-sm" title="Active Account">
             <CheckCircle2 size={16} />
           </div>
@@ -114,35 +114,35 @@ export default function Profile() {
 
         <div className="flex-1 text-center md:text-left space-y-4">
           <div>
-            <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight">{user?.fullName}</h2>
-            <p className="text-slate-500 font-medium flex items-center justify-center md:justify-start gap-2 mt-1">
-              <Mail size={14} className="text-slate-400" /> {user?.email}
+            <h2 className="text-3xl font-display font-medium text-zinc-900 tracking-tight">{user?.fullName}</h2>
+            <p className="text-zinc-500 font-medium flex items-center justify-center md:justify-start gap-2 mt-1">
+              <Mail size={14} className="text-zinc-400" /> {user?.email}
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-            <div className="px-3 py-1 bg-brand-50 text-brand-600 text-[10px] font-bold uppercase tracking-widest rounded-lg border border-brand-100">
+            <div className="px-3 py-1 bg-brand-50 text-brand-600 text-[10px] font-medium uppercase tracking-widest rounded-lg border border-brand-100">
                ID: {STUDENT_PROFILE.rollNo}
             </div>
-            <div className="px-3 py-1 bg-slate-50 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-lg border border-slate-100">
+            <div className="px-3 py-1 bg-zinc-50 text-zinc-600 text-[10px] font-medium uppercase tracking-widest rounded-lg border border-zinc-100">
                {STUDENT_PROFILE.department}
             </div>
-            <div className="px-3 py-1 bg-slate-50 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-lg border border-slate-100">
+            <div className="px-3 py-1 bg-zinc-50 text-zinc-600 text-[10px] font-medium uppercase tracking-widest rounded-lg border border-zinc-100">
                Batch {STUDENT_PROFILE.batch}
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-8 px-8 py-4 bg-slate-50 rounded-2xl border border-slate-100">
+        <div className="flex items-center gap-8 px-8 py-4 bg-zinc-50 rounded-2xl border border-zinc-100">
           <div className="text-center">
-            <p className="text-2xl font-display font-bold text-emerald-600">{STUDENT_PROFILE.gpa}</p>
-            <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+            <p className="text-2xl font-display font-medium text-emerald-600">{STUDENT_PROFILE.gpa}</p>
+            <div className="flex items-center gap-1.5 text-[9px] font-medium text-zinc-400 uppercase tracking-widest mt-1">
               <TrendingUp size={10} /> Cum. GPA
             </div>
           </div>
-          <div className="w-px h-8 bg-slate-200" />
+          <div className="w-px h-8 bg-zinc-200" />
           <div className="text-center">
-            <p className="text-2xl font-display font-bold text-brand-600">{STUDENT_PROFILE.attendance}</p>
-            <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+            <p className="text-2xl font-display font-medium text-brand-600">{STUDENT_PROFILE.attendance}</p>
+            <div className="flex items-center gap-1.5 text-[9px] font-medium text-zinc-400 uppercase tracking-widest mt-1">
               <Clock size={10} /> Attendance
             </div>
           </div>
@@ -155,13 +155,13 @@ export default function Profile() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="card-base p-8 bg-white border-slate-100 shadow-sm"
+          className="card-base p-8 bg-white border-zinc-100 shadow-sm"
         >
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-600">
+            <div className="w-8 h-8 rounded-lg bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-600">
               <GraduationCap size={16} />
             </div>
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest">Academic Record</h3>
+            <h3 className="text-sm font-medium text-zinc-900 uppercase tracking-widest">Academic Record</h3>
           </div>
           
           <div className="space-y-1">
@@ -178,28 +178,28 @@ export default function Profile() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="card-base p-8 bg-white border-slate-100 shadow-sm"
+          className="card-base p-8 bg-white border-zinc-100 shadow-sm"
         >
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-600">
+            <div className="w-8 h-8 rounded-lg bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-600">
               <User size={16} />
             </div>
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest">Personal Details</h3>
+            <h3 className="text-sm font-medium text-zinc-900 uppercase tracking-widest">Personal Details</h3>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <FieldLabel icon={User}>Full Identity</FieldLabel>
-                <div className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-400 select-none">
+                <div className="px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl text-sm font-medium text-zinc-400 select-none">
                   {user?.fullName}
                 </div>
-                <p className="text-[10px] text-slate-400 font-medium">Contact administration for name updates.</p>
+                <p className="text-[10px] text-zinc-400 font-medium">Contact administration for name updates.</p>
               </div>
 
               <div className="space-y-2">
                 <FieldLabel icon={Mail}>Email Address</FieldLabel>
-                <div className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-400 select-none">
+                <div className="px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl text-sm font-medium text-zinc-400 select-none">
                   {user?.email}
                 </div>
               </div>
@@ -210,8 +210,8 @@ export default function Profile() {
               <input
                 type="tel"
                 className={clsx(
-                  "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none",
-                  errors.phone ? "border-rose-200 bg-rose-50/30 text-rose-600" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900"
+                  "input-field",
+                  errors.phone ? "input-error" : ""
                 )}
                 {...register("phone")}
               />
@@ -223,8 +223,8 @@ export default function Profile() {
               <input
                 type="text"
                 className={clsx(
-                  "w-full px-4 py-3 bg-white border rounded-xl text-sm font-bold transition-all outline-none",
-                  errors.address ? "border-rose-200 bg-rose-50/30 text-rose-600" : "border-slate-100 focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 text-slate-900"
+                  "input-field",
+                  errors.address ? "input-error" : ""
                 )}
                 {...register("address")}
               />

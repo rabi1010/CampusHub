@@ -36,7 +36,7 @@ export default function Logo({
     <div className={cn("inline-flex flex-col gap-0.5", className)}>
       <div
         className={cn(
-          "flex items-center gap-1 font-display font-bold text-xl tracking-tight",
+          "flex items-center gap-1 font-display font-medium text-xl tracking-tight",
           styles.wrap,
         )}
       >

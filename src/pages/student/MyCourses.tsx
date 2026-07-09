@@ -67,7 +67,7 @@ const MY_COURSES = [
 
 function ProgressBar({ value, colorClass }: { value: number; colorClass: string }) {
   return (
-    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-50">
+    <div className="w-full h-2 bg-zinc-100 rounded-full overflow-hidden border border-zinc-50">
       <motion.div
         initial={{ width: 0 }}
         animate={{ width: `${Math.min(value, 100)}%` }}
@@ -106,10 +106,10 @@ export default function MyCourses() {
             key={f}
             onClick={() => setFilter(f)}
             className={clsx(
-              "px-6 py-2.5 rounded-full text-sm font-bold transition-all border capitalize",
+              "px-6 py-2.5 rounded-full text-sm font-medium transition-all border capitalize",
               filter === f
                 ? "bg-brand-600 border-brand-600 text-white shadow-lg shadow-brand-500/20"
-                : "bg-white border-slate-100 text-slate-500 hover:border-slate-200 hover:bg-slate-50"
+                : "bg-white border-zinc-100 text-zinc-500 hover:border-zinc-200 hover:bg-zinc-50"
             )}
           >
             {f}
@@ -136,7 +136,7 @@ export default function MyCourses() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
                 key={course.id}
-                className="card-base p-6 bg-white border-slate-100 flex flex-col gap-6 hover:shadow-xl hover:border-brand-100 transition-all group"
+                className="card-base p-6 bg-white border-zinc-100 flex flex-col gap-6 hover:shadow-xl hover:border-brand-100 transition-all group"
               >
                 {/* Course header */}
                 <div className="flex items-start justify-between gap-4">
@@ -146,7 +146,7 @@ export default function MyCourses() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
-                         <span className="font-mono text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded border border-brand-100">
+                         <span className="font-mono text-[10px] font-medium text-brand-600 bg-brand-50 px-2 py-0.5 rounded border border-brand-100">
                            {course.code}
                          </span>
                          <Badge
@@ -160,7 +160,7 @@ export default function MyCourses() {
                           }
                         />
                       </div>
-                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                      <h3 className="text-lg font-medium text-zinc-900 group-hover:text-brand-600 transition-colors">
                         {course.name}
                       </h3>
                     </div>
@@ -168,18 +168,18 @@ export default function MyCourses() {
                 </div>
 
                 {/* Description */}
-                <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">
+                <p className="text-sm text-zinc-500 leading-relaxed line-clamp-2">
                   {course.description}
                 </p>
 
                 {/* Meta info */}
-                <div className="grid grid-cols-2 gap-4 py-2 border-y border-slate-50">
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    <User size={14} className="text-slate-300" />
+                <div className="grid grid-cols-2 gap-4 py-2 border-y border-zinc-50">
+                  <div className="flex items-center gap-2 text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                    <User size={14} className="text-zinc-300" />
                     <span className="truncate">{course.teacher}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    <CreditCard size={14} className="text-slate-300" />
+                  <div className="flex items-center gap-2 text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                    <CreditCard size={14} className="text-zinc-300" />
                     {course.credits} Credits
                   </div>
                 </div>
@@ -188,10 +188,10 @@ export default function MyCourses() {
                 <div className="space-y-4">
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
                         <CheckCircle2 size={12} className="text-emerald-500" /> Academic Progress
                       </span>
-                      <span className="font-mono text-xs font-bold text-slate-600">{course.progress}%</span>
+                      <span className="font-mono text-xs font-medium text-zinc-600">{course.progress}%</span>
                     </div>
                     <ProgressBar
                       value={course.progress}
@@ -207,7 +207,7 @@ export default function MyCourses() {
 
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
                         {course.attendance < 75 ? (
                           <AlertCircle size={12} className="text-rose-500" />
                         ) : (
@@ -215,7 +215,7 @@ export default function MyCourses() {
                         )}
                         Session Attendance
                       </span>
-                      <span className={clsx("font-mono text-xs font-bold", course.attendance < 75 ? "text-rose-600" : "text-slate-600")}>
+                      <span className={clsx("font-mono text-xs font-medium", course.attendance < 75 ? "text-rose-600" : "text-zinc-600")}>
                         {course.attendance}%
                       </span>
                     </div>
@@ -227,7 +227,7 @@ export default function MyCourses() {
                 </div>
 
                 <div className="pt-2">
-                   <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-50 text-slate-600 text-xs font-bold hover:bg-brand-600 hover:text-white hover:shadow-lg hover:shadow-brand-500/20 transition-all border border-slate-100 hover:border-brand-500">
+                   <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-50 text-zinc-600 text-xs font-medium hover:bg-brand-600 hover:text-white hover:shadow-lg hover:shadow-brand-500/20 transition-all border border-zinc-100 hover:border-brand-500">
                       Access Course Materials <ArrowRight size={14} />
                    </button>
                 </div>

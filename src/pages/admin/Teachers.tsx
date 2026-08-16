@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { UserPlus, Pencil, Trash2, ShieldCheck, Briefcase, GraduationCap, ChevronRight, Search as SearchIcon, Filter } from "lucide-react";
+import {
+  UserPlus,
+  Pencil,
+  Trash2,
+  ShieldCheck,
+  Briefcase,
+  GraduationCap,
+  Filter,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import {
   useTeachers,
@@ -56,7 +64,7 @@ const COLUMNS: Column<Teacher>[] = [
     render: (row) => (
       <div className="flex items-center gap-2 text-xs font-medium text-zinc-500 uppercase tracking-wider">
         <Briefcase size={14} className="text-zinc-300" />
-        {row.department}
+        {row.department?.name ?? "Unassigned"}
       </div>
     ),
   },
@@ -159,8 +167,8 @@ export default function Teachers() {
           columns={COLUMNS}
           loading={isLoading}
           searchable
-          searchKeys={["fullName", "email", "employeeId", "department"]}
-          searchPlaceholder="Filter directory by member name, employee index or department..."
+          searchKeys={["fullName", "email", "employeeId"]}
+          searchPlaceholder="Filter directory by name, email or employee index..."
           pageSize={10}
           emptyTitle="Directory is Empty"
           emptyDesc="No faculty members were found matching your current parameters."

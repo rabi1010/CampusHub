@@ -18,7 +18,7 @@ export const teacherSchema = z.object({
     .min(1, "Employee ID is required")
     .regex(/^[A-Z0-9]+$/, "Must be uppercase letters and numbers"),
 
-  department: z.string().min(1, "Department is required"),
+  departmentId: z.string().min(1, "Department is required"),
 
   qualification: z.string().min(1, "Qualification is required"),
 

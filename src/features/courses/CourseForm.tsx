@@ -4,14 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
 import { courseSchema, type CourseFormValues } from "./courseSchemas";
 import type { Course } from "../../services/courseService";
-
-const DEPARTMENTS = [
-  "Computer Science",
-  "Information Technology",
-  "Electronics",
-  "Civil Engineering",
-  "Mechanical Engineering",
-];
+import { useDepartments } from "../academics/useAcademics";
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -46,6 +39,8 @@ export default function CourseForm({
   isLoading = false,
 }: CourseFormProps) {
   const isEdit = !!course;
+  const { data: departments = [], isLoading: departmentsLoading } =
+    useDepartments();
 
   const {
     register,
@@ -58,7 +53,7 @@ export default function CourseForm({
       ? {
           name: course.name,
           code: course.code,
-          department: course.department,
+          departmentId: course.department?.id ?? "",
           credits: course.credits,
           semester: course.semester,
           description: course.description,
@@ -66,7 +61,7 @@ export default function CourseForm({
       : {
           name: "",
           code: "",
-          department: "",
+          departmentId: "",
           credits: 3,
           semester: 1,
           description: "",
@@ -78,7 +73,7 @@ export default function CourseForm({
       reset({
         name: course.name,
         code: course.code,
-        department: course.department,
+        departmentId: course.department?.id ?? "",
         credits: course.credits,
         semester: course.semester,
         description: course.description,
@@ -126,17 +121,20 @@ export default function CourseForm({
       <div>
         <FieldLabel>Department</FieldLabel>
         <select
-          className={`input-field ${errors.department ? "input-error" : ""}`}
-          {...register("department")}
+          disabled={departmentsLoading}
+          className={`input-field ${errors.departmentId ? "input-error" : ""}`}
+          {...register("departmentId")}
         >
-          <option value="">Select department</option>
-          {DEPARTMENTS.map((d) => (
-            <option key={d} value={d}>
-              {d}
+          <option value="">
+            {departmentsLoading ? "Loading departments..." : "Select department"}
+          </option>
+          {departments.map((department) => (
+            <option key={department.id} value={department.id}>
+              {department.name}
             </option>
           ))}
         </select>
-        <FieldError message={errors.department?.message} />
+        <FieldError message={errors.departmentId?.message} />
       </div>
 
       {/* Row 3 — Credits + Semester */}

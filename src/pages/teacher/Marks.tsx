@@ -195,7 +195,7 @@ export default function Marks() {
                               <div className="min-w-0">
                                 <p className="text-sm font-medium text-zinc-900 truncate">{student.fullName}</p>
                                 <div className="flex items-center gap-1.5 text-[10px] font-medium text-zinc-400 uppercase mt-0.5">
-                                  <GraduationCap size={12} /> {student.department}
+                                  <GraduationCap size={12} /> {student.department?.name ?? "Unassigned"}
                                 </div>
                               </div>
                             </div>

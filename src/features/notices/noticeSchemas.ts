@@ -13,7 +13,7 @@ export const noticeSchema = z.object({
     .min(10, "Content must be at least 10 characters")
     .max(1000, "Content is too long"),
 
-  forRole: z.enum(["ALL", "TEACHER", "STUDENT"], {
+  forRole: z.enum(["ALL", "TEACHER", "STUDENT", "PARENT"], {
     error: "Please select an audience",
   }),
 

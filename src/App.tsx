@@ -29,6 +29,7 @@ import ParentDashboard from "./pages/parent/ParentDashboard";
 import ParentAttendance from "./pages/parent/ParentAttendance";
 import ParentNotices from "./pages/parent/ParentNotices";
 import ParentProfile from "./pages/parent/ParentProfile";
+import Parents from "./pages/admin/Parents";
 
 // Temporary placeholder — replace as you build each page
 const ComingSoon = ({ label }: { label: string }) => (
@@ -66,6 +67,7 @@ export default function App() {
               <Route path="/dashboard/admin" element={<AdminDashboard />} />
               <Route path="/admin/students" element={<Students />} />
               <Route path="/admin/teachers" element={<Teachers />} />
+              <Route path="/admin/parents" element={<Parents />} />
               <Route path="/admin/courses" element={<Courses />} />
               <Route path="/admin/notices" element={<Notices />} />
 

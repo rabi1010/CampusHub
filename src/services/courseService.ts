@@ -1,36 +1,70 @@
 import api from "./axios";
 
+interface ApiResponse<T> { success: boolean; message: string; data: T; }
+
+interface CourseDepartment { id: string; name: string; code: string; }
+
 export interface Course {
   id: string;
   name: string;
   code: string;
-  department: string;
+  department: CourseDepartment;
   credits: number;
   semester: number;
   description: string;
-  status: "ACTIVE" | "INACTIVE";
-  enrolledCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface SpringPage<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
 }
 
 export interface CreateCoursePayload {
   name: string;
   code: string;
-  department: string;
+  departmentId: string;
   credits: number;
   semester: number;
-  description: string;
+  description?: string;
+}
+
+export interface UpdateCoursePayload {
+  name?: string;
+  departmentId?: string;
+  credits?: number;
+  semester?: number;
+  description?: string;
 }
 
 export const courseService = {
-  getAll: () => api.get<Course[]>("/courses").then((r) => r.data),
+  getAll: (params?: { search?: string; semester?: number; departmentId?: string }) =>
+    api
+      .get<ApiResponse<SpringPage<Course>>>("/courses", {
+        params: { page: 1, size: 100, ...params },
+      })
+      .then((r) => r.data.data.content),
 
-  getOne: (id: string) => api.get<Course>(`/courses/${id}`).then((r) => r.data),
+  getOne: (id: string) =>
+    api
+      .get<ApiResponse<Course>>(`/courses/${id}`)
+      .then((r) => r.data.data),
 
   create: (data: CreateCoursePayload) =>
-    api.post<Course>("/courses", data).then((r) => r.data),
+    api
+      .post<ApiResponse<Course>>("/courses", data)
+      .then((r) => r.data.data),
 
-  update: (id: string, data: Partial<CreateCoursePayload>) =>
-    api.put<Course>(`/courses/${id}`, data).then((r) => r.data),
+  update: (id: string, data: UpdateCoursePayload) =>
+    api
+      .put<ApiResponse<Course>>(`/courses/${id}`, data)
+      .then((r) => r.data.data),
 
-  delete: (id: string) => api.delete(`/courses/${id}`).then((r) => r.data),
+  delete: (id: string) =>
+    api
+      .delete<ApiResponse<null>>(`/courses/${id}`)
+      .then((r) => r.data),
 };

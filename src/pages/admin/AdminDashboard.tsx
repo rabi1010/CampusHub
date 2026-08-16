@@ -5,10 +5,8 @@ import {
   Users,
   BookOpen,
   Bell,
-  TrendingUp,
-  UserCheck,
-  Pencil,
-  Trash2,
+  Activity,
+  ClipboardCheck,
   ArrowUpRight,
   Clock,
   ExternalLink,
@@ -19,6 +17,7 @@ import {
 import { motion } from "framer-motion";
 import { useAdminStats } from "../../features/stats/useStats";
 import { useStudents } from "../../features/students/useStudents";
+import { useNotices } from "../../features/notices/useNotices";
 import { useAppSelector } from "../../app/hooks";
 import StatCard from "../../components/ui/StatCard";
 import type { Student } from "../../services/studentService";
@@ -27,30 +26,6 @@ import Avatar from "../../Component/ui/Avatar";
 import Badge from "../../Component/ui/Badge";
 import { CardSkeleton } from "../../Component/ui/Skeleton";
 import DataTable from "../../Component/ui/DataTable";
-
-const RECENT_NOTICES = [
-  {
-    id: "1",
-    title: "Annual Sports Week",
-    forRole: "ALL",
-    date: "May 10, 2024",
-    urgent: true,
-  },
-  {
-    id: "2",
-    title: "CS101 Exam Schedule",
-    forRole: "STUDENT",
-    date: "May 10, 2024",
-    urgent: false,
-  },
-  {
-    id: "3",
-    title: "Holiday Notice",
-    forRole: "ALL",
-    date: "May 9, 2024",
-    urgent: false,
-  },
-];
 
 const STUDENT_COLUMNS: Column<Student>[] = [
   {
@@ -90,7 +65,7 @@ const STUDENT_COLUMNS: Column<Student>[] = [
     render: (row) => (
       <div className="flex items-center gap-2 text-xs font-medium text-zinc-500 uppercase tracking-wider">
         <div className="w-1.5 h-1.5 rounded-full bg-zinc-300" />
-        {row.department?.name ??"-"}
+        {row.department?.name ?? "-"}
       </div>
     ),
     sortable: true,
@@ -117,8 +92,30 @@ export default function AdminDashboard() {
   const user = useAppSelector((s) => s.auth.user);
   const { data: stats, isLoading: statsLoading } = useAdminStats();
   const { data: students = [], isLoading: studentsLoading } = useStudents();
+  const { data: notices = [], isLoading: noticesLoading } = useNotices();
 
-  const recentStudents = useMemo(() => [...students].slice(0, 5), [students]);
+  const recentStudents = useMemo(
+    () =>
+      [...students]
+        .sort(
+          (a, b) =>
+            new Date(b.user?.createdAt ?? b.admissionDate).getTime() -
+            new Date(a.user?.createdAt ?? a.admissionDate).getTime(),
+        )
+        .slice(0, 5),
+    [students],
+  );
+
+  const recentNotices = useMemo(
+    () =>
+      [...notices]
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        )
+        .slice(0, 3),
+    [notices],
+  );
 
   const greeting = useMemo(() => {
     const h = new Date().getHours();
@@ -133,6 +130,12 @@ export default function AdminDashboard() {
     month: "long",
     day: "numeric",
   });
+
+  const attendanceTotal =
+    (stats?.totalPresentRecords ?? 0) + (stats?.totalAbsentRecords ?? 0);
+  const attendanceRate = attendanceTotal
+    ? Math.round(((stats?.totalPresentRecords ?? 0) / attendanceTotal) * 100)
+    : 0;
 
   return (
     <div className="space-y-10">
@@ -149,7 +152,7 @@ export default function AdminDashboard() {
           <h1 className="text-4xl lg:text-5xl font-display font-medium text-zinc-900 leading-tight tracking-tight">
             {greeting},{" "}
             <span className="text-brand-600">
-              {user?.fullName?.split(" ")[0]}
+              {user?.fullName?.split(" ")[0] || "Admin"}
             </span>
           </h1>
           <p className="text-zinc-500 font-medium text-lg">
@@ -180,8 +183,6 @@ export default function AdminDashboard() {
             label="Enrolled Students"
             value={stats?.totalStudents ?? 0}
             icon={GraduationCap}
-            change={`+${stats?.newStudents ?? 0} this cycle`}
-            positive
             color="brand"
           />
           <StatCard
@@ -213,7 +214,7 @@ export default function AdminDashboard() {
             <h2 className="text-xl font-medium text-zinc-900 flex items-center gap-3">
               Institutional Registry
               <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-600 text-[10px] rounded-full font-medium uppercase tracking-widest border border-emerald-100">
-                <TrendingUp size={12} /> Live Updates
+                <Activity size={12} /> Live Updates
               </div>
             </h2>
             <Link
@@ -233,16 +234,6 @@ export default function AdminDashboard() {
               pageSize={5}
               emptyTitle="No Recent Data"
               emptyDesc="Newly registered students will be cataloged here automatically."
-              actions={() => (
-                <div className="flex items-center gap-2">
-                  <button className="p-2.5 rounded-xl text-zinc-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100">
-                    <Pencil size={14} />
-                  </button>
-                  <button className="p-2.5 rounded-xl text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100">
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              )}
             />
           </div>
         </div>
@@ -263,26 +254,17 @@ export default function AdminDashboard() {
                 <div>
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-sm font-medium text-zinc-200 flex items-center gap-2">
-                      <UserCheck size={16} className="text-brand-400" />{" "}
-                      Enrollment Ratio
+                      <ClipboardCheck size={16} className="text-brand-400" />{" "}
+                      Attendance Rate
                     </span>
                     <span className="text-sm font-display font-medium text-white">
-                      {stats
-                        ? Math.round(
-                            (stats.activeStudents / stats.totalStudents) * 100,
-                          )
-                        : 0}
-                      %
+                      {attendanceRate}%
                     </span>
                   </div>
                   <div className="h-2.5 w-full bg-white/10 rounded-full overflow-hidden border border-white/5">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{
-                        width: stats
-                          ? `${(stats.activeStudents / stats.totalStudents) * 100}%`
-                          : 0,
-                      }}
+                      animate={{ width: `${attendanceRate}%` }}
                       className="h-full bg-linear-to-r from-brand-600 to-brand-400 rounded-full shadow-[0_0_12px_rgba(99,102,241,0.4)]"
                     />
                   </div>
@@ -291,18 +273,18 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
                     <p className="text-[9px] font-medium text-zinc-400 uppercase tracking-widest mb-1">
-                      Stability
+                      Present
                     </p>
                     <p className="text-2xl font-display font-medium text-emerald-400 leading-none">
-                      98.2%
+                      {stats?.totalPresentRecords ?? 0}
                     </p>
                   </div>
                   <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
                     <p className="text-[9px] font-medium text-zinc-400 uppercase tracking-widest mb-1">
-                      New Intake
+                      Pending Reviews
                     </p>
-                    <p className="text-2xl font-display font-medium text-brand-400 leading-none">
-                      +{stats?.newStudents ?? 0}
+                    <p className="text-2xl font-display font-medium text-amber-400 leading-none">
+                      {stats?.pendingApprovals ?? 0}
                     </p>
                   </div>
                 </div>
@@ -316,31 +298,54 @@ export default function AdminDashboard() {
               Active Bulletins
             </h3>
             <div className="space-y-3">
-              {RECENT_NOTICES.map((notice) => (
-                <div
-                  key={notice.id}
-                  className="p-5 rounded-2xl bg-white border border-zinc-100 hover:border-brand-200 hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
-                >
-                  <div className="space-y-1.5 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        label={notice.forRole}
-                        variant={notice.urgent ? "danger" : "info"}
-                      />
-                      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest truncate">
-                        {notice.date}
-                      </span>
-                    </div>
-                    <h4 className="text-sm font-medium text-zinc-800 group-hover:text-brand-600 transition-colors truncate">
-                      {notice.title}
-                    </h4>
-                  </div>
-                  <ChevronRight
-                    size={16}
-                    className="text-zinc-300 group-hover:text-brand-400 transition-colors shrink-0 ml-3"
-                  />
+              {noticesLoading ? (
+                <div className="space-y-3" aria-label="Loading recent notices">
+                  {[0, 1, 2].map((item) => (
+                    <div
+                      key={item}
+                      className="h-20 animate-pulse rounded-2xl border border-zinc-100 bg-zinc-100"
+                    />
+                  ))}
                 </div>
-              ))}
+              ) : recentNotices.length > 0 ? (
+                recentNotices.map((notice) => (
+                  <Link
+                    key={notice.id}
+                    to="/admin/notices"
+                    className="p-5 rounded-2xl bg-white border border-zinc-100 hover:border-brand-200 hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
+                  >
+                    <div className="space-y-1.5 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          label={notice.forRole}
+                          variant={notice.urgent ? "danger" : "info"}
+                        />
+                        <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest truncate">
+                          {new Date(notice.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            },
+                          )}
+                        </span>
+                      </div>
+                      <h4 className="text-sm font-medium text-zinc-800 group-hover:text-brand-600 transition-colors truncate">
+                        {notice.title}
+                      </h4>
+                    </div>
+                    <ChevronRight
+                      size={16}
+                      className="text-zinc-300 group-hover:text-brand-400 transition-colors shrink-0 ml-3"
+                    />
+                  </Link>
+                ))
+              ) : (
+                <div className="rounded-2xl border border-dashed border-zinc-200 px-5 py-8 text-center text-sm text-zinc-500">
+                  No bulletins have been published yet.
+                </div>
+              )}
               <Link
                 to="/admin/notices"
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl border-2 border-dashed border-zinc-200 text-zinc-400 text-[11px] font-medium uppercase tracking-widest hover:border-brand-300 hover:text-brand-600 hover:bg-brand-50 transition-all"

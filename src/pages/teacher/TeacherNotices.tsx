@@ -120,7 +120,7 @@ export default function TeacherNotices() {
                       <div className="flex items-center gap-4 pt-2 text-[11px] font-medium text-zinc-400 uppercase tracking-widest">
                         <div className="flex items-center gap-1.5">
                           <User size={14} className="text-zinc-300" />
-                          {notice.author}
+                           {notice.createdBy.fullName}
                         </div>
                         <div className="w-1 h-1 rounded-full bg-zinc-200" />
                         <div className="flex items-center gap-1.5">

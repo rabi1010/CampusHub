@@ -20,11 +20,6 @@ import Avatar from "../../Component/ui/Avatar";
 
 type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE";
 
-interface AttendanceRecord {
-  studentId: string;
-  status: AttendanceStatus;
-}
-
 const MY_COURSES = [
   { id: "1", name: "Data Structures", code: "CS101" },
   { id: "2", name: "Database Systems", code: "CS102" },
@@ -61,14 +56,6 @@ export default function Attendance() {
   const [attendance, setAttendance] = useState<Record<string, AttendanceStatus>>({});
   const [isSaving, setIsSaving] = useState(false);
 
-  useMemo(() => {
-    const defaults: Record<string, AttendanceStatus> = {};
-    students.forEach((s) => {
-      defaults[s.id] = attendance[s.id] ?? "PRESENT";
-    });
-    setAttendance(defaults);
-  }, [students]);
-
   const setStatus = (studentId: string, status: AttendanceStatus) => {
     setAttendance((prev) => ({ ...prev, [studentId]: status }));
   };
@@ -90,13 +77,13 @@ export default function Attendance() {
   };
 
   const counts = useMemo(() => {
-    const values = Object.values(attendance);
+    const values = students.map((student) => attendance[student.id] ?? "PRESENT");
     return {
       present: values.filter((v) => v === "PRESENT").length,
       absent: values.filter((v) => v === "ABSENT").length,
       late: values.filter((v) => v === "LATE").length,
     };
-  }, [attendance]);
+  }, [attendance, students]);
 
   const changeDate = (days: number) => {
     const d = new Date(selectedDate);

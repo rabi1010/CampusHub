@@ -2,7 +2,6 @@ import { useState } from "react";
 import { BookOpen, GraduationCap, Phone, Hash, Layers, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { useStudents } from "../../features/students/useStudents";
-import { useCourses } from "../../features/courses/useCourses";
 
 import type { Student } from "../../services/studentService";
 import type { Column } from "../../Component/ui/DataTable";
@@ -51,7 +50,7 @@ const COLUMNS: Column<Student>[] = [
     render: (row) => (
       <div className="flex items-center gap-2 text-xs font-medium text-zinc-400 uppercase tracking-widest">
         <Layers size={14} className="text-zinc-300" />
-        Batch {row.batch}
+        Batch {row.batch?.name ?? "Unassigned"}
       </div>
     ),
   },

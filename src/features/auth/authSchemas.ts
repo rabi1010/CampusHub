@@ -68,17 +68,20 @@ export const registerSchema = z.object({
 
   // Only required when role = PARENT
   // Array of roll numbers for each child
-  childRollNumbers: z
-    .array(z.string().min(1))
-    .optional(),
+  // Allow empty strings in the raw array (useful for default blank inputs)
+  // and validate non-empty values when role === 'PARENT' in the refine step.
+  childRollNumbers: z.array(z.string()).optional(),
 })
 .refine(
   (data) => {
     if (data.role === "PARENT") {
+      // Must be a non-empty array and every roll number must be a non-empty string
       return (
-        data.childRollNumbers &&
+        Array.isArray(data.childRollNumbers) &&
         data.childRollNumbers.length > 0 &&
-        data.childRollNumbers[0] !== ""
+        data.childRollNumbers.every(
+          (r) => typeof r === "string" && r.trim().length > 0
+        )
       )
     }
     return true

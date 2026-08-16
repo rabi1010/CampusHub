@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, BookOpen, Layers, Users, Hash } from "lucide-react";
+import { Plus, Pencil, Trash2, BookOpen, Layers, Hash } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   useCourses,
@@ -12,7 +12,6 @@ import PageHeader from "../../components/ui/PageHeader";
 import type { Course } from "../../services/courseService";
 import type { CourseFormValues } from "../../features/courses/courseSchemas";
 import type { Column } from "../../Component/ui/DataTable";
-import Badge from "../../Component/ui/Badge";
 import DataTable from "../../Component/ui/DataTable";
 import Modal from "../../Component/ui/Modal";
 import CourseForm from "../../features/courses/CourseForm";
@@ -56,7 +55,7 @@ const COLUMNS: Column<Course>[] = [
     render: (row) => (
       <div className="flex items-center gap-2 text-sm font-medium text-zinc-600">
         <Layers size={14} className="text-zinc-400" />
-        {row.department}
+        {row.department?.name ?? "Unassigned"}
       </div>
     ),
   },
@@ -76,26 +75,6 @@ const COLUMNS: Column<Course>[] = [
       <div className="px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 font-medium text-[10px] inline-block border border-zinc-200">
         {row.credits} CREDITS
       </div>
-    ),
-  },
-  {
-    key: "enrolledCount",
-    label: "Enrollment",
-    render: (row) => (
-      <div className="flex items-center gap-1.5 text-zinc-500 font-medium text-xs">
-        <Users size={12} className="text-zinc-400" />
-        {row.enrolledCount}
-      </div>
-    ),
-  },
-  {
-    key: "status",
-    label: "Status",
-    render: (row) => (
-      <Badge
-        label={row.status}
-        variant={row.status === "ACTIVE" ? "success" : "default"}
-      />
     ),
   },
 ];
@@ -158,8 +137,8 @@ export default function Courses() {
           columns={COLUMNS}
           loading={isLoading}
           searchable
-          searchKeys={["name", "code", "department"]}
-          searchPlaceholder="Filter catalog by name, code or department..."
+          searchKeys={["name", "code"]}
+          searchPlaceholder="Filter catalog by name or code..."
           pageSize={10}
           emptyTitle="Catalog is Empty"
           emptyDesc="No courses found. Create a new curriculum item to begin."

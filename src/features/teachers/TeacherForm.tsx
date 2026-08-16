@@ -2,20 +2,14 @@ import { useEffect } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, User, ShieldCheck, Mail, Smartphone, Layers, GraduationCap, Save, Plus } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import {
   teacherSchema,
   teacherEditSchema,
   type TeacherFormValues,
 } from "./teacherSchemas";
 import type { Teacher } from "../../services/teacherService";
-
-const DEPARTMENTS = [
-  "Computer Science",
-  "Information Technology",
-  "Electronics",
-  "Civil Engineering",
-  "Mechanical Engineering",
-];
+import { useDepartments } from "../academics/useAcademics";
 
 const QUALIFICATIONS = [
   "B.E / B.Tech",
@@ -27,7 +21,13 @@ const QUALIFICATIONS = [
   "Other",
 ];
 
-function FieldLabel({ children, icon: Icon }: { children: React.ReactNode; icon: any }) {
+function FieldLabel({
+  children,
+  icon: Icon,
+}: {
+  children: React.ReactNode;
+  icon: LucideIcon;
+}) {
   return (
     <label className="flex items-center gap-2 text-sm font-medium text-zinc-700 mb-2">
       <Icon size={12} className="text-zinc-400" />
@@ -58,6 +58,8 @@ export default function TeacherForm({
   isLoading = false,
 }: TeacherFormProps) {
   const isEdit = !!teacher;
+  const { data: departments = [], isLoading: departmentsLoading } =
+    useDepartments();
 
   const {
     register,
@@ -73,7 +75,7 @@ export default function TeacherForm({
           fullName: teacher.fullName,
           email: teacher.email,
           employeeId: teacher.employeeId,
-          department: teacher.department,
+          departmentId: teacher.department?.id ?? "",
           qualification: teacher.qualification,
           phone: teacher.phone,
           password: "",
@@ -82,7 +84,7 @@ export default function TeacherForm({
           fullName: "",
           email: "",
           employeeId: "",
-          department: "",
+          departmentId: "",
           qualification: "",
           phone: "",
           password: "",
@@ -95,7 +97,7 @@ export default function TeacherForm({
         fullName: teacher.fullName,
         email: teacher.email,
         employeeId: teacher.employeeId,
-        department: teacher.department,
+        departmentId: teacher.department?.id ?? "",
         qualification: teacher.qualification,
         phone: teacher.phone,
         password: "",
@@ -169,17 +171,24 @@ export default function TeacherForm({
         <div className="space-y-1">
           <FieldLabel icon={Layers}>Academic Faculty</FieldLabel>
           <select
+            disabled={departmentsLoading}
             className={`input-field appearance-none ${
-              errors.department ? "input-error" : ""
+              errors.departmentId ? "input-error" : ""
             }`}
-            {...register("department")}
+            {...register("departmentId")}
           >
-            <option value="">Select department</option>
-            {DEPARTMENTS.map((d) => (
-              <option key={d} value={d}>{d}</option>
+            <option value="">
+              {departmentsLoading
+                ? "Loading departments..."
+                : "Select department"}
+            </option>
+            {departments.map((department) => (
+              <option key={department.id} value={department.id}>
+                {department.name}
+              </option>
             ))}
           </select>
-          <FieldError message={errors.department?.message} />
+          <FieldError message={errors.departmentId?.message} />
         </div>
         <div className="space-y-1">
           <FieldLabel icon={GraduationCap}>Highest Qualification</FieldLabel>

@@ -11,7 +11,7 @@ export const courseSchema = z.object({
     .min(1, "Course code is required")
     .regex(/^[A-Z]{2,4}[0-9]{3,4}$/, "Format must be like CS101 or BCA201"),
 
-  department: z.string().min(1, "Department is required"),
+  departmentId: z.string().min(1, "Department is required"),
 
   credits: z
     .number({ error: "Credits must be a number" })

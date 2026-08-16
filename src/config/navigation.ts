@@ -5,10 +5,8 @@ import {
   BookOpen,
   Bell,
   Settings,
-  ClipboardList,
   BarChart3,
   UserCheck,
-  FileText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -37,6 +35,7 @@ export const ADMIN_NAV: NavGroup[] = [
     items: [
       { label: "Students", to: "/admin/students", icon: GraduationCap },
       { label: "Teachers", to: "/admin/teachers", icon: Users },
+      { label: "Parents", to: "/admin/parents", icon: Users },
       { label: "Courses", to: "/admin/courses", icon: BookOpen },
     ],
   },

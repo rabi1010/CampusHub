@@ -63,7 +63,7 @@ export default function Register() {
       childRollNumbers: [""],
     },
   })
-
+console.log("Form errors:", errors)
   const selectedRole = watch("role")
 
   const { fields, append, remove } = useFieldArray({
@@ -81,6 +81,7 @@ export default function Register() {
   const prevStep = () => setStep(1)
 
   const onSubmit = (data: RegisterFormData) => {
+    console.log("Form submitted with:", data)
     register(data)
   }
 

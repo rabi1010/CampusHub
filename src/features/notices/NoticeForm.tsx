@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useForm, type Resolver } from "react-hook-form";
+import { useEffect, type ReactNode } from "react";
+import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
 import { noticeSchema, type NoticeFormValues } from "./noticeSchemas";
@@ -9,9 +9,10 @@ const AUDIENCE_OPTIONS = [
   { value: "ALL", label: "Everyone", desc: "All students and teachers" },
   { value: "STUDENT", label: "Students only", desc: "Only student accounts" },
   { value: "TEACHER", label: "Teachers only", desc: "Only teacher accounts" },
+  { value: "PARENT", label: "Parents only", desc: "Only parent accounts" },
 ];
 
-function FieldLabel({ children }: { children: React.ReactNode }) {
+function FieldLabel({ children }: { children: ReactNode }) {
   return (
     <label
       className="block text-xs font-mono text-ink-400
@@ -50,8 +51,8 @@ export default function NoticeForm({
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
     setValue,
+    control,
   } = useForm<NoticeFormValues>({
     resolver: zodResolver(noticeSchema) as Resolver<NoticeFormValues>,
     defaultValues: isEdit
@@ -69,8 +70,8 @@ export default function NoticeForm({
         },
   });
 
-  const isUrgent = watch("urgent");
-  const selectedRole = watch("forRole");
+  const isUrgent = useWatch({ control, name: "urgent" });
+  const selectedRole = useWatch({ control, name: "forRole" });
 
   useEffect(() => {
     if (notice) {
@@ -112,7 +113,10 @@ export default function NoticeForm({
               key={value}
               type="button"
               onClick={() =>
-                setValue("forRole", value as NoticeFormValues["forRole"])
+                setValue("forRole", value as NoticeFormValues["forRole"], {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                })
               }
               className={`flex flex-col items-start gap-1 p-3
                           rounded-xl border text-left
@@ -158,7 +162,12 @@ export default function NoticeForm({
                         ? "bg-red-500/10 border-red-500/30"
                         : "border-white/[0.07] hover:border-white/15"
                     }`}
-        onClick={() => setValue("urgent", !isUrgent)}
+        onClick={() =>
+          setValue("urgent", !isUrgent, {
+            shouldDirty: true,
+            shouldValidate: true,
+          })
+        }
       >
         <div>
           <p

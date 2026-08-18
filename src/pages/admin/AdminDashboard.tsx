@@ -26,6 +26,7 @@ import Avatar from "../../Component/ui/Avatar";
 import Badge from "../../Component/ui/Badge";
 import { CardSkeleton } from "../../Component/ui/Skeleton";
 import DataTable from "../../Component/ui/DataTable";
+import PendingApprovals from "../../features/auth/PendingApprovals";
 
 const STUDENT_COLUMNS: Column<Student>[] = [
   {
@@ -356,6 +357,8 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      <PendingApprovals />
     </div>
   );
 }

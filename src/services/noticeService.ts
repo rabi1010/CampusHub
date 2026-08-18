@@ -36,7 +36,7 @@ export const noticeService = {
   getAll: (params?: { search?: string; page?: number; size?: number }) =>
     api
       .get<ApiResponse<SpringPage<Notice>>>("/notices", {
-        params: { page: params?.page ?? 1, size: params?.size ?? 50, ...params },
+        params,
       })
       .then((r) => r.data.data.content),
 

@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import { useToast } from "../../Component/ui/Toast";
 import {
   teacherService,
@@ -11,6 +12,12 @@ export const teacherKeys = {
   lists:  ["teachers", "list"] as const,
   detail: (id: string) => ["teachers", id] as const,
 };
+
+function getErrorMessage(error: unknown) {
+  return isAxiosError<{ message?: string }>(error)
+    ? error.response?.data?.message ?? "Please try again"
+    : "Please try again";
+}
 
 export function useTeachers() {
   return useQuery({
@@ -31,8 +38,8 @@ export function useCreateTeacher() {
       queryClient.invalidateQueries({ queryKey: teacherKeys.lists });
       toast.success("Teacher added", `${t.fullName} was added successfully`);
     },
-    onError: (error: any) => {
-      toast.error("Failed", error.response?.data?.message ?? "Please try again");
+    onError: (error: unknown) => {
+      toast.error("Failed", getErrorMessage(error));
     },
   });
 }
@@ -48,8 +55,8 @@ export function useUpdateTeacher() {
       queryClient.invalidateQueries({ queryKey: teacherKeys.lists });
       toast.success("Teacher updated", "Changes saved successfully");
     },
-    onError: (error: any) => {
-      toast.error("Failed", error.response?.data?.message ?? "Please try again");
+    onError: (error: unknown) => {
+      toast.error("Failed", getErrorMessage(error));
     },
   });
 }

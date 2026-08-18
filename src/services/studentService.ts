@@ -93,7 +93,7 @@ export function mapStudent(s: Student): Student {
 
 export const studentService = {
 
-  // GET /api/students?page=1&size=10&search=...
+  // GET /api/students, with optional filters when explicitly requested.
   getAll: (params?: {
     page?: number;
     size?: number;
@@ -102,7 +102,7 @@ export const studentService = {
   }) =>
     api
       .get<ApiResponse<SpringPage<Student>>>("/students", {
-        params: { page: params?.page ?? 1, size: params?.size ?? 50, ...params },
+        params,
       })
       .then((r) => r.data.data.content.map(mapStudent)),
 

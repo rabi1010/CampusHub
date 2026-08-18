@@ -49,7 +49,7 @@ export const attendanceService = {
     api
       .get<ApiResponse<SpringPage<AttendanceRecord>>>(
         `/attendance/course/${courseId}`,
-        { params: { page: params?.page ?? 1, size: params?.size ?? 50 } }
+        { params }
       )
       .then((r) => r.data.data.content),
 
@@ -57,14 +57,12 @@ export const attendanceService = {
     api
       .get<ApiResponse<SpringPage<AttendanceRecord>>>(
         `/attendance/student/${studentId}`,
-        { params: { page: params?.page ?? 1, size: params?.size ?? 50 } }
+        { params }
       )
       .then((r) => r.data.data.content),
 
-  getSummary: (studentId: string) =>
+  getSummary: () =>
     api
-      .get<ApiResponse<AttendanceSummary>>(
-        `/attendance/student/${studentId}/summary`
-      )
+      .get<ApiResponse<AttendanceSummary>>("/attendance/summary")
       .then((r) => r.data.data),
 };

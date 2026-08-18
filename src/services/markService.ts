@@ -45,8 +45,8 @@ export const markService = {
       .get<ApiResponse<Mark[]>>(`/marks/course/${courseId}`)
       .then((r) => r.data.data),
 
-  getGpa: (studentId: string) =>
+  getGpa: () =>
     api
-      .get<ApiResponse<number>>(`/marks/student/${studentId}/gpa`)
+      .get<ApiResponse<number>>("/marks/gpa")
       .then((r) => r.data.data),
 };

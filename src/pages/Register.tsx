@@ -63,7 +63,6 @@ export default function Register() {
       childRollNumbers: [""],
     },
   })
-console.log("Form errors:", errors)
   const selectedRole = watch("role")
 
   const { fields, append, remove } = useFieldArray({
@@ -81,7 +80,6 @@ console.log("Form errors:", errors)
   const prevStep = () => setStep(1)
 
   const onSubmit = (data: RegisterFormData) => {
-    console.log("Form submitted with:", data)
     register(data)
   }
 
@@ -304,7 +302,7 @@ console.log("Form errors:", errors)
                         {fields.map((f, index) => (
                           <div key={f.id} className="flex gap-2">
                             <input
-                              {...field(`childRollNumbers.${index}` as any)}
+                              {...field(`childRollNumbers.${index}`)}
                               className={`flex-1 input-field ${
                                 errors.childRollNumbers
                                   ? "input-error"

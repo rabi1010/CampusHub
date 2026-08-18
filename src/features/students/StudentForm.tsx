@@ -10,7 +10,7 @@ import {
 import type { Student } from "../../services/studentService";
 import { useDepartments, useBatches } from "../academics/useAcademics";
 
-function FieldLabel({ children, icon: Icon }: { children: React.ReactNode; icon: any }) {
+function FieldLabel({ children, icon: Icon }: { children: React.ReactNode; icon: React.ElementType }) {
   return (
     <label className="flex items-center gap-2 text-sm font-medium text-zinc-700 mb-2">
       <Icon size={16} className="text-zinc-400" />

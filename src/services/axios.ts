@@ -20,11 +20,12 @@ api.interceptors.request.use((config) => {
 });
 
 // ── Response interceptor ────────────────────────────────
-// Handle 401 and 403 globally. If token expires or is invalid, clear auth and redirect to login.
+// Only 401 means the session is invalid. A 403 is a valid user without permission
+// and must not destroy their authenticated session.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
+    if (error.response?.status === 401) {
       store.dispatch(clearCredentials());
       window.location.href = "/login";
     }

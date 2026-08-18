@@ -68,7 +68,7 @@ export const parentService = {
   getAll: (params?: { search?: string }) =>
     api
       .get<ApiResponse<SpringPage<Parent>>>("/parents", {
-        params: { page: 1, size: 100, ...params },
+        params,
       })
       .then((r) => r.data.data.content.map(mapParent)),
 

@@ -3,6 +3,7 @@ import { useNavigate }  from "react-router-dom"
 import { useToast }     from "@/Component/ui/Toast"
 import type { RegisterFormData } from "./authSchemas"
 import api from "@/services/axios"
+import { isAxiosError } from "axios"
 
 export function useRegister() {
   const navigate = useNavigate()
@@ -11,7 +12,14 @@ export function useRegister() {
   return useMutation({
     mutationFn: async (data: RegisterFormData) => {
       // Build payload — only send childRollNumbers if PARENT
-      const payload: any = {
+      const payload: {
+        fullName: string
+        email: string
+        password: string
+        phone?: string
+        role: RegisterFormData["role"]
+        childRollNumbers?: string[]
+      } = {
         fullName: data.fullName,
         email:    data.email,
         password: data.password,
@@ -38,9 +46,10 @@ export function useRegister() {
       navigate("/login")
     },
 
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || "Registration failed"
+    onError: (error: unknown) => {
+      const message = isAxiosError<{ message?: string }>(error)
+        ? error.response?.data?.message || "Registration failed"
+        : "Registration failed"
       toast.error("Registration failed", message)
     },
   })

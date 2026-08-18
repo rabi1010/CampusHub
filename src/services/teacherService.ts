@@ -72,7 +72,7 @@ export const teacherService = {
   getAll: (params?: { search?: string; departmentId?: string }) =>
     api
       .get<ApiResponse<SpringPage<Teacher>>>("/teachers", {
-        params: { page: 1, size: 100, ...params },
+        params,
       })
       .then((r) => r.data.data.content.map(mapTeacher)),
 

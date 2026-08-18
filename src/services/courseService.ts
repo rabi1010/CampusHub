@@ -44,7 +44,7 @@ export const courseService = {
   getAll: (params?: { search?: string; semester?: number; departmentId?: string }) =>
     api
       .get<ApiResponse<SpringPage<Course>>>("/courses", {
-        params: { page: 1, size: 100, ...params },
+        params,
       })
       .then((r) => r.data.data.content),
 

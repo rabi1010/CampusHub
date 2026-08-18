@@ -1,7 +1,7 @@
 import logo from "@/assets/logo/logo.svg";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, GraduationCap } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import clsx from "clsx";
 
 const NAV_LINKS = [
@@ -13,7 +13,6 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -21,9 +20,6 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  // Close mobile menu when navigating
-  useEffect(() => setMenuOpen(false), [pathname]);
 
   return (
     <header
@@ -61,17 +57,25 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden p-2.5 rounded-xl bg-zinc-50 text-zinc-500 hover:text-brand-600 hover:bg-brand-50 transition-all border border-zinc-100"
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        <MobileNavigation key={pathname} pathname={pathname} />
       </nav>
+    </header>
+  );
+}
 
-      {/* Mobile dropdown menu */}
+function MobileNavigation({ pathname }: { pathname: string }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="md:hidden p-2.5 rounded-xl bg-zinc-50 text-zinc-500 hover:text-brand-600 hover:bg-brand-50 transition-all border border-zinc-100"
+        aria-label="Toggle menu"
+      >
+        {menuOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
       {menuOpen && (
         <div
           className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-zinc-100
@@ -95,6 +99,6 @@ export default function Navbar() {
           </Link>
         </div>
       )}
-    </header>
+    </>
   );
 }

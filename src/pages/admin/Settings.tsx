@@ -38,7 +38,7 @@ function FieldLabel({
   icon: Icon,
 }: {
   children: React.ReactNode;
-  icon?: any;
+  icon?: React.ElementType;
 }) {
   return (
     <label className="flex items-center gap-2 text-[10px] font-medium text-zinc-400 mb-2 uppercase tracking-[0.2em]">
@@ -191,7 +191,7 @@ export default function Settings() {
     },
   });
 
-  const onPasswordSubmit = async (_data: PasswordFormValues) => {
+  const onPasswordSubmit = async () => {
     await new Promise((r) => setTimeout(r, 800));
     passwordForm.reset();
     toast.success(
@@ -211,7 +211,7 @@ export default function Settings() {
     },
   });
 
-  const onCollegeSubmit = async (_data: CollegeFormValues) => {
+  const onCollegeSubmit = async () => {
     await new Promise((r) => setTimeout(r, 800));
     toast.success(
       "Institution config saved",

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { clearCredentials } from "../../features/auth/authSlice";
+import { authService } from "../../services/authService";
 import clsx from "clsx";
 
 interface TopbarProps {
@@ -50,9 +51,13 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleLogout = () => {
-    dispatch(clearCredentials());
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } finally {
+      dispatch(clearCredentials());
+      navigate("/login");
+    }
   };
 
   const unreadCount = MOCK_NOTIFICATIONS.filter((n) => n.unread).length;

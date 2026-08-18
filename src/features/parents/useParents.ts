@@ -10,6 +10,7 @@ import {
 export const parentKeys = {
   lists:  ["parents", "list"] as const,
   detail: (id: string) => ["parents", id] as const,
+  me: ["parents", "me"] as const,
 };
 
 function getErrorMessage(error: unknown) {
@@ -72,5 +73,13 @@ export function useDeleteParent() {
     onError: () => {
       toast.error("Failed to delete", "Please try again");
     },
+  });
+}
+
+export function useParentMe() {
+  return useQuery({
+    queryKey: parentKeys.me,
+    queryFn: () => parentService.getMe(),
+    staleTime: 2 * 60 * 1000,
   });
 }

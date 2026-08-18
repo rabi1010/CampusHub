@@ -27,7 +27,6 @@ export interface RegisterResponse {
 export interface LoginPayload {
   email: string;
   password: string;
-  role: "ADMIN" | "TEACHER" | "STUDENT";
 }
 export interface AuthResponse {
   token: string;
@@ -35,7 +34,7 @@ export interface AuthResponse {
     id: string;
     email: string;
     fullName: string;
-    role: "admin" | "teacher" | "student";
+    role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT";
   };
 }
 export interface ApiResponse<T> {
@@ -48,6 +47,23 @@ export interface ContactPayload {
   email: string;
   subject: string;
   message: string;
+}
+
+export interface PendingUser {
+  id: string;
+  email: string;
+  fullName: string;
+  phone?: string;
+  role: "STUDENT" | "TEACHER" | "PARENT";
+  status: "PENDING";
+  createdAt: string;
+}
+
+export interface ApproveStudentPayload {
+  role: "STUDENT";
+  rollNo: string;
+  departmentId: string;
+  batchId: string;
 }
 
 // Auth
@@ -68,6 +84,14 @@ export const authService = {
   logout: () => api.post("/auth/logout").then((r) => r.data),
 
   me: () => api.get("/auth/me").then((r) => r.data),
+  getPendingUsers: () =>
+    api
+      .get<ApiResponse<PendingUser[]>>("/auth/users/pending")
+      .then((r) => r.data.data),
+  approveStudent: (id: string, data: ApproveStudentPayload) =>
+    api
+      .patch<ApiResponse<PendingUser>>(`/auth/users/${id}/approve`, data)
+      .then((r) => r.data.data),
 };
 
 // Contact form (public endpoint)

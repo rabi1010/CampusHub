@@ -10,8 +10,6 @@ import {
   Shield,
   CheckCircle2,
   Star,
-  GraduationCap,
-  UserCog,
   ChevronRight,
   Quote,
 } from "lucide-react";

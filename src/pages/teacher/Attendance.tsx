@@ -11,8 +11,10 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { isAxiosError } from "axios";
+import { useCourses } from "../../features/courses/useCourses";
 import { useStudents } from "../../features/students/useStudents";
-
+import { attendanceService } from "../../services/attendanceService";
 import clsx from "clsx";
 import { useToast } from "../../Component/ui/Toast";
 import PageHeader from "../../components/ui/PageHeader";
@@ -20,41 +22,45 @@ import Avatar from "../../Component/ui/Avatar";
 
 type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE";
 
-const MY_COURSES = [
-  { id: "1", name: "Data Structures", code: "CS101" },
-  { id: "2", name: "Database Systems", code: "CS102" },
-  { id: "3", name: "Web Development", code: "IT201" },
-];
-
 const STATUS_CONFIG = {
   PRESENT: {
     label: "Present",
     icon: CheckCircle2,
     active: "bg-emerald-50 border-emerald-100 text-emerald-600 ring-2 ring-emerald-500/20",
-    hover: "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-100",
   },
   ABSENT: {
     label: "Absent",
     icon: XCircle,
     active: "bg-rose-50 border-rose-100 text-rose-600 ring-2 ring-rose-500/20",
-    hover: "hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100",
   },
   LATE: {
     label: "Late",
     icon: Clock,
     active: "bg-amber-50 border-amber-100 text-amber-600 ring-2 ring-amber-500/20",
-    hover: "hover:bg-amber-50 hover:text-amber-600 hover:border-amber-100",
   },
 };
 
 export default function Attendance() {
   const toast = useToast();
-  const { data: students = [], isLoading } = useStudents();
+  const { data: courses = [], isLoading: coursesLoading } = useCourses();
+  const { data: students = [], isLoading: studentsLoading } = useStudents();
 
-  const [selectedCourse, setSelectedCourse] = useState(MY_COURSES[0].id);
+  const [courseSelection, setCourseSelection] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [attendance, setAttendance] = useState<Record<string, AttendanceStatus>>({});
   const [isSaving, setIsSaving] = useState(false);
+  const selectedCourse = courseSelection || courses[0]?.id || "";
+  const isLoading = coursesLoading || studentsLoading;
+
+  const selectCourse = (courseId: string) => {
+    setCourseSelection(courseId);
+    setAttendance({});
+  };
+
+  const selectDate = (date: string) => {
+    setSelectedDate(date);
+    setAttendance({});
+  };
 
   const setStatus = (studentId: string, status: AttendanceStatus) => {
     setAttendance((prev) => ({ ...prev, [studentId]: status }));
@@ -70,10 +76,27 @@ export default function Attendance() {
   };
 
   const handleSave = async () => {
+    if (!selectedCourse || !selectedDate || students.length === 0) return;
+
     setIsSaving(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setIsSaving(false);
-    toast.success("Attendance saved", `${students.length} records synchronized successfully.`);
+    try {
+      await attendanceService.mark({
+        courseId: selectedCourse,
+        date: selectedDate,
+        records: students.map((student) => ({
+          studentId: student.id,
+          status: attendance[student.id] ?? "PRESENT",
+        })),
+      });
+      toast.success("Attendance saved", `${students.length} records synchronized successfully.`);
+    } catch (error) {
+      const message = isAxiosError<{ message?: string }>(error)
+        ? error.response?.data?.message ?? "Please try again"
+        : "Please try again";
+      toast.error("Failed to save attendance", message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const counts = useMemo(() => {
@@ -88,7 +111,7 @@ export default function Attendance() {
   const changeDate = (days: number) => {
     const d = new Date(selectedDate);
     d.setDate(d.getDate() + days);
-    setSelectedDate(d.toISOString().split("T")[0]);
+    selectDate(d.toISOString().split("T")[0]);
   };
 
   return (
@@ -100,7 +123,7 @@ export default function Attendance() {
           action={
             <button
               onClick={handleSave}
-              disabled={isSaving || students.length === 0}
+              disabled={isSaving || isLoading || !selectedCourse || !selectedDate || students.length === 0}
               className="btn-primary py-3 px-8 shadow-brand-500/10 disabled:opacity-50"
             >
               {isSaving ? "Synchronizing..." : <><Save size={18} /> Save Attendance</>}
@@ -117,10 +140,15 @@ export default function Attendance() {
               <LayoutGrid size={14} /> Selected Class
             </div>
             <div className="space-y-2">
-              {MY_COURSES.map((course) => (
+              {coursesLoading ? (
+                <p className="px-4 py-3 text-sm text-zinc-400">Loading courses...</p>
+              ) : courses.length === 0 ? (
+                <p className="px-4 py-3 text-sm text-zinc-400">No courses available.</p>
+              ) : courses.map((course) => (
                 <button
                   key={course.id}
-                  onClick={() => setSelectedCourse(course.id)}
+                  onClick={() => selectCourse(course.id)}
+                  disabled={isSaving}
                   className={clsx(
                     "w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all",
                     selectedCourse === course.id
@@ -140,16 +168,17 @@ export default function Attendance() {
               <Calendar size={14} /> Session Date
             </div>
             <div className="flex items-center gap-2 bg-zinc-50 p-2 rounded-xl border border-zinc-100">
-              <button onClick={() => changeDate(-1)} className="p-2 hover:bg-white rounded-lg text-zinc-400 transition-colors shadow-sm">
+              <button disabled={isSaving} onClick={() => changeDate(-1)} className="p-2 hover:bg-white rounded-lg text-zinc-400 transition-colors shadow-sm disabled:opacity-50">
                 <ChevronLeft size={16} />
               </button>
               <input
                 type="date"
                 value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
+                onChange={(e) => selectDate(e.target.value)}
+                disabled={isSaving}
                 className="bg-transparent text-sm text-zinc-900 font-medium focus:outline-none flex-1 text-center"
               />
-              <button onClick={() => changeDate(1)} className="p-2 hover:bg-white rounded-lg text-zinc-400 transition-colors shadow-sm">
+              <button disabled={isSaving} onClick={() => changeDate(1)} className="p-2 hover:bg-white rounded-lg text-zinc-400 transition-colors shadow-sm disabled:opacity-50">
                 <ChevronRight size={16} />
               </button>
             </div>
@@ -177,7 +206,8 @@ export default function Attendance() {
             </div>
             <button
               onClick={markAllPresent}
-              className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-brand-600 hover:bg-brand-50 rounded-xl transition-all border border-transparent hover:border-brand-100"
+              disabled={isSaving || isLoading || students.length === 0}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-brand-600 hover:bg-brand-50 rounded-xl transition-all border border-transparent hover:border-brand-100 disabled:opacity-50"
             >
               <UserCheck size={16} /> Mark All Present
             </button>
@@ -217,6 +247,7 @@ export default function Attendance() {
                               <button
                                 key={s}
                                 onClick={() => setStatus(student.id, s)}
+                                disabled={isSaving}
                                 className={clsx(
                                   "flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium transition-all border shadow-sm",
                                   isActive ? config.active : "bg-white border-zinc-100 text-zinc-400 hover:text-zinc-600 hover:border-zinc-200"

@@ -1,17 +1,14 @@
 import { useState, useMemo } from "react";
-import { Save, Download, Calculator, TrendingUp, Users, Target, ClipboardList, GraduationCap } from "lucide-react";
+import { Save, Calculator, TrendingUp, Users, Target, ClipboardList, GraduationCap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { isAxiosError } from "axios";
+import { useCourses } from "../../features/courses/useCourses";
 import { useStudents } from "../../features/students/useStudents";
+import { markService } from "../../services/markService";
 import { useToast } from "../../Component/ui/Toast";
 import PageHeader from "../../components/ui/PageHeader";
 import Avatar from "../../Component/ui/Avatar";
 import clsx from "clsx";
-
-const MY_COURSES = [
-  { id: "1", name: "Data Structures", code: "CS101", totalMarks: 100 },
-  { id: "2", name: "Database Systems", code: "CS102", totalMarks: 100 },
-  { id: "3", name: "Web Development", code: "IT201", totalMarks: 100 },
-];
 
 const EXAM_TYPES = [
   { value: "INTERNAL", label: "Internal", max: 30 },
@@ -23,33 +20,69 @@ type ExamType = "INTERNAL" | "MIDTERM" | "FINAL";
 
 export default function Marks() {
   const toast = useToast();
-  const { data: students = [], isLoading } = useStudents();
+  const { data: courses = [], isLoading: coursesLoading } = useCourses();
+  const { data: students = [], isLoading: studentsLoading } = useStudents();
 
-  const [selectedCourse, setSelectedCourse] = useState(MY_COURSES[0].id);
+  const [courseSelection, setCourseSelection] = useState("");
   const [selectedExam, setSelectedExam] = useState<ExamType>("INTERNAL");
   const [marks, setMarks] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
 
-  const course = MY_COURSES.find((c) => c.id === selectedCourse)!;
+  const selectedCourse = courseSelection || courses[0]?.id || "";
+  const course = courses.find((c) => c.id === selectedCourse);
   const exam = EXAM_TYPES.find((e) => e.value === selectedExam)!;
+  const isLoading = coursesLoading || studentsLoading;
+  const enteredMarks = students.flatMap((student) => {
+    const value = marks[student.id]?.trim();
+    return value !== undefined && value !== ""
+      ? [{ studentId: student.id, marksObtained: Number(value), totalMarks: exam.max }]
+      : [];
+  });
+
+  const selectCourse = (courseId: string) => {
+    setCourseSelection(courseId);
+    setMarks({});
+  };
+
+  const selectExam = (examType: ExamType) => {
+    setSelectedExam(examType);
+    setMarks({});
+  };
 
   const setMark = (studentId: string, value: string) => {
-    const num = parseInt(value);
-    if (value !== "" && (isNaN(num) || num < 0 || num > exam.max)) return;
+    const num = Number(value);
+    if (value !== "" && (!Number.isFinite(num) || num < 0 || num > exam.max)) return;
     setMarks((prev) => ({ ...prev, [studentId]: value }));
   };
 
   const handleSave = async () => {
+    if (!course || enteredMarks.length === 0) return;
+
     setIsSaving(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setIsSaving(false);
-    toast.success("Marks synchronized", `Academic records updated for ${course.name}.`);
+    try {
+      await markService.upload({
+        courseId: course.id,
+        examType: selectedExam,
+        semester: course.semester,
+        records: enteredMarks,
+      });
+      toast.success("Marks synchronized", `Academic records updated for ${course.name}.`);
+    } catch (error) {
+      const message = isAxiosError<{ message?: string }>(error)
+        ? error.response?.data?.message ?? "Please try again"
+        : "Please try again";
+      toast.error("Failed to publish grades", message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const stats = useMemo(() => {
     const values = students
-      .map((s) => parseFloat(marks[s.id] ?? "0"))
-      .filter((v) => !isNaN(v) && v > 0);
+      .map((s) => marks[s.id]?.trim())
+      .filter((value): value is string => value !== undefined && value !== "")
+      .map(Number)
+      .filter(Number.isFinite);
 
     if (values.length === 0) return null;
 
@@ -68,7 +101,7 @@ export default function Marks() {
           action={
             <button
               onClick={handleSave}
-              disabled={isSaving}
+              disabled={isSaving || isLoading || !course || enteredMarks.length === 0}
               className="btn-primary py-3 px-8 shadow-brand-500/10 disabled:opacity-50"
             >
               {isSaving ? "Synchronizing..." : <><Save size={18} /> Publish Grades</>}
@@ -85,10 +118,15 @@ export default function Marks() {
               <ClipboardList size={14} /> Academic Unit
             </div>
             <div className="space-y-2">
-              {MY_COURSES.map((c) => (
+              {coursesLoading ? (
+                <p className="px-4 py-3 text-sm text-zinc-400">Loading courses...</p>
+              ) : courses.length === 0 ? (
+                <p className="px-4 py-3 text-sm text-zinc-400">No courses available.</p>
+              ) : courses.map((c) => (
                 <button
                   key={c.id}
-                  onClick={() => setSelectedCourse(c.id)}
+                  onClick={() => selectCourse(c.id)}
+                  disabled={isSaving}
                   className={clsx(
                     "w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all",
                     selectedCourse === c.id
@@ -111,7 +149,8 @@ export default function Marks() {
               {EXAM_TYPES.map((e) => (
                 <button
                   key={e.value}
-                  onClick={() => setSelectedExam(e.value as ExamType)}
+                  onClick={() => selectExam(e.value as ExamType)}
+                  disabled={isSaving}
                   className={clsx(
                     "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all border",
                     selectedExam === e.value
@@ -161,8 +200,11 @@ export default function Marks() {
           )}
 
           <div className="card-base bg-white border-zinc-100 overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
+            {studentsLoading ? (
+              <div className="p-20 text-center text-zinc-400 font-medium">Loading class roster...</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-zinc-50 bg-zinc-50/50">
                     <th className="px-6 py-4 text-[10px] font-medium text-zinc-400 uppercase tracking-widest w-16">#</th>
@@ -209,6 +251,7 @@ export default function Marks() {
                                 max={exam.max}
                                 value={val}
                                 onChange={(e) => setMark(student.id, e.target.value)}
+                                disabled={isSaving}
                                 placeholder="—"
                                 className={clsx(
                                   "w-24 px-4 py-2.5 rounded-xl text-sm font-medium text-right transition-all border outline-none",
@@ -227,8 +270,9 @@ export default function Marks() {
                     })}
                   </AnimatePresence>
                 </tbody>
-              </table>
-            </div>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       </div>

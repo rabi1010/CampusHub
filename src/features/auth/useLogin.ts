@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { authService } from "../../services/authService";
 import { setCredentials } from "./authSlice";
 import { useAppDispatch } from "../../app/hooks";
-import type { LoginPayload } from "../../services/authService";
 import type { LoginFormValues } from "./authSchemas";
 
 const ROLE_REDIRECT = {
@@ -20,10 +19,7 @@ export function useLogin() {
   return useMutation({
     // ── Real API call ──────────────────────────────────
     mutationFn: (payload: LoginFormValues) =>
-      authService.login({
-        ...payload,
-        role: payload.role.toUpperCase() as LoginPayload["role"],
-      }),
+      authService.login({ email: payload.email, password: payload.password }),
 
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);

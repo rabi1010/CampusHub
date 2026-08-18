@@ -1,6 +1,6 @@
 import logo from "@/assets/logo/logo.svg";
 import { Link } from "react-router-dom";
-import { GraduationCap, GitFork, ExternalLink, Mail } from "lucide-react";
+import { GitFork, ExternalLink, Mail } from "lucide-react";
 
 const LINKS = {
   Product: [

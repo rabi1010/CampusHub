@@ -5,6 +5,7 @@ interface AvatarProps {
   size?: "sm" | "md" | "lg" | "xl";
   color?: "brand" | "zinc" | "indigo";
   className?: string;
+  imageUrl?: string;
 }
 
 const SIZES = {
@@ -39,7 +40,8 @@ export default function Avatar({
   name, 
   size = "md", 
   color, 
-  className 
+  className,
+  imageUrl,
 }: AvatarProps) {
   const c = color ?? getColor(name);
   
@@ -52,7 +54,9 @@ export default function Avatar({
         className
       )}
     >
-      {getInitials(name)}
+      {imageUrl ? (
+        <img src={imageUrl} alt={`${name} profile`} className="h-full w-full rounded-[inherit] object-cover" />
+      ) : getInitials(name)}
     </div>
   );
 }

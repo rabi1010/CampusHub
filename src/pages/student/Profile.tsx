@@ -9,13 +9,18 @@ import {
   ShieldCheck,
   TrendingUp,
   User,
+  Camera,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useAppSelector } from "../../app/hooks";
 import { useAttendanceSummary } from "../../features/attendance/useAttendance";
 import { useGpa } from "../../features/marks/useMarks";
 import PageHeader from "../../components/ui/PageHeader";
 import Avatar from "../../Component/ui/Avatar";
+import { studentService } from "../../services/studentService";
+import api from "../../services/axios";
 
 function Metric({
   label,
@@ -46,6 +51,48 @@ export default function Profile() {
   const user = useAppSelector((state) => state.auth.user);
   const gpaQuery = useGpa();
   const attendanceQuery = useAttendanceSummary();
+  const studentQuery = useQuery({ queryKey: ["students", "me"], queryFn: studentService.getMe });
+  const [imageUrl, setImageUrl] = useState<string>();
+  const [imageError, setImageError] = useState("");
+  const upload = useMutation({
+    mutationFn: (file: File) => studentService.uploadImage(studentQuery.data!.id, file),
+    onSuccess: async () => {
+      if (studentQuery.data) {
+        const response = await api.get(`/students/${studentQuery.data.id}/image`, { responseType: "blob" });
+        setImageUrl(URL.createObjectURL(response.data));
+        window.dispatchEvent(new Event("student-profile-image-updated"));
+      }
+      setImageError("");
+    },
+    onError: () => setImageError("Image upload failed. Please try again."),
+  });
+
+  useEffect(() => {
+    const id = studentQuery.data?.id;
+    if (!id) return;
+    let objectUrl: string | undefined;
+    api.get(`/students/${id}/image`, { responseType: "blob" })
+      .then((response) => {
+        objectUrl = URL.createObjectURL(response.data);
+        setImageUrl(objectUrl);
+      })
+      .catch(() => undefined);
+    return () => { if (objectUrl) URL.revokeObjectURL(objectUrl); };
+  }, [studentQuery.data?.id]);
+
+  const onImageSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!(["image/jpeg", "image/png", "image/webp"] as string[]).includes(file.type)) {
+      setImageError("Use a JPEG, PNG, or WebP image.");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setImageError("Image must be under 2MB.");
+      return;
+    }
+    upload.mutate(file);
+  };
 
   const gpa = gpaQuery.data?.toFixed(2);
   const attendance = attendanceQuery.data
@@ -70,8 +117,15 @@ export default function Profile() {
         <Avatar
           name={user?.fullName ?? "Student"}
           size="xl"
+          imageUrl={imageUrl}
           className="border-4 border-zinc-50 shadow-md ring-1 ring-zinc-100"
         />
+
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-700 hover:border-brand-300 hover:text-brand-600">
+          <Camera size={15} />
+          {upload.isPending ? "Uploading..." : "Change photo"}
+          <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={onImageSelected} disabled={upload.isPending || studentQuery.isLoading} />
+        </label>
 
         <div className="flex-1 text-center lg:text-left min-w-0">
           <h2 className="text-3xl font-display font-medium text-zinc-900 tracking-tight">
@@ -120,7 +174,9 @@ export default function Profile() {
       )}
 
       <div className="grid lg:grid-cols-2 gap-8">
-        <motion.section
+         {imageError && <p className="text-sm text-rose-600">{imageError}</p>}
+
+         <motion.section
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
@@ -178,33 +234,24 @@ export default function Profile() {
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="card-base p-8 bg-zinc-50 border-zinc-200 shadow-sm"
+           className="card-base p-8 bg-zinc-50 border-zinc-200 shadow-sm"
         >
           <div className="flex items-center gap-3 mb-6">
             <div className="w-9 h-9 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-zinc-500">
               <GraduationCap size={18} />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-zinc-900 uppercase tracking-widest">
-                Student Record Unavailable
+               <h3 className="text-sm font-medium text-zinc-900 uppercase tracking-widest">
+                 Student Record
               </h3>
               <p className="text-xs text-zinc-500 mt-0.5">
-                Academic and contact editing is disabled
+                 Linked academic information
               </p>
             </div>
           </div>
 
           <div className="rounded-xl bg-white border border-zinc-200 p-5 space-y-3">
-            <p className="text-sm text-zinc-700 leading-relaxed">
-              The current API does not provide a student-profile endpoint for the
-              authenticated account or a mapping from this account ID to a student
-              profile ID.
-            </p>
-            <p className="text-sm text-zinc-500 leading-relaxed">
-              Registration number, department, batch, semester, admission date,
-              phone, and address cannot be shown or edited reliably. No profile
-              update request will be made from this page.
-            </p>
+             {studentQuery.isLoading ? <p className="text-sm text-zinc-500">Loading student record...</p> : studentQuery.isError ? <p className="text-sm text-rose-600">Student record could not be loaded.</p> : <dl className="space-y-3 text-sm text-zinc-700"><div className="flex justify-between gap-4"><dt>Roll number</dt><dd className="font-medium">{studentQuery.data?.rollNo}</dd></div><div className="flex justify-between gap-4"><dt>Department</dt><dd className="font-medium">{studentQuery.data?.department?.name}</dd></div><div className="flex justify-between gap-4"><dt>Batch</dt><dd className="font-medium">{studentQuery.data?.batch?.name}</dd></div><div className="flex justify-between gap-4"><dt>Phone</dt><dd className="font-medium">{studentQuery.data?.phone || "Not provided"}</dd></div><div className="flex justify-between gap-4"><dt>Address</dt><dd className="font-medium text-right">{studentQuery.data?.address || "Not provided"}</dd></div></dl>}
           </div>
         </motion.section>
       </div>

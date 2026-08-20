@@ -12,25 +12,37 @@ import {
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { clearCredentials } from "../../features/auth/authSlice";
 import { authService } from "../../services/authService";
+import { studentService } from "../../services/studentService";
+import api from "../../services/axios";
+import { useNotices } from "../../features/notices/useNotices";
 import clsx from "clsx";
 
 interface TopbarProps {
   onMobileMenuToggle: () => void;
 }
 
-const MOCK_NOTIFICATIONS = [
-  { id: 1, text: "New student registered", time: "2m ago", unread: true },
-  { id: 2, text: "Attendance sheet updated", time: "1h ago", unread: true },
-  { id: 3, text: "Exam schedule posted", time: "3h ago", unread: false },
-];
+function formatNoticeTime(createdAt: string) {
+  const date = new Date(createdAt);
+  const elapsed = Date.now() - date.getTime();
+  const minutes = Math.floor(elapsed / 60_000);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
 
 export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector((s) => s.auth.user);
+  const noticesQuery = useNotices();
 
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [profileImageUrl, setProfileImageUrl] = useState<string>();
 
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -51,6 +63,44 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  useEffect(() => {
+    if (user?.role !== "student") {
+      setProfileImageUrl(undefined);
+      return;
+    }
+
+    let active = true;
+    let objectUrl: string | undefined;
+
+    const loadProfileImage = async () => {
+      try {
+        const student = await studentService.getMe();
+        const response = await api.get(`/students/${student.id}/image`, {
+          responseType: "blob",
+        });
+        const nextUrl = URL.createObjectURL(response.data);
+        if (!active) {
+          URL.revokeObjectURL(nextUrl);
+          return;
+        }
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        objectUrl = nextUrl;
+        setProfileImageUrl(nextUrl);
+      } catch {
+        if (active) setProfileImageUrl(undefined);
+      }
+    };
+
+    void loadProfileImage();
+    window.addEventListener("student-profile-image-updated", loadProfileImage);
+
+    return () => {
+      active = false;
+      window.removeEventListener("student-profile-image-updated", loadProfileImage);
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [user?.role]);
+
   const handleLogout = async () => {
     try {
       await authService.logout();
@@ -60,7 +110,17 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
     }
   };
 
-  const unreadCount = MOCK_NOTIFICATIONS.filter((n) => n.unread).length;
+  const recentNotices = [...(noticesQuery.data ?? [])]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5);
+  const urgentCount = recentNotices.filter((notice) => notice.urgent).length;
+  const noticesPath = user?.role === "admin"
+    ? "/admin/notices"
+    : user?.role === "teacher"
+      ? "/teacher/notices"
+      : user?.role === "parent"
+        ? "/parent/notices"
+        : "/student/notices";
 
   const initials =
     user?.fullName
@@ -111,7 +171,7 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
             )}
           >
             <Bell size={20} />
-            {unreadCount > 0 && (
+            {urgentCount > 0 && (
               <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white ring-1 ring-red-500/30" />
             )}
           </button>
@@ -121,31 +181,54 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
               <div className="px-6 py-4 border-b border-zinc-50 flex items-center justify-between">
                 <h3 className="font-medium text-zinc-900">Notifications</h3>
                 <span className="bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full text-[10px] font-medium">
-                  {unreadCount} NEW
+                  {urgentCount > 0 ? `${urgentCount} URGENT` : `${recentNotices.length} RECENT`}
                 </span>
               </div>
               <div className="max-h-96 overflow-y-auto">
-                {MOCK_NOTIFICATIONS.map((n) => (
-                  <div 
-                    key={n.id} 
+                {noticesQuery.isLoading ? (
+                  <div className="px-6 py-8 text-center text-sm text-zinc-400">Loading notices...</div>
+                ) : noticesQuery.isError ? (
+                  <div className="px-6 py-8 text-center text-sm text-rose-600">Notices could not be loaded.</div>
+                ) : recentNotices.length === 0 ? (
+                  <div className="px-6 py-8 text-center text-sm text-zinc-400">No notices available.</div>
+                ) : recentNotices.map((notice) => (
+                  <button
+                    type="button"
+                    key={notice.id}
+                    onClick={() => {
+                      setNotifOpen(false);
+                      navigate(noticesPath);
+                    }}
                     className={clsx(
-                      "px-6 py-4 hover:bg-zinc-50 transition-colors cursor-pointer border-b border-zinc-50 flex gap-4",
-                      n.unread && "bg-brand-50/30"
+                      "w-full px-6 py-4 text-left hover:bg-zinc-50 transition-colors border-b border-zinc-50 flex gap-4",
+                      notice.urgent && "bg-rose-50/50"
                     )}
                   >
                     <div className={clsx(
                       "w-2 h-2 rounded-full mt-1.5 shrink-0",
-                      n.unread ? "bg-brand-600" : "bg-zinc-200"
+                      notice.urgent ? "bg-rose-500" : "bg-brand-500"
                     )} />
-                    <div>
-                      <p className="text-sm font-medium text-zinc-900 leading-tight mb-1">{n.text}</p>
-                      <p className="text-[10px] text-zinc-400 font-medium uppercase">{n.time}</p>
+                    <div className="min-w-0">
+                      <div className="mb-1 flex items-center gap-2">
+                        <p className="truncate text-sm font-medium text-zinc-900 leading-tight">{notice.title}</p>
+                        {notice.urgent && <span className="shrink-0 text-[9px] font-medium text-rose-600 uppercase">Urgent</span>}
+                      </div>
+                      <p className="line-clamp-2 text-xs text-zinc-500">{notice.content}</p>
+                      <p className="mt-1.5 text-[10px] text-zinc-400 font-medium uppercase">{formatNoticeTime(notice.createdAt)}</p>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
               <div className="p-4 bg-zinc-50 border-t border-zinc-100 text-center">
-                <button className="text-xs font-medium text-brand-600 hover:underline">View all activity</button>
+                <button
+                  onClick={() => {
+                    setNotifOpen(false);
+                    navigate(noticesPath);
+                  }}
+                  className="text-xs font-medium text-brand-600 hover:underline"
+                >
+                  View all notices
+                </button>
               </div>
             </div>
           )}
@@ -169,7 +252,13 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
             )}
           >
             <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-medium text-sm shadow-brand-500/30 shadow-md">
-              {initials}
+              {profileImageUrl ? (
+                <img
+                  src={profileImageUrl}
+                  alt={`${user?.fullName ?? "User"} profile`}
+                  className="h-full w-full rounded-[inherit] object-cover"
+                />
+              ) : initials}
             </div>
             <div className="hidden lg:block text-left">
               <p className="text-sm font-medium text-zinc-900 leading-none mb-1">{user?.fullName}</p>

@@ -9,6 +9,14 @@ export function useStudentMarks(studentId?: string) {
   });
 }
 
+export function useCourseMarks(courseId?: string) {
+  return useQuery({
+    queryKey: ["marks", "course", courseId],
+    queryFn: () => markService.getByCourse(courseId!),
+    enabled: Boolean(courseId),
+  });
+}
+
 export function useGpa() {
   return useQuery({
     queryKey: ["marks", "gpa"],

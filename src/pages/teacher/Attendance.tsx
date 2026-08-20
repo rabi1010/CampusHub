@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   CheckCircle2,
   XCircle,
@@ -14,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { isAxiosError } from "axios";
 import { useCourses } from "../../features/courses/useCourses";
 import { useStudents } from "../../features/students/useStudents";
+import { useCourseAttendance } from "../../features/attendance/useAttendance";
 import { attendanceService } from "../../services/attendanceService";
 import clsx from "clsx";
 import { useToast } from "../../Component/ui/Toast";
@@ -42,28 +44,42 @@ const STATUS_CONFIG = {
 
 export default function Attendance() {
   const toast = useToast();
+  const queryClient = useQueryClient();
   const { data: courses = [], isLoading: coursesLoading } = useCourses();
   const { data: students = [], isLoading: studentsLoading } = useStudents();
 
   const [courseSelection, setCourseSelection] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
-  const [attendance, setAttendance] = useState<Record<string, AttendanceStatus>>({});
+  const [attendanceEdits, setAttendanceEdits] = useState<Record<string, Record<string, AttendanceStatus>>>({});
   const [isSaving, setIsSaving] = useState(false);
   const selectedCourse = courseSelection || courses[0]?.id || "";
-  const isLoading = coursesLoading || studentsLoading;
+  const { data: savedAttendance, isLoading: attendanceLoading } = useCourseAttendance(selectedCourse);
+  const isLoading = coursesLoading || studentsLoading || attendanceLoading;
+  const selectionKey = `${selectedCourse}:${selectedDate}`;
+  const persistedAttendance = useMemo(() => {
+    const loadedAttendance: Record<string, AttendanceStatus> = {};
+    (savedAttendance ?? [])
+      .filter((record) => record.date === selectedDate)
+      .forEach((record) => {
+        loadedAttendance[record.student.id] = record.status;
+      });
+    return loadedAttendance;
+  }, [savedAttendance, selectedDate]);
+  const attendance = attendanceEdits[selectionKey] ?? persistedAttendance;
 
   const selectCourse = (courseId: string) => {
     setCourseSelection(courseId);
-    setAttendance({});
   };
 
   const selectDate = (date: string) => {
     setSelectedDate(date);
-    setAttendance({});
   };
 
   const setStatus = (studentId: string, status: AttendanceStatus) => {
-    setAttendance((prev) => ({ ...prev, [studentId]: status }));
+    setAttendanceEdits((prev) => ({
+      ...prev,
+      [selectionKey]: { ...attendance, [studentId]: status },
+    }));
   };
 
   const markAllPresent = () => {
@@ -71,7 +87,7 @@ export default function Attendance() {
     students.forEach((s) => {
       all[s.id] = "PRESENT";
     });
-    setAttendance(all);
+    setAttendanceEdits((prev) => ({ ...prev, [selectionKey]: all }));
     toast.success("Batch Action", "All students marked as present.");
   };
 
@@ -88,6 +104,7 @@ export default function Attendance() {
           status: attendance[student.id] ?? "PRESENT",
         })),
       });
+      await queryClient.invalidateQueries({ queryKey: ["attendance", "course", selectedCourse] });
       toast.success("Attendance saved", `${students.length} records synchronized successfully.`);
     } catch (error) {
       const message = isAxiosError<{ message?: string }>(error)

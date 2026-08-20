@@ -1,9 +1,11 @@
 import { useState, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Save, Calculator, TrendingUp, Users, Target, ClipboardList, GraduationCap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { isAxiosError } from "axios";
 import { useCourses } from "../../features/courses/useCourses";
 import { useStudents } from "../../features/students/useStudents";
+import { useCourseMarks } from "../../features/marks/useMarks";
 import { markService } from "../../services/markService";
 import { useToast } from "../../Component/ui/Toast";
 import PageHeader from "../../components/ui/PageHeader";
@@ -20,18 +22,33 @@ type ExamType = "INTERNAL" | "MIDTERM" | "FINAL";
 
 export default function Marks() {
   const toast = useToast();
+  const queryClient = useQueryClient();
   const { data: courses = [], isLoading: coursesLoading } = useCourses();
   const { data: students = [], isLoading: studentsLoading } = useStudents();
 
   const [courseSelection, setCourseSelection] = useState("");
   const [selectedExam, setSelectedExam] = useState<ExamType>("INTERNAL");
-  const [marks, setMarks] = useState<Record<string, string>>({});
+  const [markEdits, setMarkEdits] = useState<Record<string, Record<string, string>>>({});
   const [isSaving, setIsSaving] = useState(false);
 
   const selectedCourse = courseSelection || courses[0]?.id || "";
   const course = courses.find((c) => c.id === selectedCourse);
+  const { data: savedMarks, isLoading: marksLoading } = useCourseMarks(selectedCourse);
   const exam = EXAM_TYPES.find((e) => e.value === selectedExam)!;
-  const isLoading = coursesLoading || studentsLoading;
+  const isLoading = coursesLoading || studentsLoading || marksLoading;
+  const selectionKey = `${selectedCourse}:${selectedExam}`;
+  const persistedMarks = useMemo(() => {
+    const loadedMarks: Record<string, string> = {};
+    if (!course) return loadedMarks;
+
+    (savedMarks ?? [])
+      .filter((mark) => mark.examType === selectedExam && mark.semester === course.semester)
+      .forEach((mark) => {
+        loadedMarks[mark.student.id] = String(mark.marksObtained);
+      });
+    return loadedMarks;
+  }, [course, savedMarks, selectedExam]);
+  const marks = markEdits[selectionKey] ?? persistedMarks;
   const enteredMarks = students.flatMap((student) => {
     const value = marks[student.id]?.trim();
     return value !== undefined && value !== ""
@@ -41,18 +58,19 @@ export default function Marks() {
 
   const selectCourse = (courseId: string) => {
     setCourseSelection(courseId);
-    setMarks({});
   };
 
   const selectExam = (examType: ExamType) => {
     setSelectedExam(examType);
-    setMarks({});
   };
 
   const setMark = (studentId: string, value: string) => {
     const num = Number(value);
     if (value !== "" && (!Number.isFinite(num) || num < 0 || num > exam.max)) return;
-    setMarks((prev) => ({ ...prev, [studentId]: value }));
+    setMarkEdits((prev) => ({
+      ...prev,
+      [selectionKey]: { ...marks, [studentId]: value },
+    }));
   };
 
   const handleSave = async () => {
@@ -66,6 +84,7 @@ export default function Marks() {
         semester: course.semester,
         records: enteredMarks,
       });
+      await queryClient.invalidateQueries({ queryKey: ["marks", "course", course.id] });
       toast.success("Marks synchronized", `Academic records updated for ${course.name}.`);
     } catch (error) {
       const message = isAxiosError<{ message?: string }>(error)

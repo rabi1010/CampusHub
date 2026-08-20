@@ -111,6 +111,11 @@ export const studentService = {
       .get<ApiResponse<Student>>(`/students/${id}`)
       .then((r) => mapStudent(r.data.data)),
 
+  getMe: () =>
+    api
+      .get<ApiResponse<Student>>("/students/me")
+      .then((r) => mapStudent(r.data.data)),
+
   create: (data: CreateStudentPayload) =>
     api
       .post<ApiResponse<Student>>("/students", data)

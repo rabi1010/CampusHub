@@ -9,6 +9,14 @@ export function useStudentAttendance(studentId?: string) {
   });
 }
 
+export function useCourseAttendance(courseId?: string) {
+  return useQuery({
+    queryKey: ["attendance", "course", courseId],
+    queryFn: () => attendanceService.getByCourse(courseId!, { size: 1000 }),
+    enabled: Boolean(courseId),
+  });
+}
+
 export function useAttendanceSummary() {
   return useQuery({
     queryKey: ["attendance", "summary"],

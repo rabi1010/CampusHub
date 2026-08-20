@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CheckCircle2, Clock } from "lucide-react";
 import { useDepartments, useBatches } from "../academics/useAcademics";
-import { useApproveStudent, usePendingUsers } from "./useApprovals";
+import { useApproveUser, usePendingUsers } from "./useApprovals";
 import type { PendingUser } from "../../services/authService";
 import Badge from "../../Component/ui/Badge";
 import Modal from "../../Component/ui/Modal";
@@ -10,27 +10,38 @@ export default function PendingApprovals() {
   const { data: users = [], isLoading, isError } = usePendingUsers();
   const { data: departments = [] } = useDepartments();
   const { data: batches = [] } = useBatches();
-  const approve = useApproveStudent();
+  const approve = useApproveUser();
   const [selected, setSelected] = useState<PendingUser | null>(null);
   const [rollNo, setRollNo] = useState("");
   const [departmentId, setDepartmentId] = useState("");
   const [batchId, setBatchId] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
+  const [qualification, setQualification] = useState("");
+  const [studentIds, setStudentIds] = useState("");
+  const [relationship, setRelationship] = useState("");
+  const [approvalRole, setApprovalRole] = useState<"STUDENT" | "TEACHER" | "PARENT">("STUDENT");
 
   const openApproval = (user: PendingUser) => {
     setSelected(user);
     setRollNo("");
     setDepartmentId("");
     setBatchId("");
+    setEmployeeId("");
+    setQualification("");
+    setStudentIds("");
+    setRelationship("");
+    setApprovalRole(user.role === "TEACHER" || user.role === "PARENT" ? user.role : "STUDENT");
   };
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
     if (!selected) return;
-    approve.mutate(
-      {
-        id: selected.id,
-        data: { role: "STUDENT", rollNo, departmentId, batchId },
-      },
+    const data = approvalRole === "STUDENT"
+      ? { role: "STUDENT" as const, rollNo, departmentId, batchId }
+      : approvalRole === "TEACHER"
+        ? { role: "TEACHER" as const, employeeId, departmentId, qualification }
+        : { role: "PARENT" as const, studentIds: studentIds.split(",").map((id) => id.trim()).filter(Boolean), relationship };
+    approve.mutate({ id: selected.id, data },
       { onSuccess: () => setSelected(null) },
     );
   };
@@ -61,31 +72,33 @@ export default function PendingApprovals() {
                   <p className="font-medium text-zinc-900">{user.fullName}</p>
                   <p className="truncate text-sm text-zinc-500">{user.email}</p>
                 </div>
-                <Badge label={user.role} variant="warning" />
-                {user.role === "STUDENT" ? (
-                  <button className="btn-primary px-5 py-2 text-xs" onClick={() => openApproval(user)}>
-                    Review and approve
-                  </button>
-                ) : (
-                  <span className="text-xs text-zinc-400">Approval fields are not documented for this role.</span>
-                )}
+                <Badge label={user.role === "PENDING" ? "ROLE NOT SET" : user.role} variant="warning" />
+                <button className="btn-primary px-5 py-2 text-xs" onClick={() => openApproval(user)}>
+                  Review and approve
+                </button>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <Modal open={Boolean(selected)} onClose={() => setSelected(null)} title="Approve student" subtitle={selected?.email}>
+      <Modal open={Boolean(selected)} onClose={() => setSelected(null)} title={`Approve ${approvalRole.toLowerCase()}`} subtitle={selected?.email}>
         <form className="space-y-4" onSubmit={submit}>
-          <input className="input-field" placeholder="Roll number" value={rollNo} onChange={(e) => setRollNo(e.target.value)} required />
-          <select className="input-field" value={departmentId} onChange={(e) => setDepartmentId(e.target.value)} required>
-            <option value="">Select department</option>
-            {departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
-          </select>
-          <select className="input-field" value={batchId} onChange={(e) => setBatchId(e.target.value)} required>
-            <option value="">Select batch</option>
-            {batches.filter((batch) => !departmentId || batch.department?.id === departmentId).map((batch) => <option key={batch.id} value={batch.id}>{batch.name}</option>)}
-          </select>
+          {selected?.role === "PENDING" && <select className="input-field" value={approvalRole} onChange={(e) => setApprovalRole(e.target.value as typeof approvalRole)}><option value="STUDENT">Student</option><option value="TEACHER">Teacher</option><option value="PARENT">Parent</option></select>}
+          {approvalRole === "STUDENT" && <>
+            <input className="input-field" placeholder="Roll number" value={rollNo} onChange={(e) => setRollNo(e.target.value)} required />
+            <select className="input-field" value={departmentId} onChange={(e) => setDepartmentId(e.target.value)} required><option value="">Select department</option>{departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}</select>
+            <select className="input-field" value={batchId} onChange={(e) => setBatchId(e.target.value)} required><option value="">Select batch</option>{batches.filter((batch) => !departmentId || batch.department?.id === departmentId).map((batch) => <option key={batch.id} value={batch.id}>{batch.name}</option>)}</select>
+          </>}
+          {approvalRole === "TEACHER" && <>
+            <input className="input-field" placeholder="Employee ID" value={employeeId} onChange={(e) => setEmployeeId(e.target.value)} required />
+            <select className="input-field" value={departmentId} onChange={(e) => setDepartmentId(e.target.value)} required><option value="">Select department</option>{departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}</select>
+            <input className="input-field" placeholder="Qualification" value={qualification} onChange={(e) => setQualification(e.target.value)} required />
+          </>}
+          {approvalRole === "PARENT" && <>
+            <input className="input-field" placeholder="Student IDs, comma separated" value={studentIds} onChange={(e) => setStudentIds(e.target.value)} required />
+            <input className="input-field" placeholder="Relationship" value={relationship} onChange={(e) => setRelationship(e.target.value)} required />
+          </>}
           <button className="btn-primary w-full justify-center py-3" disabled={approve.isPending}>
             {approve.isPending ? "Approving..." : "Approve account"}
           </button>

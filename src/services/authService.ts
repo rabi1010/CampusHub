@@ -4,7 +4,7 @@ export interface RegisterPayload {
   fullName: string;
   email: string;
   phone: string;
-  role: "teacher" | "student";
+  role: "teacher" | "student" | "parent";
   password: string;
 }
 export type RegisterRequest = {
@@ -12,7 +12,7 @@ export type RegisterRequest = {
   email: string;
   phone: string;
   password: string;
-  role: "TEACHER" | "STUDENT";
+  role: "TEACHER" | "STUDENT" | "PARENT";
 };
 export interface RegisterResponse {
   id: string;
@@ -54,17 +54,15 @@ export interface PendingUser {
   email: string;
   fullName: string;
   phone?: string;
-  role: "STUDENT" | "TEACHER" | "PARENT";
+  role: "STUDENT" | "TEACHER" | "PARENT" | "PENDING";
   status: "PENDING";
   createdAt: string;
 }
 
-export interface ApproveStudentPayload {
-  role: "STUDENT";
-  rollNo: string;
-  departmentId: string;
-  batchId: string;
-}
+export type ApproveUserPayload =
+  | { role: "STUDENT"; rollNo: string; departmentId: string; batchId: string; address?: string }
+  | { role: "TEACHER"; employeeId: string; departmentId: string; qualification: string }
+  | { role: "PARENT"; studentIds: string[]; relationship: string };
 
 // Auth
 export const authService = {
@@ -88,7 +86,7 @@ export const authService = {
     api
       .get<ApiResponse<PendingUser[]>>("/auth/users/pending")
       .then((r) => r.data.data),
-  approveStudent: (id: string, data: ApproveStudentPayload) =>
+  approveUser: (id: string, data: ApproveUserPayload) =>
     api
       .patch<ApiResponse<PendingUser>>(`/auth/users/${id}/approve`, data)
       .then((r) => r.data.data),

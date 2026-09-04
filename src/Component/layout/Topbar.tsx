@@ -12,8 +12,6 @@ import {
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { clearCredentials } from "../../features/auth/authSlice";
 import { authService } from "../../services/authService";
-import { studentService } from "../../services/studentService";
-import api from "../../services/axios";
 import { useNotices } from "../../features/notices/useNotices";
 import clsx from "clsx";
 
@@ -64,28 +62,19 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
   }, []);
 
   useEffect(() => {
-    if (user?.role !== "student") {
-      setProfileImageUrl(undefined);
+    if (!user) {
       return;
     }
 
     let active = true;
-    let objectUrl: string | undefined;
 
     const loadProfileImage = async () => {
       try {
-        const student = await studentService.getMe();
-        const response = await api.get(`/students/${student.id}/image`, {
-          responseType: "blob",
-        });
-        const nextUrl = URL.createObjectURL(response.data);
+        const response = await authService.getProfileImage();
         if (!active) {
-          URL.revokeObjectURL(nextUrl);
-          return;
+            return;
         }
-        if (objectUrl) URL.revokeObjectURL(objectUrl);
-        objectUrl = nextUrl;
-        setProfileImageUrl(nextUrl);
+        setProfileImageUrl(response);
       } catch {
         if (active) setProfileImageUrl(undefined);
       }
@@ -93,13 +82,16 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
 
     void loadProfileImage();
     window.addEventListener("student-profile-image-updated", loadProfileImage);
+    window.addEventListener("profile-image-updated", loadProfileImage);
 
     return () => {
       active = false;
       window.removeEventListener("student-profile-image-updated", loadProfileImage);
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      window.removeEventListener("profile-image-updated", loadProfileImage);
     };
-  }, [user?.role]);
+  }, [user]);
+
+  const displayedProfileImageUrl = user ? profileImageUrl : undefined;
 
   const handleLogout = async () => {
     try {
@@ -252,9 +244,9 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
             )}
           >
             <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-medium text-sm shadow-brand-500/30 shadow-md">
-              {profileImageUrl ? (
+              {displayedProfileImageUrl ? (
                 <img
-                  src={profileImageUrl}
+                  src={displayedProfileImageUrl}
                   alt={`${user?.fullName ?? "User"} profile`}
                   className="h-full w-full rounded-[inherit] object-cover"
                 />

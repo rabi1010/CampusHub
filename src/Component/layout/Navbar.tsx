@@ -48,12 +48,12 @@ export default function Navbar() {
         </ul>
 
         {/* Desktop CTA */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-5">
           <Link to="/login" className="text-sm font-medium text-zinc-600 hover:text-brand-600 transition-colors link-underline">
             Sign in
           </Link>
-          <Link to="/login" className="px-6 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-700 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300">
-            Get started
+          <Link to="/login" className="px-5 py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-700 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300">
+            Open portal
           </Link>
         </div>
 

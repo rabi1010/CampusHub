@@ -70,15 +70,16 @@ export default function Login() {
     clearErrors,
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { role: "student" },
+    defaultValues: { role: "admin" },
   });
 
   const selectedRole = watch("role");
   const selected = ROLES.find((r) => r.id === selectedRole)!;
 
   const fillDemo = () => {
-    setValue("email", selected.demo);
-    setValue("password", "demo123");
+    setValue("role", "admin");
+    setValue("email", "admin@campushub.edu");
+    setValue("password", "admin123");
     clearErrors();
   };
 
@@ -87,13 +88,13 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="min-h-screen bg-zinc-50 flex">
       {/* ── LEFT SIDE: FORM ─────────────────────────────── */}
-      <div className="flex-1 flex flex-col justify-center px-8 lg:px-24 py-12 relative overflow-hidden">
+      <div className="flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-24 py-10 relative overflow-hidden">
         {/* Subtle background blur */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-brand-50 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 opacity-60" />
 
-        <div className="relative z-10 w-full max-w-md mx-auto">
+        <div className="relative z-10 w-full max-w-md mx-auto bg-white border border-zinc-100 rounded-3xl p-7 sm:p-9 shadow-card-lg">
           {/* Logo & Back */}
           <div className="flex items-center justify-between mb-12">
             <Link to="/" className="inline-flex items-center gap-2 group">
@@ -112,6 +113,7 @@ export default function Login() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
+            <p className="section-kicker">Secure access</p>
             <h1 className="text-3xl font-display font-medium text-zinc-900 mb-2">
               Welcome Back
             </h1>
@@ -120,7 +122,7 @@ export default function Login() {
             </p>
 
             {/* Role selector */}
-            <div className="grid grid-cols-3 gap-3 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
               {ROLES.map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
@@ -227,7 +229,7 @@ export default function Login() {
                 onClick={fillDemo}
                 className="text-sm font-medium text-zinc-400 hover:text-brand-600 transition-colors flex items-center justify-center gap-2 mx-auto"
               >
-                Use demo credentials for {selected.label}{" "}
+                Use seeded admin credentials{" "}
                 <ArrowRight size={14} />
               </button>
             </div>
@@ -246,13 +248,13 @@ export default function Login() {
       </div>
 
       {/* ── RIGHT SIDE: IMAGE ────────────────────────────── */}
-      <div className="hidden lg:flex flex-1 bg-zinc-900 relative items-center justify-center overflow-hidden">
+      <div className="hidden lg:flex flex-1 bg-zinc-900 relative items-center justify-center overflow-hidden min-h-screen">
         <img
           src="https://plus.unsplash.com/premium_photo-1682126255537-d3d08524f263?w=1200&auto=format&fit=crop&q=80"
           alt="Campus Excellence"
           className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay"
         />
-        <div className="absolute inset-0 bg-linear-to-br from-emerald-900/60 to-zinc-950" />
+        <div className="absolute inset-0 bg-linear-to-br from-emerald-900/75 via-zinc-950/80 to-zinc-950" />
 
         <div className="relative z-10 max-w-lg p-12 text-white">
           <motion.div

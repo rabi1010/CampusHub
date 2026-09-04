@@ -20,7 +20,6 @@ import { useGpa } from "../../features/marks/useMarks";
 import PageHeader from "../../components/ui/PageHeader";
 import Avatar from "../../Component/ui/Avatar";
 import { studentService } from "../../services/studentService";
-import api from "../../services/axios";
 
 function Metric({
   label,
@@ -58,8 +57,8 @@ export default function Profile() {
     mutationFn: (file: File) => studentService.uploadImage(studentQuery.data!.id, file),
     onSuccess: async () => {
       if (studentQuery.data) {
-        const response = await api.get(`/students/${studentQuery.data.id}/image`, { responseType: "blob" });
-        setImageUrl(URL.createObjectURL(response.data));
+        const response = await studentService.getImage(studentQuery.data.id);
+        setImageUrl(response);
         window.dispatchEvent(new Event("student-profile-image-updated"));
       }
       setImageError("");
@@ -70,14 +69,9 @@ export default function Profile() {
   useEffect(() => {
     const id = studentQuery.data?.id;
     if (!id) return;
-    let objectUrl: string | undefined;
-    api.get(`/students/${id}/image`, { responseType: "blob" })
-      .then((response) => {
-        objectUrl = URL.createObjectURL(response.data);
-        setImageUrl(objectUrl);
-      })
+    studentService.getImage(id)
+      .then((url) => setImageUrl(url))
       .catch(() => undefined);
-    return () => { if (objectUrl) URL.revokeObjectURL(objectUrl); };
   }, [studentQuery.data?.id]);
 
   const onImageSelected = (event: React.ChangeEvent<HTMLInputElement>) => {

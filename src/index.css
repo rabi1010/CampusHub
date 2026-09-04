@@ -165,23 +165,38 @@
    ============================================ */
 @layer components {
   .section-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-7xl mx-auto px-5 sm:px-8 lg:px-10;
   }
 
   .card-base {
-    @apply bg-white border border-zinc-100 rounded-2xl shadow-card 
-           transition-all duration-300 hover:shadow-card-lg;
+    @apply bg-white border border-zinc-100 rounded-2xl shadow-card
+           transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-100 hover:shadow-card-lg;
+  }
+
+  .public-grid {
+    background-image: linear-gradient(rgba(16, 185, 129, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(16, 185, 129, 0.045) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: linear-gradient(to bottom, black, transparent 78%);
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-700;
+  }
+
+  .section-kicker {
+    @apply mb-4 text-xs font-bold uppercase tracking-[0.2em] text-brand-600;
   }
 
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-6 py-2.5 rounded-xl
+    @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl
            bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm
-           transition-all duration-200 active:scale-[0.98] shadow-soft;
+           transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] shadow-lg shadow-brand-500/20;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 px-6 py-2.5 rounded-xl
-           bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 
+    @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl
+           bg-white border border-zinc-200 hover:border-brand-200 hover:bg-brand-50/40 text-zinc-700
            font-medium text-sm transition-all duration-200 active:scale-[0.98];
   }
 
@@ -192,11 +207,26 @@
   }
 
   .input-field {
-    @apply w-full px-4 py-2.5 rounded-xl text-sm
-           bg-white border border-zinc-200
+    @apply w-full px-4 py-3 rounded-xl text-sm
+           bg-white border border-zinc-200 shadow-sm
            text-zinc-900 placeholder-zinc-400
-           focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500
+           hover:border-zinc-300 focus:outline-none focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500
            transition-all duration-200;
+  }
+
+  .dashboard-page > div {
+    animation: dashboardReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes dashboardReveal {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .input-error {

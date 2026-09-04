@@ -51,7 +51,7 @@ export default function Sidebar({ role, collapsed, onToggle }: SidebarProps) {
         {navGroups.map(({ group, items }) => (
           <div key={group} className="space-y-2">
             {!collapsed && (
-              <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.3em] px-4 mb-4">
+              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.24em] px-4 mb-4">
                 {group}
               </p>
             )}

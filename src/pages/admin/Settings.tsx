@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -17,7 +17,7 @@ import {
   Globe,
   MapPin,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   profileSchema,
   passwordSchema,
@@ -32,6 +32,8 @@ import { setCredentials } from "../../features/auth/authSlice";
 import clsx from "clsx";
 import { useToast } from "../../Component/ui/Toast";
 import Avatar from "../../Component/ui/Avatar";
+import { authService } from "../../services/authService";
+import { useNavigate } from "react-router-dom";
 
 function FieldLabel({
   children,
@@ -76,7 +78,7 @@ function SettingsSection({
   return (
     <div
       className={clsx(
-        "card-base transition-all duration-500 overflow-hidden",
+        "card-base transition-all duration-500 bg-white",
         active
           ? "border-brand-200 shadow-2xl shadow-brand-500/5 ring-1 ring-brand-100"
           : "border-zinc-100 hover:border-zinc-200 shadow-sm",
@@ -86,13 +88,13 @@ function SettingsSection({
         type="button"
         onClick={onClick}
         className={clsx(
-          "w-full flex items-center gap-6 p-6 transition-all text-left group",
+          "w-full flex items-center gap-4 sm:gap-6 p-4 sm:p-6 transition-all text-left group",
           active ? "bg-zinc-50/30" : "bg-white hover:bg-zinc-50/50",
         )}
       >
         <div
           className={clsx(
-            "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-sm border",
+            "w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-sm border",
             active
               ? "bg-brand-600 text-white border-brand-500 shadow-brand-200"
               : "bg-white text-zinc-400 border-zinc-100 group-hover:border-zinc-200 group-hover:text-zinc-600",
@@ -125,24 +127,18 @@ function SettingsSection({
         </div>
       </button>
 
-      <AnimatePresence>
-        {active && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="border-t border-zinc-100"
-          >
-            <div className="p-8 bg-white">{children}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {active && (
+        <div className="border-t border-zinc-100 bg-white">
+          <div className="p-5 sm:p-8">{children}</div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function Settings() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const user = useAppSelector((s) => s.auth.user);
   const toast = useToast();
 
@@ -152,6 +148,49 @@ export default function Settings() {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [profileImageUrl, setProfileImageUrl] = useState<string>();
+  const [imageError, setImageError] = useState("");
+  const [imageUploading, setImageUploading] = useState(false);
+
+  useEffect(() => {
+    authService.getProfileImage().then((url) => {
+      setProfileImageUrl(url);
+    }).catch(() => undefined);
+  }, []);
+
+  const onImageSelected = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setImageError("Use a JPEG, PNG, or WebP image.");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setImageError("Image must be under 2MB.");
+      return;
+    }
+    setImageUploading(true);
+    try {
+      await authService.uploadProfileImage(file);
+       const url = await authService.getProfileImage();
+       setProfileImageUrl(url);
+      window.dispatchEvent(new Event("profile-image-updated"));
+      setImageError("");
+      toast.success("Profile image updated", "Your admin avatar was saved.");
+    } catch (error) {
+      const status = (error as { response?: { status?: number } }).response?.status;
+      setImageError(
+        status === 403
+          ? "Your account is not permitted to upload images."
+          : status === 401
+            ? "Your session expired. Sign in again, then return to Settings."
+            : "Profile image upload failed. Please try again.",
+      );
+    } finally {
+      setImageUploading(false);
+      event.target.value = "";
+    }
+  };
 
   const toggleSection = (section: "profile" | "password" | "college") => {
     setActiveSection((s) => (s === section ? null : section));
@@ -167,19 +206,11 @@ export default function Settings() {
   });
 
   const onProfileSubmit = async (data: ProfileFormValues) => {
-    await new Promise((r) => setTimeout(r, 800));
-    if (user) {
-      dispatch(
-        setCredentials({
-          token: localStorage.getItem("token") ?? "",
-          user: { ...user, fullName: data.fullName, email: data.email },
-        }),
-      );
-    }
-    toast.success(
-      "Identity synchronized",
-      "Your account credentials have been updated successfully.",
-    );
+    try {
+      await authService.updateMe(data);
+      if (user) dispatch(setCredentials({ token: localStorage.getItem("token") ?? "", user: { ...user, fullName: data.fullName, email: data.email } }));
+      toast.success("Identity synchronized", "Your account credentials have been updated successfully.");
+    } catch { toast.error("Profile update failed", "Could not save your account details."); }
   };
 
   const passwordForm = useForm<PasswordFormValues>({
@@ -191,13 +222,12 @@ export default function Settings() {
     },
   });
 
-  const onPasswordSubmit = async () => {
-    await new Promise((r) => setTimeout(r, 800));
-    passwordForm.reset();
-    toast.success(
-      "Security vault updated",
-      "Your authentication credentials have been reset.",
-    );
+  const onPasswordSubmit = async (data: PasswordFormValues) => {
+    try {
+      await authService.changePassword({ currentPassword: data.currentPassword, newPassword: data.newPassword });
+      passwordForm.reset();
+      toast.success("Security vault updated", "Your password has been changed.");
+    } catch { toast.error("Password update failed", "Check your current password and try again."); }
   };
 
   const collegeForm = useForm<CollegeFormValues>({
@@ -220,34 +250,38 @@ export default function Settings() {
   };
 
   return (
-    <div className="max-w-5xl space-y-10">
+    <div className="w-full max-w-6xl space-y-8 pb-10 sm:space-y-10 sm:pb-14">
       {/* Dynamic Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="space-y-2"
       >
-        <h1 className="text-4xl lg:text-5xl font-display font-medium text-zinc-900 leading-tight tracking-tight">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-medium text-zinc-900 leading-tight tracking-tight">
           System <span className="text-brand-600">Preferences</span>
         </h1>
-        <p className="text-zinc-500 font-medium text-lg">
+        <p className="text-zinc-500 font-medium text-sm sm:text-lg leading-6">
           Configure your personal identity, security layers, and institutional
           defaults.
         </p>
       </motion.div>
 
-      <div className="grid lg:grid-cols-3 gap-10">
+      <div className="grid lg:grid-cols-3 gap-6 lg:gap-10 items-start">
         {/* Profile Insight Card */}
         <div className="lg:col-span-1">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="card-base p-8 bg-white border-zinc-100 sticky top-24 shadow-sm"
+            className="card-base p-5 sm:p-8 bg-white border-zinc-100 lg:sticky lg:top-24 shadow-sm"
           >
             <div className="flex flex-col items-center text-center">
               <div className="relative mb-6 shadow-xl shadow-brand-500/10 border-4 border-white ring-1 ring-zinc-100 rounded-full w-fit">
-                <Avatar name={user?.fullName ?? "Admin"} size="lg" />
+                <Avatar name={user?.fullName ?? "Admin"} size="lg" imageUrl={profileImageUrl} />
+                <label className="absolute -bottom-2 -left-2 cursor-pointer rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-medium text-zinc-600 shadow-sm hover:text-brand-600">
+                  {imageUploading ? "Uploading" : "Change"}
+                  <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={onImageSelected} disabled={imageUploading} />
+                </label>
                 <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-emerald-500 border-4 border-white flex items-center justify-center text-white shadow-sm">
                   <CheckCircle2 size={16} />
                 </div>
@@ -264,6 +298,20 @@ export default function Settings() {
                   <ShieldCheck size={12} /> {user?.role} Access
                 </div>
               </div>
+              {imageError && (
+                <div className="mt-3 w-full rounded-xl border border-rose-100 bg-rose-50 px-3 py-3 text-left">
+                  <p className="text-xs font-medium text-rose-700">{imageError}</p>
+                  {imageError.includes("session expired") && (
+                    <button
+                      type="button"
+                      onClick={() => navigate("/login")}
+                      className="mt-2 text-xs font-semibold text-rose-700 underline underline-offset-2 hover:text-rose-900"
+                    >
+                      Sign in again
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="mt-10 pt-10 border-t border-zinc-50 space-y-4">
@@ -289,7 +337,7 @@ export default function Settings() {
         </div>
 
         {/* Configuration Sections */}
-        <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 min-w-0 space-y-5 sm:space-y-6">
           <SettingsSection
             icon={User}
             title="Personal Credentials"
@@ -299,9 +347,9 @@ export default function Settings() {
           >
             <form
               onSubmit={profileForm.handleSubmit(onProfileSubmit)}
-              className="space-y-8"
+              className="space-y-6 sm:space-y-8"
             >
-              <div className="grid sm:grid-cols-2 gap-8">
+              <div className="grid sm:grid-cols-2 gap-5 sm:gap-8">
                 <div className="space-y-2">
                   <FieldLabel icon={User}>Full Identity</FieldLabel>
                   <input
@@ -347,11 +395,11 @@ export default function Settings() {
                 />
               </div>
 
-              <div className="pt-6 border-t border-zinc-50 flex justify-end">
+              <div className="pt-5 sm:pt-6 border-t border-zinc-50 flex justify-stretch sm:justify-end">
                 <button
                   type="submit"
                   disabled={profileForm.formState.isSubmitting}
-                  className="btn-primary py-3.5 px-10 shadow-xl shadow-brand-500/15 disabled:opacity-50"
+                  className="btn-primary w-full sm:w-auto py-3.5 px-5 sm:px-10 shadow-xl shadow-brand-500/15 disabled:opacity-50"
                 >
                   {profileForm.formState.isSubmitting ? (
                     "Processing..."
@@ -374,7 +422,7 @@ export default function Settings() {
           >
             <form
               onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
-              className="space-y-8"
+              className="space-y-6 sm:space-y-8"
             >
               <div className="space-y-2">
                 <FieldLabel icon={Lock}>
@@ -404,7 +452,7 @@ export default function Settings() {
                 />
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-8">
+              <div className="grid sm:grid-cols-2 gap-5 sm:gap-8">
                 <div className="space-y-2">
                   <FieldLabel icon={Lock}>New Secure Password</FieldLabel>
                   <div className="relative">
@@ -470,11 +518,11 @@ export default function Settings() {
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-zinc-50 flex justify-end">
+              <div className="pt-5 sm:pt-6 border-t border-zinc-50 flex justify-stretch sm:justify-end">
                 <button
                   type="submit"
                   disabled={passwordForm.formState.isSubmitting}
-                  className="btn-primary py-3.5 px-10 shadow-xl shadow-brand-500/15"
+                  className="btn-primary w-full sm:w-auto py-3.5 px-5 sm:px-10 shadow-xl shadow-brand-500/15"
                 >
                   <Lock size={18} /> Update Security Vault
                 </button>
@@ -491,7 +539,7 @@ export default function Settings() {
           >
             <form
               onSubmit={collegeForm.handleSubmit(onCollegeSubmit)}
-              className="space-y-8"
+              className="space-y-6 sm:space-y-8"
             >
               <div className="space-y-2">
                 <FieldLabel icon={Building2}>
@@ -504,7 +552,7 @@ export default function Settings() {
                 />
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-8">
+              <div className="grid sm:grid-cols-2 gap-5 sm:gap-8">
                 <div className="space-y-2">
                   <FieldLabel icon={Mail}>Global Support Email</FieldLabel>
                   <input
@@ -543,11 +591,11 @@ export default function Settings() {
                 />
               </div>
 
-              <div className="pt-6 border-t border-zinc-50 flex justify-end">
+              <div className="pt-5 sm:pt-6 border-t border-zinc-50 flex justify-stretch sm:justify-end">
                 <button
                   type="submit"
                   disabled={collegeForm.formState.isSubmitting}
-                  className="btn-primary py-3.5 px-10 shadow-xl shadow-brand-500/15"
+                  className="btn-primary w-full sm:w-auto py-3.5 px-5 sm:px-10 shadow-xl shadow-brand-500/15"
                 >
                   <Save size={18} /> Synchronize Institutional Logic
                 </button>

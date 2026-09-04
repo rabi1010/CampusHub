@@ -84,13 +84,13 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="min-h-screen bg-zinc-50 flex">
       {/* ── LEFT SIDE: FORM ─────────────────────────────── */}
-      <div className="flex-1 flex flex-col justify-center px-8 lg:px-24 py-12 relative overflow-hidden">
+      <div className="flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-24 py-10 relative overflow-hidden">
         {/* Subtle background blur */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-brand-50 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 opacity-60" />
 
-        <div className="relative z-10 w-full max-w-md mx-auto">
+        <div className="relative z-10 w-full max-w-md mx-auto bg-white border border-zinc-100 rounded-3xl p-7 sm:p-9 shadow-card-lg">
           {/* Logo & Back */}
           <div className="flex items-center justify-between mb-12">
             <Link to="/" className="inline-flex items-center gap-2 group">
@@ -114,6 +114,7 @@ export default function Register() {
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.3 }}
                 >
+                  <p className="section-kicker">Start your journey</p>
                   <h1 className="text-3xl font-display font-medium text-zinc-900 mb-2">
                     Join CampusHub
                   </h1>

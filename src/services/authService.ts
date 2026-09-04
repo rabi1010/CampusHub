@@ -82,6 +82,28 @@ export const authService = {
   logout: () => api.post("/auth/logout").then((r) => r.data),
 
   me: () => api.get("/auth/me").then((r) => r.data),
+  updateMe: (data: { fullName: string; email: string; phone: string }) =>
+    api.put<ApiResponse<Record<string, unknown>>>("/auth/me", data).then((r) => r.data.data),
+  changePassword: (data: { currentPassword: string; newPassword: string }) =>
+    api.patch<ApiResponse<null>>("/auth/me/password", data).then((r) => r.data),
+  uploadProfileImage: (file: File) => {
+    const form = new FormData();
+    form.append("image", file);
+    const token = localStorage.getItem("token");
+    return api.put<ApiResponse<null>>("/auth/me/image", form, {
+      // This endpoint uses the JWT header, not a session cookie. Let the
+      // browser create the multipart boundary automatically.
+      withCredentials: false,
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        "Content-Type": undefined,
+      },
+    }).then((r) => r.data);
+  },
+  getProfileImage: () =>
+    api
+      .get<ApiResponse<string>>(`/auth/me/image?_=${Date.now()}`)
+      .then((r) => r.data.data),
   getPendingUsers: () =>
     api
       .get<ApiResponse<PendingUser[]>>("/auth/users/pending")

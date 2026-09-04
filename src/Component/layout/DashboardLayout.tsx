@@ -63,13 +63,13 @@ export default function DashboardLayout() {
       </div>
 
       {/* ── Main content area ────────────────────────── */}
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+      <div className="flex min-h-0 flex-col flex-1 min-w-0 overflow-hidden">
         {/* Topbar with shadow when scrolled if needed */}
         <Topbar onMobileMenuToggle={() => setMobileOpen((o) => !o)} />
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-200 scrollbar-track-transparent">
-          <div className="p-4 md:p-8 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-700">
+        <main className="min-h-0 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-200 scrollbar-track-transparent">
+          <div className="p-4 md:p-8 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-700 dashboard-page">
             <Outlet />
           </div>
           

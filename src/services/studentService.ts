@@ -134,13 +134,20 @@ export const studentService = {
   uploadImage: (id: string, file: File) => {
     const form = new FormData();
     form.append("image", file);
+    const token = localStorage.getItem("token");
     return api
       .post<ApiResponse<null>>(`/students/${id}/image`, form, {
-        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: false,
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          "Content-Type": undefined,
+        },
       })
       .then((r) => r.data);
   },
 
   getImage: (id: string) =>
-    `${api.defaults.baseURL}/students/${id}/image`,
+    api
+      .get<ApiResponse<string>>(`/students/${id}/image?_=${Date.now()}`)
+      .then((r) => r.data.data),
 };

@@ -102,10 +102,11 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="bg-zinc-50 min-h-screen">
+    <div className="bg-zinc-50 min-h-screen overflow-hidden">
       {/* ── 1. HERO SECTION ──────────────────────────────── */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+      <section className="relative pt-32 pb-24 lg:pt-44 lg:pb-36 overflow-hidden">
         {/* Abstract background elements */}
+        <div className="absolute inset-0 public-grid opacity-80 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-40 pointer-events-none">
           <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-100 rounded-full blur-[120px]" />
           <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-brand-50 rounded-full blur-[120px]" />
@@ -118,15 +119,15 @@ export default function Landing() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-xs font-medium mb-6">
+              <div className="eyebrow mb-6">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
                 Empowering 100+ Institutions
               </div>
-              <h1 className="text-5xl lg:text-7xl font-display font-medium text-zinc-900 leading-[1.1] mb-6">
+              <h1 className="text-5xl lg:text-[4.7rem] font-display font-medium text-zinc-900 leading-[1.04] mb-6 tracking-[-0.045em]">
                 The Modern OS for Your <br />
                 <span className="text-brand-600">Smart Campus</span>
               </h1>
-              <p className="text-lg text-zinc-600 leading-relaxed mb-10 max-w-lg">
+              <p className="text-lg text-zinc-600 leading-relaxed mb-10 max-w-xl">
                 Streamline academic operations, enhance student engagement, and
                 unify campus management with our all-in-one digital ecosystem.
               </p>
@@ -143,7 +144,7 @@ export default function Landing() {
               <div className="mt-10 flex items-center gap-4 text-sm text-zinc-500">
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-zinc-200" />
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-brand-100 text-brand-700 flex items-center justify-center text-[10px] font-bold">{String.fromCharCode(64 + i)}</div>
                   ))}
                 </div>
                 <p>Trusted by 10k+ users worldwide</p>
@@ -156,13 +157,14 @@ export default function Landing() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-zinc-200 aspect-[4/3]">
+              <div className="relative rounded-[2rem] overflow-hidden shadow-2xl border-8 border-white aspect-[4/3] ring-1 ring-zinc-200">
                 <img
                   src="https://plus.unsplash.com/premium_photo-1682126255537-d3d08524f263?w=1000&auto=format&fit=crop&q=85"
                   alt="Modern Campus Life"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/40 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/55 via-transparent to-white/5 pointer-events-none" />
+                <div className="absolute top-5 left-5 rounded-xl border border-white/20 bg-zinc-950/45 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-md">Campus in motion</div>
               </div>
               
               {/* Floating card */}
@@ -207,6 +209,7 @@ export default function Landing() {
       <section id="features" className="py-24">
         <div className="section-container">
           <div className="text-center max-w-3xl mx-auto mb-16">
+            <p className="section-kicker">One connected campus</p>
             <h2 className="text-4xl lg:text-5xl font-medium text-zinc-900 mb-6">
               Everything you need to <br />
               <span className="text-brand-600">run a modern campus</span>

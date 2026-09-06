@@ -123,7 +123,7 @@ export default function Topbar({ onMobileMenuToggle }: TopbarProps) {
       .slice(0, 2) ?? "U";
 
   return (
-    <header className="h-20 flex items-center justify-between px-6 bg-white border-b border-zinc-100 z-10 sticky top-0">
+    <header className="relative h-20 flex items-center justify-between px-4 md:px-6 bg-white border-b border-zinc-100 z-30 sticky top-0">
       {/* ── Left: Mobile Toggle & Search ─────────────────── */}
       <div className="flex items-center gap-4 flex-1">
         <button

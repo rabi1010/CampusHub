@@ -55,6 +55,7 @@ export const TEACHER_NAV: NavGroup[] = [
     group: "Overview",
     items: [
       { label: "Dashboard", to: "/dashboard/teacher", icon: LayoutDashboard },
+      { label: "Profile", to: "/teacher/profile", icon: Users },
     ],
   },
   {

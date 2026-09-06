@@ -21,6 +21,7 @@ import StudentsList from "./pages/teacher/StudentsList";
 import Attendance from "./pages/teacher/Attendance";
 import Marks from "./pages/teacher/Marks";
 import TeacherNotices from "./pages/teacher/TeacherNotices";
+import TeacherProfile from "./pages/teacher/TeacherProfile";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import Profile from "./pages/student/Profile";
 import MyCourses from "./pages/student/MyCourses";
@@ -66,6 +67,7 @@ export default function App() {
             {/* Teacher */}
             <Route element={<RoleRoute allowedRoles={["teacher"]} />}>
               <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
+              <Route path="/teacher/profile" element={<TeacherProfile />} />
               <Route path="/teacher/students" element={<StudentsList />} />
               <Route path="/teacher/attendance" element={<Attendance />} />
               <Route path="/teacher/marks" element={<Marks />} />

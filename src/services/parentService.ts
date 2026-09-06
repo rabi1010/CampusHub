@@ -96,4 +96,13 @@ export const parentService = {
     api
       .delete<ApiResponse<null>>(`/parents/${id}`)
       .then((r) => r.data),
+
+  uploadImage: (id: string, file: File) => {
+    const form = new FormData();
+    form.append("image", file);
+    return api.post<ApiResponse<null>>(`/parents/${id}/image`, form).then((r) => r.data);
+  },
+
+  getImage: (id: string) =>
+    api.get<ApiResponse<string>>(`/parents/${id}/image?_=${Date.now()}`).then((r) => r.data.data),
 };

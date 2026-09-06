@@ -95,4 +95,16 @@ export const teacherService = {
     api
       .delete<ApiResponse<null>>(`/teachers/${id}`)
       .then((r) => r.data),
+
+  getMe: () =>
+    api.get<ApiResponse<Teacher>>("/teachers/me").then((r) => mapTeacher(r.data.data)),
+
+  uploadImage: (id: string, file: File) => {
+    const form = new FormData();
+    form.append("image", file);
+    return api.post<ApiResponse<null>>(`/teachers/${id}/image`, form).then((r) => r.data);
+  },
+
+  getImage: (id: string) =>
+    api.get<ApiResponse<string>>(`/teachers/${id}/image?_=${Date.now()}`).then((r) => r.data.data),
 };

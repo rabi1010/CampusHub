@@ -1,10 +1,46 @@
-import { User } from "lucide-react"
+import { Camera, User } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useMutation } from "@tanstack/react-query"
 import PageHeader from "@/components/ui/PageHeader"
+import Avatar from "@/Component/ui/Avatar"
 import { useParentMe } from "@/features/parents/useParents"
+import { parentService } from "@/services/parentService"
 
 export default function ParentProfile() {
   const parentQuery = useParentMe()
   const parent = parentQuery.data
+  const [imageUrl, setImageUrl] = useState<string>()
+  const [imageError, setImageError] = useState("")
+  const upload = useMutation({
+    mutationFn: (file: File) => parentService.uploadImage(parent!.id, file),
+    onSuccess: async () => {
+      const url = await parentService.getImage(parent!.id)
+      setImageUrl(url)
+      setImageError("")
+      window.dispatchEvent(new Event("profile-image-updated"))
+    },
+    onError: () => setImageError("Image upload failed. Please try again."),
+  })
+
+  useEffect(() => {
+    if (!parent?.id) return
+    parentService.getImage(parent.id).then(setImageUrl).catch(() => undefined)
+  }, [parent?.id])
+
+  const onImageSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    if (!( ["image/jpeg", "image/png", "image/webp"] as string[]).includes(file.type)) {
+      setImageError("Use a JPEG, PNG, or WebP image.")
+      return
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setImageError("Image must be under 2MB.")
+      return
+    }
+    upload.mutate(file)
+    event.target.value = ""
+  }
 
   return (
     <div className="space-y-6">
@@ -22,9 +58,12 @@ export default function ParentProfile() {
         <>
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                <User size={28} className="text-blue-600" />
-              </div>
+              <Avatar name={parent.fullName || "Parent"} size="xl" imageUrl={imageUrl} color="indigo" />
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:border-blue-300 hover:text-blue-600">
+                <Camera size={15} />
+                {upload.isPending ? "Uploading..." : "Change photo"}
+                <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={onImageSelected} disabled={upload.isPending} />
+              </label>
               <div>
                 <h2 className="text-lg font-medium text-gray-900">{parent.fullName}</h2>
                 <p className="text-sm text-gray-500">{parent.email}</p>
@@ -33,6 +72,7 @@ export default function ParentProfile() {
                 </span>
               </div>
             </div>
+            {imageError && <p className="mt-3 text-sm text-red-600">{imageError}</p>}
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
               <div>

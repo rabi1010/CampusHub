@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import clsx from "clsx";
 
@@ -43,16 +44,16 @@ export default function Modal({
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/50 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-3 sm:p-6 bg-zinc-950/55 backdrop-blur-sm animate-fade-in"
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
       <div
         className={clsx(
-          "w-full bg-white rounded-2xl shadow-2xl border border-zinc-100",
-          "flex flex-col max-h-[90vh] animate-fade-up",
+          "relative w-full bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-zinc-200",
+          "flex flex-col max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-3rem)] animate-fade-up",
           SIZES[size],
         )}
       >
@@ -75,8 +76,9 @@ export default function Modal({
         )}
 
         {/* Scrollable content */}
-        <div className="overflow-y-auto flex-1 px-6 py-5">{children}</div>
+        <div className="min-h-0 overflow-y-auto flex-1 px-4 py-4 sm:px-6 sm:py-5">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

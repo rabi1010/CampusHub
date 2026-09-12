@@ -10,4 +10,3 @@ dist/
 .env.production
 Dockerfile
 .dockerignore
-nginx.conf.template

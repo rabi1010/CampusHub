@@ -1,0 +1,21 @@
+server {
+    listen ${PORT};
+
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript image/svg+xml;
+
+    # Vite fingerprints everything in /assets, so it can be cached forever.
+    location /assets/ {
+        root /usr/share/nginx/html;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        try_files $uri =404;
+    }
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        # SPA fallback: refreshing /dashboard/admin must serve index.html,
+        # not nginx's 404.
+        try_files $uri $uri/ /index.html;
+    }
+}
